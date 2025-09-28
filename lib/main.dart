@@ -1,6 +1,28 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
+import 'firebase_options.dart';
+import 'services/firebase_messaging_service.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  
+  // Khởi tạo Firebase với options cho web
+  if (kIsWeb) {
+    await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  } else {
+    await Firebase.initializeApp();
+  }
+  
+  // Khởi tạo Firebase Messaging
+  await FirebaseMessagingService.initialize();
+  
+  // Đăng ký background message handler (chỉ cho mobile)
+  if (!kIsWeb) {
+    FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
+  }
+  
   runApp(const MyApp());
 }
 
@@ -34,6 +56,7 @@ class _MainScreenState extends State<MainScreen> {
   final List<Widget> _screens = [
     const HomeScreen(),
     const ProfileScreen(),
+    const NotificationScreen(),
     const SettingsScreen(),
     const AboutScreen(),
   ];
@@ -101,8 +124,8 @@ class _MainScreenState extends State<MainScreen> {
               },
             ),
             ListTile(
-              leading: const Icon(Icons.settings),
-              title: const Text('Cài đặt'),
+              leading: const Icon(Icons.notifications),
+              title: const Text('Thông báo'),
               selected: _selectedIndex == 2,
               onTap: () {
                 setState(() {
@@ -111,14 +134,25 @@ class _MainScreenState extends State<MainScreen> {
                 Navigator.pop(context);
               },
             ),
-            const Divider(),
             ListTile(
-              leading: const Icon(Icons.info),
-              title: const Text('Giới thiệu'),
+              leading: const Icon(Icons.settings),
+              title: const Text('Cài đặt'),
               selected: _selectedIndex == 3,
               onTap: () {
                 setState(() {
                   _selectedIndex = 3;
+                });
+                Navigator.pop(context);
+              },
+            ),
+            const Divider(),
+            ListTile(
+              leading: const Icon(Icons.info),
+              title: const Text('Giới thiệu'),
+              selected: _selectedIndex == 4,
+              onTap: () {
+                setState(() {
+                  _selectedIndex = 4;
                 });
                 Navigator.pop(context);
               },
@@ -187,6 +221,181 @@ class ProfileScreen extends StatelessWidget {
             'Thông tin cá nhân của bạn sẽ hiển thị ở đây.',
             style: TextStyle(fontSize: 16),
             textAlign: TextAlign.center,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class NotificationScreen extends StatefulWidget {
+  const NotificationScreen({super.key});
+
+  @override
+  State<NotificationScreen> createState() => _NotificationScreenState();
+}
+
+class _NotificationScreenState extends State<NotificationScreen> {
+  String? _fcmToken;
+  bool _isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadFCMToken();
+  }
+
+  Future<void> _loadFCMToken() async {
+    try {
+      final token = await FirebaseMessagingService.getToken();
+      setState(() {
+        _fcmToken = token;
+        _isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        _fcmToken = 'Lỗi khi lấy token: $e';
+        _isLoading = false;
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            'Quản lý thông báo',
+            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: 20),
+          
+          // FCM Token Section
+          Card(
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    'FCM Token:',
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 8),
+                  if (_isLoading)
+                    const CircularProgressIndicator()
+                  else
+                    SelectableText(
+                      _fcmToken ?? 'Không có token',
+                      style: const TextStyle(fontSize: 12, fontFamily: 'monospace'),
+                    ),
+                  const SizedBox(height: 8),
+                  ElevatedButton(
+                    onPressed: _loadFCMToken,
+                    child: const Text('Làm mới Token'),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          
+          const SizedBox(height: 20),
+          
+          // Topic Subscription Section
+          Card(
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    'Đăng ký Topic:',
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 8),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: ElevatedButton(
+                          onPressed: () {
+                            FirebaseMessagingService.subscribeToTopic('general');
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(content: Text('Đã đăng ký topic "general"')),
+                            );
+                          },
+                          child: const Text('Đăng ký "general"'),
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: ElevatedButton(
+                          onPressed: () {
+                            FirebaseMessagingService.unsubscribeFromTopic('general');
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(content: Text('Đã hủy đăng ký topic "general"')),
+                            );
+                          },
+                          child: const Text('Hủy "general"'),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: ElevatedButton(
+                          onPressed: () {
+                            FirebaseMessagingService.subscribeToTopic('news');
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(content: Text('Đã đăng ký topic "news"')),
+                            );
+                          },
+                          child: const Text('Đăng ký "news"'),
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: ElevatedButton(
+                          onPressed: () {
+                            FirebaseMessagingService.unsubscribeFromTopic('news');
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(content: Text('Đã hủy đăng ký topic "news"')),
+                            );
+                          },
+                          child: const Text('Hủy "news"'),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+          
+          const SizedBox(height: 20),
+          
+          // Instructions
+          const Card(
+            child: Padding(
+              padding: EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Hướng dẫn:',
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  ),
+                  SizedBox(height: 8),
+                  Text('1. Copy FCM Token để sử dụng trong PHP script'),
+                  Text('2. Đăng ký/hủy các topic để nhận thông báo theo nhóm'),
+                  Text('3. Sử dụng PHP script để gửi thông báo từ web server'),
+                ],
+              ),
+            ),
           ),
         ],
       ),

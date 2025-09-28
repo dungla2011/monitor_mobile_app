@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "916524608033",
+    "project_id": "monitorv2-dcf5b",
+    "storage_bucket": "monitorv2-dcf5b.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:916524608033:android:5b2e60188fec6432d1d160",
+        "android_client_info": {
+          "package_name": "com.example.monitor_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBCHpCDZoONPpwsiBurfvKqOqSMbzFlkio"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
