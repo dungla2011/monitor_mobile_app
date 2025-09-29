@@ -988,20 +988,26 @@ class _MonitorItemDialogState extends State<MonitorItemDialog> {
         ),
       ),
       actions: [
-        TextButton(
-          onPressed: _isLoading ? null : () => Navigator.of(context).pop(),
-          child: const Text('Hủy'),
-        ),
-        ElevatedButton(
-          onPressed: _isLoading ? null : _save,
-          child:
-              _isLoading
-                  ? const SizedBox(
-                    width: 20,
-                    height: 20,
-                    child: CircularProgressIndicator(strokeWidth: 2),
-                  )
-                  : Text(widget.item != null ? 'Cập nhật' : 'Thêm'),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            TextButton(
+              onPressed: _isLoading ? null : () => Navigator.of(context).pop(),
+              child: const Text('Hủy'),
+            ),
+            const SizedBox(width: 16),
+            ElevatedButton(
+              onPressed: _isLoading ? null : _save,
+              child:
+                  _isLoading
+                      ? const SizedBox(
+                        width: 20,
+                        height: 20,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      )
+                      : Text(widget.item != null ? 'Cập nhật' : 'Thêm'),
+            ),
+          ],
         ),
       ],
     );
