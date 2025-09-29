@@ -187,12 +187,50 @@ widget.fields.where((field) {
 })
 ```
 
+## Tính năng Read-Only Fields
+
+### 1. Hiển thị trong Edit Mode
+
+Khi edit item, các field có `editable = "no"` nhưng `show_in_api_edit_one = "yes"` sẽ được hiển thị ở dưới cùng form:
+
+```json
+{
+    "field_name": "last_check_status",
+    "description": "Trạng thái gần nhất",
+    "data_type": "smallint(6)",
+    "editable": "no",
+    "show_in_api_edit_one": "yes",
+    "show_in_api_list": "yes",
+    "show_dependency": null,
+    "required": "no"
+}
+```
+
+### 2. Thứ tự hiển thị
+
+1. **Editable fields** (có thể chỉnh sửa)
+2. **Divider** "Thông tin Bổ xung" 
+3. **Read-only fields** (chỉ xem, không chỉnh sửa)
+
+### 3. Format hiển thị
+
+**Layout**: 1 hàng với Label bên trái, Data bên phải (tỷ lệ 2:3)
+
+- **String/Text**: Hiển thị nguyên văn
+- **DateTime**: Format thành "DD/MM/YYYY HH:mm:ss"
+- **Boolean/Tinyint**: "Có" (cho 1/true) hoặc "Không" (cho 0/false)
+- **Null/Empty**: "Chưa có dữ liệu" (màu xám)
+
+**Styling**: Background xám nhạt, border radius 8px, separator line giữa label và data
+
 ## Lưu ý quan trọng
 
 1. **Performance**: Form sẽ rebuild khi field thay đổi để cập nhật visibility
 2. **Validation**: Các field ẩn sẽ không được validate
 3. **Data**: Dữ liệu của field ẩn vẫn được lưu trữ nhưng không hiển thị
 4. **New Items**: Khi tạo item mới, các field có dependency sẽ ẩn cho đến khi điều kiện được thỏa mãn
+5. **Read-Only Fields**: Chỉ hiển thị khi edit, không gửi lên server khi save
+6. **Add Mode**: Read-only fields không hiển thị khi thêm mới
 
 ## Mở rộng trong tương lai
 

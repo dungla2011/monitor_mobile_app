@@ -180,12 +180,17 @@ class _MonitorScreenState extends State<MonitorScreen> {
   }
 
   void _showAddEditDialog({Map<String, dynamic>? item}) {
+    final isEditMode = item != null;
+    final dialogFields = MonitorConfigService.getFormFields(
+      isEditMode: isEditMode,
+    );
+
     showDialog(
       context: context,
       builder:
           (context) => MonitorItemDialog(
             item: item,
-            fields: _formFields,
+            fields: dialogFields,
             onSaved: () async {
               Navigator.of(context).pop();
               await _loadMonitorItems();
@@ -479,6 +484,131 @@ class _MonitorItemDialogState extends State<MonitorItemDialog> {
     });
   }
 
+  // Build read-only field widget
+  Widget _buildReadOnlyField(String fieldName, String label, String dataType) {
+    final currentValue = widget.item?[fieldName]?.toString() ?? '';
+    final displayValue = _formatDisplayValue(currentValue, dataType);
+
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.grey.shade50,
+        border: Border.all(color: Colors.grey.shade300),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Label bên trái
+          Expanded(
+            flex: 2,
+            child: Padding(
+              padding: const EdgeInsets.only(top: 2),
+              child: Text(
+                label,
+                style: const TextStyle(
+                  fontSize: 14,
+                  color: Colors.black87,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ),
+          ),
+          // Separator
+          Container(
+            width: 1,
+            height: 20,
+            color: Colors.grey.shade300,
+            margin: const EdgeInsets.symmetric(horizontal: 12),
+          ),
+          // Data bên phải
+          Expanded(
+            flex: 3,
+            child: Padding(
+              padding: const EdgeInsets.only(top: 2),
+              child: Text(
+                displayValue.isNotEmpty ? displayValue : 'Chưa có dữ liệu',
+                style: TextStyle(
+                  fontSize: 14,
+                  color:
+                      displayValue.isNotEmpty
+                          ? Colors.black87
+                          : Colors.grey.shade500,
+                  fontWeight:
+                      displayValue.isNotEmpty
+                          ? FontWeight.w400
+                          : FontWeight.w300,
+                ),
+                textAlign: TextAlign.end,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // Format display value based on data type
+  String _formatDisplayValue(String value, String dataType) {
+    if (value.isEmpty || value == 'null') {
+      return '';
+    }
+
+    final lowerDataType = dataType.toLowerCase();
+
+    // Format datetime
+    if (lowerDataType.contains('datetime')) {
+      try {
+        final dateTime = DateTime.parse(value);
+        return _formatDateTime(dateTime);
+      } catch (e) {
+        return value;
+      }
+    }
+
+    // Format boolean/tinyint
+    if (lowerDataType.contains('boolean') ||
+        lowerDataType.contains('tinyint')) {
+      if (value == '1' || value.toLowerCase() == 'true') {
+        return 'Có';
+      } else if (value == '0' || value.toLowerCase() == 'false') {
+        return 'Không';
+      }
+    }
+
+    return value;
+  }
+
+  // Build divider widget
+  Widget _buildDivider(String label) {
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 16),
+      child: Row(
+        children: [
+          const Expanded(child: Divider(color: Colors.blue, thickness: 1.5)),
+          Container(
+            margin: const EdgeInsets.symmetric(horizontal: 16),
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+            decoration: BoxDecoration(
+              color: Colors.blue.shade50,
+              borderRadius: BorderRadius.circular(20),
+              border: Border.all(color: Colors.blue.shade200),
+            ),
+            child: Text(
+              label,
+              style: TextStyle(
+                fontSize: 13,
+                fontWeight: FontWeight.w600,
+                color: Colors.blue.shade700,
+              ),
+            ),
+          ),
+          const Expanded(child: Divider(color: Colors.blue, thickness: 1.5)),
+        ],
+      ),
+    );
+  }
+
   Widget _buildToggleSwitch(String fieldName, String label, bool required) {
     final isEnabled = _booleanValues[fieldName] ?? false;
 
@@ -646,7 +776,15 @@ class _MonitorItemDialogState extends State<MonitorItemDialog> {
     try {
       final data = <String, dynamic>{};
       for (final entry in _controllers.entries) {
-        data[entry.key] = entry.value.text;
+        // Only include editable fields in save data
+        final field = widget.fields.firstWhere(
+          (f) => f['field'] == entry.key,
+          orElse: () => {'editable': 'yes'}, // Default to editable if not found
+        );
+
+        if (field['editable'] == 'yes') {
+          data[entry.key] = entry.value.text;
+        }
       }
 
       Map<String, dynamic> result;
@@ -683,118 +821,168 @@ class _MonitorItemDialogState extends State<MonitorItemDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text(
-        widget.item != null ? 'Sửa Monitor Item' : 'Thêm Monitor Item',
+      title: Container(
+        padding: const EdgeInsets.only(top: 8),
+        child:
+            widget.item != null
+                ? Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Text('Sửa Monitor Item'),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 4,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Colors.blue.shade100,
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(color: Colors.blue.shade300),
+                      ),
+                      child: Text(
+                        '#${widget.item!['id']}',
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.blue.shade700,
+                        ),
+                      ),
+                    ),
+                  ],
+                )
+                : const Text('Thêm Monitor Item'),
       ),
       content: SizedBox(
         width: double.maxFinite,
         child: Form(
           key: _formKey,
           child: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children:
-                  widget.fields
-                      .where((field) {
-                        // Check if field should be shown based on show_dependency
-                        return MonitorConfigService.shouldShowField(
-                          field,
-                          _currentItemData,
-                        );
-                      })
-                      .map((field) {
-                        final fieldName = field['field'] as String;
-                        final label = field['label'] as String? ?? fieldName;
-                        final required = field['required'] == true;
-                        final selectOptions =
-                            field['select_options'] as Map<String, dynamic>?;
-                        final dataType =
-                            field['data_type']?.toString().toLowerCase() ?? '';
-                        final isBooleanField =
-                            dataType.contains('boolean') ||
-                            dataType.contains('tinyint') ||
-                            (fieldName ==
-                                'enable'); // Special case for enable field
-                        final isDateTimeField =
-                            dataType.contains('datetime') &&
-                            field['editable'] == 'yes';
+            child: Padding(
+              padding: const EdgeInsets.only(top: 8),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children:
+                    widget.fields
+                        .where((field) {
+                          // Check if field should be shown based on show_dependency
+                          return MonitorConfigService.shouldShowField(
+                            field,
+                            _currentItemData,
+                          );
+                        })
+                        .map((field) {
+                          final fieldName = field['field'] as String;
+                          final label = field['label'] as String? ?? fieldName;
+                          final required = field['required'] == true;
+                          final selectOptions =
+                              field['select_options'] as Map<String, dynamic>?;
+                          final dataType =
+                              field['data_type']?.toString().toLowerCase() ??
+                              '';
+                          final isBooleanField =
+                              dataType.contains('boolean') ||
+                              dataType.contains('tinyint') ||
+                              (fieldName ==
+                                  'enable'); // Special case for enable field
+                          final isDateTimeField =
+                              dataType.contains('datetime') &&
+                              field['editable'] == 'yes';
+                          final isReadOnly = field['editable'] == 'no';
+                          final isDivider = field['editable'] == 'divider';
 
-                        return Padding(
-                          padding: const EdgeInsets.only(bottom: 16),
-                          child:
-                              isBooleanField
-                                  ? _buildToggleSwitch(
-                                    fieldName,
-                                    label,
-                                    required,
-                                  )
-                                  : isDateTimeField
-                                  ? _buildDateTimePicker(
-                                    fieldName,
-                                    label,
-                                    required,
-                                  )
-                                  : selectOptions != null
-                                  ? DropdownButtonFormField<String>(
-                                    value:
-                                        _controllers[fieldName]
-                                                    ?.text
-                                                    .isNotEmpty ==
-                                                true
-                                            ? _controllers[fieldName]!.text
-                                            : null,
-                                    decoration: InputDecoration(
-                                      labelText: required ? '$label *' : label,
-                                      border: const OutlineInputBorder(),
-                                    ),
-                                    items:
-                                        selectOptions.entries.map((entry) {
-                                          return DropdownMenuItem<String>(
-                                            value: entry.key,
-                                            child: Text(entry.value.toString()),
-                                          );
-                                        }).toList(),
-                                    onChanged: (value) {
-                                      _controllers[fieldName]?.text =
-                                          value ?? '';
-                                      _updateFieldValue(fieldName, value ?? '');
-                                    },
-                                    validator:
-                                        required
-                                            ? (value) {
-                                              if (value == null ||
-                                                  value.trim().isEmpty ||
-                                                  value == '0') {
-                                                return 'Vui lòng chọn $label';
+                          return Padding(
+                            padding: const EdgeInsets.only(bottom: 16),
+                            child:
+                                isDivider
+                                    ? _buildDivider(label)
+                                    : isReadOnly
+                                    ? _buildReadOnlyField(
+                                      fieldName,
+                                      label,
+                                      dataType,
+                                    )
+                                    : isBooleanField
+                                    ? _buildToggleSwitch(
+                                      fieldName,
+                                      label,
+                                      required,
+                                    )
+                                    : isDateTimeField
+                                    ? _buildDateTimePicker(
+                                      fieldName,
+                                      label,
+                                      required,
+                                    )
+                                    : selectOptions != null
+                                    ? DropdownButtonFormField<String>(
+                                      value:
+                                          _controllers[fieldName]
+                                                      ?.text
+                                                      .isNotEmpty ==
+                                                  true
+                                              ? _controllers[fieldName]!.text
+                                              : null,
+                                      decoration: InputDecoration(
+                                        labelText:
+                                            required ? '$label *' : label,
+                                        border: const OutlineInputBorder(),
+                                      ),
+                                      items:
+                                          selectOptions.entries.map((entry) {
+                                            return DropdownMenuItem<String>(
+                                              value: entry.key,
+                                              child: Text(
+                                                entry.value.toString(),
+                                              ),
+                                            );
+                                          }).toList(),
+                                      onChanged: (value) {
+                                        _controllers[fieldName]?.text =
+                                            value ?? '';
+                                        _updateFieldValue(
+                                          fieldName,
+                                          value ?? '',
+                                        );
+                                      },
+                                      validator:
+                                          required
+                                              ? (value) {
+                                                if (value == null ||
+                                                    value.trim().isEmpty ||
+                                                    value == '0') {
+                                                  return 'Vui lòng chọn $label';
+                                                }
+                                                return null;
                                               }
-                                              return null;
-                                            }
-                                            : null,
-                                  )
-                                  : TextFormField(
-                                    controller: _controllers[fieldName],
-                                    decoration: InputDecoration(
-                                      labelText: required ? '$label *' : label,
-                                      border: const OutlineInputBorder(),
-                                    ),
-                                    maxLines: dataType.contains('text') ? 3 : 1,
-                                    onChanged: (value) {
-                                      _updateFieldValue(fieldName, value);
-                                    },
-                                    validator:
-                                        required
-                                            ? (value) {
-                                              if (value == null ||
-                                                  value.trim().isEmpty) {
-                                                return 'Vui lòng nhập $label';
+                                              : null,
+                                    )
+                                    : TextFormField(
+                                      controller: _controllers[fieldName],
+                                      decoration: InputDecoration(
+                                        labelText:
+                                            required ? '$label *' : label,
+                                        border: const OutlineInputBorder(),
+                                      ),
+                                      maxLines:
+                                          dataType.contains('text') ? 3 : 1,
+                                      onChanged: (value) {
+                                        _updateFieldValue(fieldName, value);
+                                      },
+                                      validator:
+                                          required
+                                              ? (value) {
+                                                if (value == null ||
+                                                    value.trim().isEmpty) {
+                                                  return 'Vui lòng nhập $label';
+                                                }
+                                                return null;
                                               }
-                                              return null;
-                                            }
-                                            : null,
-                                  ),
-                        );
-                      })
-                      .toList(),
+                                              : null,
+                                    ),
+                          );
+                        })
+                        .toList(),
+              ),
             ),
           ),
         ),

@@ -395,8 +395,8 @@ class MonitorConfigService {
     }
   }
 
-  // Helper method to get field configuration
-  static List<Map<String, dynamic>> getFormFields() {
+  // Helper method to get field configuration for forms
+  static List<Map<String, dynamic>> getFormFields({bool isEditMode = false}) {
     if (_fieldDetails == null) {
       return [];
     }
@@ -405,23 +405,60 @@ class MonitorConfigService {
     if (_fieldDetails is List) {
       final fields = _fieldDetails as List;
 
-      return fields
-          .where((field) => field is Map && field['editable'] == 'yes')
-          .map((field) {
-            final fieldMap = field as Map<String, dynamic>;
-            return {
+      List<Map<String, dynamic>> editableFields = [];
+      List<Map<String, dynamic>> readOnlyFields = [];
+
+      for (final field in fields) {
+        if (field is Map) {
+          final fieldMap = field as Map<String, dynamic>;
+          final isEditable = fieldMap['editable'] == 'yes';
+          final showInEditOne = fieldMap['show_in_api_edit_one'] == 'yes';
+
+          // Include editable fields
+          if (isEditable) {
+            editableFields.add({
               'field': fieldMap['field_name'],
               'label': fieldMap['description'],
               'required': fieldMap['required'] == 'yes',
               'data_type': fieldMap['data_type'],
-              'editable': fieldMap['editable'], // Add missing editable field
-              'select_options':
-                  fieldMap['select_option_value'], // For dropdown fields
-              'show_dependency':
-                  fieldMap['show_dependency'], // Add show_dependency support
-            };
-          })
-          .toList();
+              'editable': fieldMap['editable'],
+              'select_options': fieldMap['select_option_value'],
+              'show_dependency': fieldMap['show_dependency'],
+            });
+          }
+          // Include read-only fields if in edit mode and show_in_api_edit_one = yes
+          // But exclude 'id' field since it's already shown in title
+          else if (isEditMode &&
+              showInEditOne &&
+              fieldMap['field_name'] != 'id') {
+            readOnlyFields.add({
+              'field': fieldMap['field_name'],
+              'label': fieldMap['description'],
+              'required': false, // Read-only fields are never required
+              'data_type': fieldMap['data_type'],
+              'editable': fieldMap['editable'],
+              'select_options': fieldMap['select_option_value'],
+              'show_dependency': fieldMap['show_dependency'],
+            });
+          }
+        }
+      }
+
+      // Return editable fields first, then read-only fields
+      List<Map<String, dynamic>> result = [...editableFields];
+
+      // Add divider if there are read-only fields
+      if (readOnlyFields.isNotEmpty) {
+        result.add({
+          'field': '__divider__',
+          'label': 'Thông tin Bổ xung',
+          'editable': 'divider',
+          'data_type': 'divider',
+        });
+        result.addAll(readOnlyFields);
+      }
+
+      return result;
     }
 
     return [];
@@ -432,6 +469,11 @@ class MonitorConfigService {
     Map<String, dynamic> field,
     Map<String, dynamic>? itemData,
   ) {
+    // Always show dividers
+    if (field['editable'] == 'divider') {
+      return true;
+    }
+
     final showDependency = field['show_dependency'];
 
     // If no show_dependency, always show the field
