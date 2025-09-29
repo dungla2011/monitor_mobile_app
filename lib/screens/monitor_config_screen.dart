@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../services/monitor_config_crud_service.dart';
+import '../services/base_crud_service.dart';
 
 class MonitorConfigScreen extends StatefulWidget {
   const MonitorConfigScreen({super.key});
@@ -83,15 +84,13 @@ class _MonitorConfigScreenState extends State<MonitorConfigScreen> {
         print('📊 Monitor configs data type: ${data.runtimeType}');
         print('📊 Monitor configs data: $data');
 
-        // Handle pagination format: extract 'data' array from pagination object
-        final paginationData = result['data'];
-        final actualData =
-            paginationData is Map && paginationData.containsKey('data')
-                ? paginationData['data']
-                : paginationData;
+        // Use base service helper to extract pagination data
+        final extractedData = BaseCrudService.extractPaginationData(
+          result['data'],
+        );
 
         setState(() {
-          _monitorConfigs = List<Map<String, dynamic>>.from(actualData ?? []);
+          _monitorConfigs = extractedData;
           _isLoading = false;
           _errorMessage = null;
         });
@@ -1072,6 +1071,8 @@ class _MonitorConfigDialogState extends State<MonitorConfigDialog> {
         }
       }
 
+      print('📤 Sending data to server: $data');
+
       Map<String, dynamic> result;
       if (widget.item != null) {
         // Update existing item
@@ -1087,23 +1088,241 @@ class _MonitorConfigDialogState extends State<MonitorConfigDialog> {
 
       if (result['success']) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(result['message'] ?? 'Lưu thành công')),
+          SnackBar(
+            content: Text(result['message'] ?? 'Lưu thành công'),
+            backgroundColor: Colors.green,
+          ),
         );
         widget.onSaved();
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(result['message'] ?? 'Lỗi khi lưu')),
-        );
+        // Show detailed error dialog instead of snackbar
+        await _showErrorDialog(result['message'] ?? 'Lỗi khi lưu');
       }
     } catch (e) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('Lỗi: $e')));
+      await _showErrorDialog('Lỗi kết nối: $e');
     } finally {
       if (mounted) {
         setState(() => _isLoading = false);
       }
     }
+  }
+
+  // Helper method to get field helper text
+  String? _getFieldHelperText(String fieldName, String dataType) {
+    if (fieldName == 'alert_config') {
+      return 'Ví dụ: user@example.com hoặc user1@domain.com,user2@domain.com';
+    }
+    return null;
+  }
+
+  // Decode Unicode escape sequences in error messages
+  String _decodeUnicodeMessage(String message) {
+    try {
+      // Replace Unicode escape sequences like \u1ed7i with actual characters
+      return message.replaceAllMapped(RegExp(r'\\u([0-9a-fA-F]{4})'), (match) {
+        final hexCode = match.group(1)!;
+        final charCode = int.parse(hexCode, radix: 16);
+        return String.fromCharCode(charCode);
+      });
+    } catch (e) {
+      return message; // Return original if decoding fails
+    }
+  }
+
+  // Validate alert config field (email format)
+  String? _validateAlertConfig(String value) {
+    if (value.trim().isEmpty) return null;
+
+    // Split by comma for multiple emails
+    final emails = value
+        .split(',')
+        .map((e) => e.trim())
+        .where((e) => e.isNotEmpty);
+
+    final emailRegex = RegExp(
+      r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$',
+    );
+
+    for (final email in emails) {
+      if (!emailRegex.hasMatch(email)) {
+        return 'Email không hợp lệ: "$email". Định dạng đúng: user@example.com';
+      }
+    }
+
+    return null;
+  }
+
+  Future<void> _showErrorDialog(String errorMessage) async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // User must tap button to close
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Row(
+            children: [
+              Icon(Icons.error_outline, color: Colors.red, size: 28),
+              const SizedBox(width: 12),
+              const Text(
+                'Lỗi',
+                style: TextStyle(
+                  color: Colors.red,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  'Chi tiết lỗi:',
+                  style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
+                ),
+                const SizedBox(height: 8),
+                Container(
+                  width: double.maxFinite,
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: Colors.red.shade50,
+                    border: Border.all(color: Colors.red.shade200),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Always try to decode Unicode first
+                      SelectableText(
+                        _decodeUnicodeMessage(errorMessage),
+                        style: const TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.black87,
+                        ),
+                      ),
+                      // Show original if it contains Unicode escape sequences
+                      if (errorMessage.contains('\\u') &&
+                          _decodeUnicodeMessage(errorMessage) != errorMessage)
+                        Padding(
+                          padding: const EdgeInsets.only(top: 8),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Raw message:',
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.grey.shade600,
+                                ),
+                              ),
+                              const SizedBox(height: 4),
+                              SelectableText(
+                                errorMessage,
+                                style: const TextStyle(
+                                  fontSize: 12,
+                                  fontFamily: 'monospace',
+                                  color: Colors.black54,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 16),
+                // Add helpful hints based on error type
+                if (errorMessage.toLowerCase().contains('email'))
+                  Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: Colors.blue.shade50,
+                      border: Border.all(color: Colors.blue.shade200),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Icon(
+                              Icons.info_outline,
+                              color: Colors.blue,
+                              size: 20,
+                            ),
+                            const SizedBox(width: 8),
+                            Text(
+                              'Gợi ý sửa lỗi Email:',
+                              style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.blue.shade800,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          '• Định dạng đúng: user@example.com',
+                          style: TextStyle(
+                            fontSize: 13,
+                            color: Colors.blue.shade700,
+                          ),
+                        ),
+                        Text(
+                          '• Nhiều email: user1@gmail.com,user2@yahoo.com',
+                          style: TextStyle(
+                            fontSize: 13,
+                            color: Colors.blue.shade700,
+                          ),
+                        ),
+                        Text(
+                          '• Không có khoảng trắng thừa',
+                          style: TextStyle(
+                            fontSize: 13,
+                            color: Colors.blue.shade700,
+                          ),
+                        ),
+                        Text(
+                          '• Kiểm tra ký tự đặc biệt trong tên miền',
+                          style: TextStyle(
+                            fontSize: 13,
+                            color: Colors.blue.shade700,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                TextButton(
+                  child: const Text('Đóng'),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+                const SizedBox(width: 8),
+                ElevatedButton.icon(
+                  icon: const Icon(Icons.edit, size: 16),
+                  label: const Text('Sửa lại'),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                    // Focus will return to the form for editing
+                  },
+                ),
+              ],
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
@@ -1247,6 +1466,11 @@ class _MonitorConfigDialogState extends State<MonitorConfigDialog> {
                                         labelText:
                                             required ? '$label *' : label,
                                         border: const OutlineInputBorder(),
+                                        helperText: _getFieldHelperText(
+                                          fieldName,
+                                          dataType,
+                                        ),
+                                        helperMaxLines: 2,
                                       ),
                                       maxLines:
                                           dataType.contains('text') ? 3 : 1,
@@ -1260,9 +1484,27 @@ class _MonitorConfigDialogState extends State<MonitorConfigDialog> {
                                                     value.trim().isEmpty) {
                                                   return 'Vui lòng nhập $label';
                                                 }
+                                                // Add email validation for alert_config
+                                                if (fieldName ==
+                                                    'alert_config') {
+                                                  return _validateAlertConfig(
+                                                    value,
+                                                  );
+                                                }
                                                 return null;
                                               }
-                                              : null,
+                                              : (value) {
+                                                // Add email validation for alert_config even if not required
+                                                if (fieldName ==
+                                                        'alert_config' &&
+                                                    value != null &&
+                                                    value.trim().isNotEmpty) {
+                                                  return _validateAlertConfig(
+                                                    value,
+                                                  );
+                                                }
+                                                return null;
+                                              },
                                     ),
                           );
                         })
