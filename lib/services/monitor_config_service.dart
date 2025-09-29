@@ -17,7 +17,8 @@ class MonitorConfigService {
   // API Endpoints
   static String get _listApiUrl => '$_baseUrl/api/member-monitor-item/list';
   static String get _addApiUrl => '$_baseUrl/api/member-monitor-item/add';
-  static String _getApiUrl(int id) => '$_baseUrl/api/member-monitor-item/get/$id';
+  static String _getApiUrl(int id) =>
+      '$_baseUrl/api/member-monitor-item/get/$id';
   static String _updateApiUrl(int id) =>
       '$_baseUrl/api/member-monitor-item/update/$id';
   static String get _deleteApiUrl => '$_baseUrl/api/member-monitor-item/delete';
@@ -158,19 +159,23 @@ class MonitorConfigService {
         if (jsonResponse['code'] == 1) {
           final payload = jsonResponse['payload'];
           // Handle paginated response structure
-          final data = payload is Map && payload.containsKey('data') 
-              ? payload['data'] 
-              : payload;
-          
+          final data =
+              payload is Map && payload.containsKey('data')
+                  ? payload['data']
+                  : payload;
+
           return {
             'success': true,
             'data': data,
             'message': jsonResponse['message'],
-            'pagination': payload is Map ? {
-              'current_page': payload['current_page'],
-              'total': payload['total'],
-              'per_page': payload['per_page'],
-            } : null,
+            'pagination':
+                payload is Map
+                    ? {
+                      'current_page': payload['current_page'],
+                      'total': payload['total'],
+                      'per_page': payload['per_page'],
+                    }
+                    : null,
           };
         } else {
           return {
@@ -399,7 +404,7 @@ class MonitorConfigService {
     // _fieldDetails is now directly the array of fields
     if (_fieldDetails is List) {
       final fields = _fieldDetails as List;
-      
+
       return fields
           .where((field) => field is Map && field['editable'] == 'yes')
           .map((field) {
@@ -409,7 +414,8 @@ class MonitorConfigService {
               'label': fieldMap['description'],
               'required': fieldMap['required'] == 'yes',
               'data_type': fieldMap['data_type'],
-              'select_options': fieldMap['select_option_value'], // For dropdown fields
+              'select_options':
+                  fieldMap['select_option_value'], // For dropdown fields
             };
           })
           .toList();
