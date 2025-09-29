@@ -4,25 +4,30 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'firebase_options.dart';
 import 'services/firebase_messaging_service.dart';
+import 'services/auth_service.dart';
+import 'widgets/auth_wrapper.dart';
+import 'screens/profile_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  
+
   // Khởi tạo Firebase với options cho web
   if (kIsWeb) {
-    await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
   } else {
     await Firebase.initializeApp();
   }
-  
+
   // Khởi tạo Firebase Messaging
   await FirebaseMessagingService.initialize();
-  
+
   // Đăng ký background message handler (chỉ cho mobile)
   if (!kIsWeb) {
     FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
   }
-  
+
   runApp(const MyApp());
 }
 
@@ -37,7 +42,8 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
         useMaterial3: true,
       ),
-      home: const MainScreen(),
+      home: const AuthWrapper(),
+      routes: {'/home': (context) => const MainScreen()},
       debugShowCheckedModeBanner: false,
     );
   }
@@ -52,7 +58,7 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen> {
   int _selectedIndex = 0;
-  
+
   final List<Widget> _screens = [
     const HomeScreen(),
     const ProfileScreen(),
@@ -72,31 +78,32 @@ class _MainScreenState extends State<MainScreen> {
         child: ListView(
           padding: EdgeInsets.zero,
           children: [
-            const DrawerHeader(
-              decoration: BoxDecoration(
-                color: Colors.blue,
-              ),
+            DrawerHeader(
+              decoration: const BoxDecoration(color: Colors.blue),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   CircleAvatar(
                     backgroundColor: Colors.white,
-                    child: Icon(Icons.person, color: Colors.blue),
+                    backgroundImage:
+                        AuthService.currentUser?.photoURL != null
+                            ? NetworkImage(AuthService.currentUser!.photoURL!)
+                            : null,
+                    child:
+                        AuthService.currentUser?.photoURL == null
+                            ? const Icon(Icons.person, color: Colors.blue)
+                            : null,
                   ),
-                  SizedBox(height: 10),
-                  Text(
+                  const SizedBox(height: 10),
+                  const Text(
                     'Monitor App',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 24,
-                    ),
+                    style: TextStyle(color: Colors.white, fontSize: 24),
                   ),
                   Text(
-                    'Chào mừng bạn!',
-                    style: TextStyle(
-                      color: Colors.white70,
-                      fontSize: 14,
-                    ),
+                    AuthService.currentUser?.displayName ??
+                        AuthService.currentUser?.email ??
+                        'Chào mừng bạn!',
+                    style: const TextStyle(color: Colors.white70, fontSize: 14),
                   ),
                 ],
               ),
@@ -157,6 +164,48 @@ class _MainScreenState extends State<MainScreen> {
                 Navigator.pop(context);
               },
             ),
+            const Divider(),
+            ListTile(
+              leading: const Icon(Icons.logout, color: Colors.red),
+              title: const Text(
+                'Đăng xuất',
+                style: TextStyle(color: Colors.red),
+              ),
+              onTap: () async {
+                Navigator.pop(context);
+                final shouldSignOut = await showDialog<bool>(
+                  context: context,
+                  builder:
+                      (context) => AlertDialog(
+                        title: const Text('Đăng xuất'),
+                        content: const Text('Bạn có chắc chắn muốn đăng xuất?'),
+                        actions: [
+                          TextButton(
+                            onPressed: () => Navigator.of(context).pop(false),
+                            child: const Text('Hủy'),
+                          ),
+                          TextButton(
+                            onPressed: () => Navigator.of(context).pop(true),
+                            child: const Text('Đăng xuất'),
+                          ),
+                        ],
+                      ),
+                );
+
+                if (shouldSignOut == true) {
+                  try {
+                    await AuthService.signOut();
+                  } catch (e) {
+                    if (mounted) {
+                      final messenger = ScaffoldMessenger.of(context);
+                      messenger.showSnackBar(
+                        SnackBar(content: Text('Lỗi khi đăng xuất: $e')),
+                      );
+                    }
+                  }
+                }
+              },
+            ),
           ],
         ),
       ),
@@ -175,11 +224,7 @@ class HomeScreen extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(
-            Icons.home,
-            size: 100,
-            color: Colors.blue,
-          ),
+          Icon(Icons.home, size: 100, color: Colors.blue),
           SizedBox(height: 20),
           Text(
             'Trang chủ',
@@ -197,36 +242,7 @@ class HomeScreen extends StatelessWidget {
   }
 }
 
-class ProfileScreen extends StatelessWidget {
-  const ProfileScreen({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(
-            Icons.person,
-            size: 100,
-            color: Colors.green,
-          ),
-          SizedBox(height: 20),
-          Text(
-            'Hồ sơ',
-            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-          ),
-          SizedBox(height: 10),
-          Text(
-            'Thông tin cá nhân của bạn sẽ hiển thị ở đây.',
-            style: TextStyle(fontSize: 16),
-            textAlign: TextAlign.center,
-          ),
-        ],
-      ),
-    );
-  }
-}
+// ProfileScreen đã được chuyển sang file riêng
 
 class NotificationScreen extends StatefulWidget {
   const NotificationScreen({super.key});
@@ -272,7 +288,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
             style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 20),
-          
+
           // FCM Token Section
           Card(
             child: Padding(
@@ -290,7 +306,10 @@ class _NotificationScreenState extends State<NotificationScreen> {
                   else
                     SelectableText(
                       _fcmToken ?? 'Không có token',
-                      style: const TextStyle(fontSize: 12, fontFamily: 'monospace'),
+                      style: const TextStyle(
+                        fontSize: 12,
+                        fontFamily: 'monospace',
+                      ),
                     ),
                   const SizedBox(height: 8),
                   ElevatedButton(
@@ -301,9 +320,9 @@ class _NotificationScreenState extends State<NotificationScreen> {
               ),
             ),
           ),
-          
+
           const SizedBox(height: 20),
-          
+
           // Topic Subscription Section
           Card(
             child: Padding(
@@ -321,9 +340,13 @@ class _NotificationScreenState extends State<NotificationScreen> {
                       Expanded(
                         child: ElevatedButton(
                           onPressed: () {
-                            FirebaseMessagingService.subscribeToTopic('general');
+                            FirebaseMessagingService.subscribeToTopic(
+                              'general',
+                            );
                             ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(content: Text('Đã đăng ký topic "general"')),
+                              const SnackBar(
+                                content: Text('Đã đăng ký topic "general"'),
+                              ),
                             );
                           },
                           child: const Text('Đăng ký "general"'),
@@ -333,9 +356,13 @@ class _NotificationScreenState extends State<NotificationScreen> {
                       Expanded(
                         child: ElevatedButton(
                           onPressed: () {
-                            FirebaseMessagingService.unsubscribeFromTopic('general');
+                            FirebaseMessagingService.unsubscribeFromTopic(
+                              'general',
+                            );
                             ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(content: Text('Đã hủy đăng ký topic "general"')),
+                              const SnackBar(
+                                content: Text('Đã hủy đăng ký topic "general"'),
+                              ),
                             );
                           },
                           child: const Text('Hủy "general"'),
@@ -351,7 +378,9 @@ class _NotificationScreenState extends State<NotificationScreen> {
                           onPressed: () {
                             FirebaseMessagingService.subscribeToTopic('news');
                             ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(content: Text('Đã đăng ký topic "news"')),
+                              const SnackBar(
+                                content: Text('Đã đăng ký topic "news"'),
+                              ),
                             );
                           },
                           child: const Text('Đăng ký "news"'),
@@ -361,9 +390,13 @@ class _NotificationScreenState extends State<NotificationScreen> {
                       Expanded(
                         child: ElevatedButton(
                           onPressed: () {
-                            FirebaseMessagingService.unsubscribeFromTopic('news');
+                            FirebaseMessagingService.unsubscribeFromTopic(
+                              'news',
+                            );
                             ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(content: Text('Đã hủy đăng ký topic "news"')),
+                              const SnackBar(
+                                content: Text('Đã hủy đăng ký topic "news"'),
+                              ),
                             );
                           },
                           child: const Text('Hủy "news"'),
@@ -375,9 +408,9 @@ class _NotificationScreenState extends State<NotificationScreen> {
               ),
             ),
           ),
-          
+
           const SizedBox(height: 20),
-          
+
           // Instructions
           const Card(
             child: Padding(
@@ -412,11 +445,7 @@ class SettingsScreen extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(
-            Icons.settings,
-            size: 100,
-            color: Colors.orange,
-          ),
+          Icon(Icons.settings, size: 100, color: Colors.orange),
           SizedBox(height: 20),
           Text(
             'Cài đặt',
@@ -443,11 +472,7 @@ class AboutScreen extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(
-            Icons.info,
-            size: 100,
-            color: Colors.purple,
-          ),
+          Icon(Icons.info, size: 100, color: Colors.purple),
           SizedBox(height: 20),
           Text(
             'Giới thiệu',
