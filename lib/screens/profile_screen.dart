@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import '../services/auth_service.dart';
+import '../services/web_auth_service.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -10,7 +9,7 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  User? _user;
+  Map<String, dynamic>? _user;
   Map<String, String?> _loginInfo = {};
   bool _isLoading = true;
 
@@ -24,8 +23,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
     setState(() => _isLoading = true);
 
     try {
-      _user = AuthService.currentUser;
-      _loginInfo = await AuthService.getSavedLoginInfo();
+      _user = WebAuthService.currentUser;
+      _loginInfo = await WebAuthService.getSavedLoginInfo();
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(
@@ -62,8 +61,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
     if (shouldSignOut == true) {
       try {
-        await AuthService.signOut();
-        // AuthWrapper sẽ tự động điều hướng về LoginScreen
+        await WebAuthService.signOut();
+        // WebAuthWrapper sẽ tự động điều hướng về LoginScreen
       } catch (e) {
         if (mounted) {
           ScaffoldMessenger.of(
@@ -76,7 +75,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   Future<void> _showEditProfileDialog() async {
     final nameController = TextEditingController(
-      text: _user?.displayName ?? '',
+      text: _user?['displayName'] ?? '',
     );
 
     final result = await showDialog<String>(
@@ -105,20 +104,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
 
     if (result != null && result.isNotEmpty) {
-      try {
-        await AuthService.updateProfile(displayName: result);
-        await _loadUserInfo(); // Reload user info
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Cập nhật hồ sơ thành công!')),
-          );
-        }
-      } catch (e) {
-        if (mounted) {
-          ScaffoldMessenger.of(
-            context,
-          ).showSnackBar(SnackBar(content: Text('Lỗi khi cập nhật hồ sơ: $e')));
-        }
+      // TODO: Implement profile update với API của bạn
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Chức năng cập nhật hồ sơ chưa được hỗ trợ'),
+          ),
+        );
       }
     }
   }
@@ -146,16 +138,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
               padding: const EdgeInsets.all(16.0),
               child: Row(
                 children: [
-                  CircleAvatar(
+                  const CircleAvatar(
                     radius: 40,
-                    backgroundImage:
-                        _user?.photoURL != null
-                            ? NetworkImage(_user!.photoURL!)
-                            : null,
-                    child:
-                        _user?.photoURL == null
-                            ? const Icon(Icons.person, size: 40)
-                            : null,
+                    backgroundColor: Colors.blue,
+                    child: Icon(Icons.person, size: 40, color: Colors.white),
                   ),
                   const SizedBox(width: 16),
                   Expanded(
@@ -163,7 +149,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          _user?.displayName ?? 'Chưa có tên',
+                          _user?['displayName'] ??
+                              _user?['username'] ??
+                              'Chưa có tên',
                           style: const TextStyle(
                             fontSize: 20,
                             fontWeight: FontWeight.bold,
@@ -171,36 +159,35 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         ),
                         const SizedBox(height: 4),
                         Text(
-                          _user?.email ?? 'Chưa có email',
+                          _user?['username'] ?? 'Chưa có username',
                           style: const TextStyle(
                             fontSize: 16,
+                            color: Colors.grey,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          _user?['email'] ?? 'Chưa có email',
+                          style: const TextStyle(
+                            fontSize: 14,
                             color: Colors.grey,
                           ),
                         ),
                         const SizedBox(height: 8),
                         Row(
                           children: [
-                            Icon(
-                              _user?.emailVerified == true
-                                  ? Icons.verified
-                                  : Icons.warning,
+                            const Icon(
+                              Icons.check_circle,
                               size: 16,
-                              color:
-                                  _user?.emailVerified == true
-                                      ? Colors.green
-                                      : Colors.orange,
+                              color: Colors.green,
                             ),
                             const SizedBox(width: 4),
                             Text(
-                              _user?.emailVerified == true
-                                  ? 'Email đã xác thực'
-                                  : 'Email chưa xác thực',
+                              'Đã đăng nhập',
                               style: TextStyle(
                                 fontSize: 12,
-                                color:
-                                    _user?.emailVerified == true
-                                        ? Colors.green
-                                        : Colors.orange,
+                                color: Colors.green,
                               ),
                             ),
                           ],
@@ -238,20 +225,26 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     Icons.login,
                   ),
                   const SizedBox(height: 8),
-                  _buildInfoRow('UID', _user?.uid ?? 'N/A', Icons.fingerprint),
+                  _buildInfoRow(
+                    'Username',
+                    _user?['username'] ?? 'N/A',
+                    Icons.account_circle,
+                  ),
+                  const SizedBox(height: 8),
+                  _buildInfoRow('Email', _user?['email'] ?? 'N/A', Icons.email),
                   const SizedBox(height: 8),
                   _buildInfoRow(
-                    'Ngày tạo tài khoản',
-                    _user?.metadata.creationTime?.toString().split(' ')[0] ??
-                        'N/A',
-                    Icons.calendar_today,
+                    'Thời gian đăng nhập',
+                    _loginInfo['login_time']?.split('T')[0] ?? 'N/A',
+                    Icons.access_time,
                   ),
                   const SizedBox(height: 8),
                   _buildInfoRow(
-                    'Lần đăng nhập cuối',
-                    _user?.metadata.lastSignInTime?.toString().split(' ')[0] ??
-                        'N/A',
-                    Icons.access_time,
+                    'Bearer Token',
+                    WebAuthService.bearerToken != null
+                        ? '${WebAuthService.bearerToken!.substring(0, 20)}...'
+                        : 'N/A',
+                    Icons.security,
                   ),
                 ],
               ),
@@ -272,34 +265,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 12),
-
-                  if (_user?.emailVerified == false)
-                    ListTile(
-                      leading: const Icon(Icons.email, color: Colors.orange),
-                      title: const Text('Xác thực email'),
-                      subtitle: const Text('Gửi email xác thực'),
-                      trailing: const Icon(Icons.arrow_forward_ios),
-                      onTap: () async {
-                        try {
-                          await _user?.sendEmailVerification();
-                          if (mounted) {
-                            final messenger = ScaffoldMessenger.of(context);
-                            messenger.showSnackBar(
-                              const SnackBar(
-                                content: Text('Email xác thực đã được gửi!'),
-                              ),
-                            );
-                          }
-                        } catch (e) {
-                          if (mounted) {
-                            final messenger = ScaffoldMessenger.of(context);
-                            messenger.showSnackBar(
-                              SnackBar(content: Text('Lỗi: $e')),
-                            );
-                          }
-                        }
-                      },
-                    ),
 
                   ListTile(
                     leading: const Icon(Icons.refresh, color: Colors.blue),
@@ -352,8 +317,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   String _getLoginMethodText(String? method) {
     switch (method) {
-      case 'google':
-        return 'Google';
+      case 'web_api':
+        return 'Web API (Username & Password)';
       case 'email':
         return 'Email & Mật khẩu';
       default:

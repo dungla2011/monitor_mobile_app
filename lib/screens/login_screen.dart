@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../services/auth_service.dart';
+import '../services/web_auth_service.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -12,7 +12,8 @@ class _LoginScreenState extends State<LoginScreen>
     with TickerProviderStateMixin {
   final _loginFormKey = GlobalKey<FormState>();
   final _registerFormKey = GlobalKey<FormState>();
-  final _emailController = TextEditingController();
+  final _usernameController = TextEditingController();
+  final _emailController = TextEditingController(); // Cho đăng ký
   final _passwordController = TextEditingController();
   final _nameController = TextEditingController();
 
@@ -29,6 +30,7 @@ class _LoginScreenState extends State<LoginScreen>
 
   @override
   void dispose() {
+    _usernameController.dispose();
     _emailController.dispose();
     _passwordController.dispose();
     _nameController.dispose();
@@ -36,23 +38,27 @@ class _LoginScreenState extends State<LoginScreen>
     super.dispose();
   }
 
-  Future<void> _signInWithEmail() async {
+  Future<void> _signInWithUsername() async {
     if (!_loginFormKey.currentState!.validate()) return;
 
     setState(() => _isLoading = true);
 
     try {
-      await AuthService.signInWithEmailAndPassword(
-        email: _emailController.text.trim(),
+      final result = await WebAuthService.signInWithUsernameAndPassword(
+        username: _usernameController.text.trim(),
         password: _passwordController.text,
       );
 
       if (mounted) {
-        Navigator.of(context).pushReplacementNamed('/home');
+        if (result['success'] == true) {
+          Navigator.of(context).pushReplacementNamed('/home');
+        } else {
+          _showErrorDialog(result['message'] ?? 'Đăng nhập không thành công');
+        }
       }
     } catch (e) {
       if (mounted) {
-        _showErrorDialog(e.toString());
+        _showErrorDialog('Lỗi kết nối: $e');
       }
     } finally {
       if (mounted) {
@@ -61,44 +67,29 @@ class _LoginScreenState extends State<LoginScreen>
     }
   }
 
-  Future<void> _signUpWithEmail() async {
+  Future<void> _signUpWithUsername() async {
     if (!_registerFormKey.currentState!.validate()) return;
 
     setState(() => _isLoading = true);
 
     try {
-      await AuthService.createUserWithEmailAndPassword(
-        email: _emailController.text.trim(),
+      final result = await WebAuthService.registerWithUsernameAndPassword(
+        username: _usernameController.text.trim(),
         password: _passwordController.text,
+        email: _emailController.text.trim(),
         displayName: _nameController.text.trim(),
       );
 
       if (mounted) {
-        Navigator.of(context).pushReplacementNamed('/home');
+        if (result['success'] == true) {
+          Navigator.of(context).pushReplacementNamed('/home');
+        } else {
+          _showErrorDialog(result['message'] ?? 'Đăng ký không thành công');
+        }
       }
     } catch (e) {
       if (mounted) {
-        _showErrorDialog(e.toString());
-      }
-    } finally {
-      if (mounted) {
-        setState(() => _isLoading = false);
-      }
-    }
-  }
-
-  Future<void> _signInWithGoogle() async {
-    setState(() => _isLoading = true);
-
-    try {
-      final result = await AuthService.signInWithGoogle();
-
-      if (result != null && mounted) {
-        Navigator.of(context).pushReplacementNamed('/home');
-      }
-    } catch (e) {
-      if (mounted) {
-        _showErrorDialog(e.toString());
+        _showErrorDialog('Lỗi kết nối: $e');
       }
     } finally {
       if (mounted) {
@@ -108,21 +99,15 @@ class _LoginScreenState extends State<LoginScreen>
   }
 
   Future<void> _resetPassword() async {
-    if (_emailController.text.trim().isEmpty) {
-      _showErrorDialog('Vui lòng nhập email để reset mật khẩu');
+    if (_usernameController.text.trim().isEmpty) {
+      _showErrorDialog('Vui lòng nhập username để reset mật khẩu');
       return;
     }
 
-    try {
-      await AuthService.sendPasswordResetEmail(_emailController.text.trim());
-      if (mounted) {
-        _showSuccessDialog('Email reset mật khẩu đã được gửi!');
-      }
-    } catch (e) {
-      if (mounted) {
-        _showErrorDialog(e.toString());
-      }
-    }
+    // TODO: Implement password reset với API của bạn
+    _showErrorDialog(
+      'Chức năng reset password chưa được hỗ trợ.\nVui lòng liên hệ admin.',
+    );
   }
 
   void _showErrorDialog(String message) {
@@ -182,9 +167,9 @@ class _LoginScreenState extends State<LoginScreen>
                 children: [
                   // Header với tiêu đề
                   Container(
-                    padding: const EdgeInsets.all(20.0),
+                    padding: const EdgeInsets.all(6.0),
                     decoration: const BoxDecoration(
-                      color: Colors.blue,
+                      color: Colors.transparent,
                       borderRadius: BorderRadius.only(
                         topLeft: Radius.circular(16),
                         topRight: Radius.circular(16),
@@ -195,9 +180,9 @@ class _LoginScreenState extends State<LoginScreen>
                         Text(
                           'Monitor App',
                           style: TextStyle(
-                            fontSize: 24,
+                            fontSize: 16,
                             fontWeight: FontWeight.bold,
-                            color: Colors.white,
+                            color: Colors.blue,
                           ),
                         ),
                       ],
@@ -226,45 +211,6 @@ class _LoginScreenState extends State<LoginScreen>
                       children: [_buildLoginForm(), _buildRegisterForm()],
                     ),
                   ),
-
-                  // Google Sign In Button - Fixed at bottom
-                  Container(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const Row(
-                          children: [
-                            Expanded(child: Divider()),
-                            Padding(
-                              padding: EdgeInsets.symmetric(horizontal: 16),
-                              child: Text('HOẶC'),
-                            ),
-                            Expanded(child: Divider()),
-                          ],
-                        ),
-                        const SizedBox(height: 16),
-                        SizedBox(
-                          width: double.infinity,
-                          height: 48,
-                          child: OutlinedButton.icon(
-                            onPressed: _isLoading ? null : _signInWithGoogle,
-                            icon: const Icon(Icons.login, color: Colors.red),
-                            label: const Text(
-                              'Đăng nhập bằng Google',
-                              style: TextStyle(fontSize: 16),
-                            ),
-                            style: OutlinedButton.styleFrom(
-                              side: const BorderSide(color: Colors.grey),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
                 ],
               ),
             ),
@@ -282,13 +228,12 @@ class _LoginScreenState extends State<LoginScreen>
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            // Email field
+            // Username field
             TextFormField(
-              controller: _emailController,
-              keyboardType: TextInputType.emailAddress,
+              controller: _usernameController,
               decoration: const InputDecoration(
-                labelText: 'Email',
-                prefixIcon: Icon(Icons.email),
+                labelText: 'Username',
+                prefixIcon: Icon(Icons.person),
                 border: OutlineInputBorder(),
                 contentPadding: EdgeInsets.symmetric(
                   horizontal: 16,
@@ -297,12 +242,10 @@ class _LoginScreenState extends State<LoginScreen>
               ),
               validator: (value) {
                 if (value == null || value.trim().isEmpty) {
-                  return 'Vui lòng nhập email';
+                  return 'Vui lòng nhập username';
                 }
-                if (!RegExp(
-                  r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
-                ).hasMatch(value)) {
-                  return 'Email không hợp lệ';
+                if (value.trim().length < 3) {
+                  return 'Username phải có ít nhất 3 ký tự';
                 }
                 return null;
               },
@@ -361,7 +304,7 @@ class _LoginScreenState extends State<LoginScreen>
               width: double.infinity,
               height: 48,
               child: ElevatedButton(
-                onPressed: _isLoading ? null : _signInWithEmail,
+                onPressed: _isLoading ? null : _signInWithUsername,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.blue,
                   foregroundColor: Colors.white,
@@ -420,7 +363,31 @@ class _LoginScreenState extends State<LoginScreen>
             ),
             const SizedBox(height: 16),
 
-            // Email field - Sử dụng controller riêng để không bị mất khi chuyển tab
+            // Username field - Sử dụng controller riêng để không bị mất khi chuyển tab
+            TextFormField(
+              controller: _usernameController,
+              decoration: const InputDecoration(
+                labelText: 'Username',
+                prefixIcon: Icon(Icons.person),
+                border: OutlineInputBorder(),
+                contentPadding: EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 12,
+                ),
+              ),
+              validator: (value) {
+                if (value == null || value.trim().isEmpty) {
+                  return 'Vui lòng nhập username';
+                }
+                if (value.trim().length < 3) {
+                  return 'Username phải có ít nhất 3 ký tự';
+                }
+                return null;
+              },
+            ),
+            const SizedBox(height: 16),
+
+            // Email field (optional cho đăng ký)
             TextFormField(
               controller: _emailController,
               keyboardType: TextInputType.emailAddress,
@@ -434,13 +401,13 @@ class _LoginScreenState extends State<LoginScreen>
                 ),
               ),
               validator: (value) {
-                if (value == null || value.trim().isEmpty) {
-                  return 'Vui lòng nhập email';
-                }
-                if (!RegExp(
-                  r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
-                ).hasMatch(value)) {
-                  return 'Email không hợp lệ';
+                // Email là optional cho đăng ký
+                if (value != null && value.trim().isNotEmpty) {
+                  if (!RegExp(
+                    r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
+                  ).hasMatch(value)) {
+                    return 'Email không hợp lệ';
+                  }
                 }
                 return null;
               },
@@ -487,7 +454,7 @@ class _LoginScreenState extends State<LoginScreen>
               width: double.infinity,
               height: 48,
               child: ElevatedButton(
-                onPressed: _isLoading ? null : _signUpWithEmail,
+                onPressed: _isLoading ? null : _signUpWithUsername,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.green,
                   foregroundColor: Colors.white,

@@ -4,8 +4,8 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'firebase_options.dart';
 import 'services/firebase_messaging_service.dart';
-import 'services/auth_service.dart';
-import 'widgets/auth_wrapper.dart';
+import 'services/web_auth_service.dart';
+import 'widgets/web_auth_wrapper.dart';
 import 'screens/profile_screen.dart';
 
 void main() async {
@@ -42,7 +42,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
         useMaterial3: true,
       ),
-      home: const AuthWrapper(),
+      home: const WebAuthWrapper(),
       routes: {'/home': (context) => const MainScreen()},
       debugShowCheckedModeBanner: false,
     );
@@ -83,16 +83,9 @@ class _MainScreenState extends State<MainScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  CircleAvatar(
+                  const CircleAvatar(
                     backgroundColor: Colors.white,
-                    backgroundImage:
-                        AuthService.currentUser?.photoURL != null
-                            ? NetworkImage(AuthService.currentUser!.photoURL!)
-                            : null,
-                    child:
-                        AuthService.currentUser?.photoURL == null
-                            ? const Icon(Icons.person, color: Colors.blue)
-                            : null,
+                    child: Icon(Icons.person, color: Colors.blue),
                   ),
                   const SizedBox(height: 10),
                   const Text(
@@ -100,8 +93,8 @@ class _MainScreenState extends State<MainScreen> {
                     style: TextStyle(color: Colors.white, fontSize: 24),
                   ),
                   Text(
-                    AuthService.currentUser?.displayName ??
-                        AuthService.currentUser?.email ??
+                    WebAuthService.currentUser?['displayName'] ??
+                        WebAuthService.currentUser?['username'] ??
                         'Chào mừng bạn!',
                     style: const TextStyle(color: Colors.white70, fontSize: 14),
                   ),
@@ -194,7 +187,8 @@ class _MainScreenState extends State<MainScreen> {
 
                 if (shouldSignOut == true) {
                   try {
-                    await AuthService.signOut();
+                    await WebAuthService.signOut();
+                    // WebAuthWrapper sẽ tự động điều hướng về LoginScreen
                   } catch (e) {
                     if (mounted) {
                       final messenger = ScaffoldMessenger.of(context);
