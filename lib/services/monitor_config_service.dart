@@ -469,6 +469,8 @@ class MonitorConfigService {
               'label': fieldMap['description'],
               'data_type': fieldMap['data_type'],
               'editable': fieldMap['editable'],
+              'select_options':
+                  fieldMap['select_option_value'], // Include select options
             };
           })
           .toList();

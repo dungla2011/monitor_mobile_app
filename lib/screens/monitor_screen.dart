@@ -204,9 +204,25 @@ class _MonitorScreenState extends State<MonitorScreen> {
   }
 
   // Format value for mobile field display
-  String _formatMobileValue(String value, String dataType) {
+  String _formatMobileValue(
+    String value,
+    String dataType,
+    Map<String, dynamic>? selectOptions,
+  ) {
     if (value.isEmpty || value == 'null') {
       return 'N/A';
+    }
+
+    // Handle select options first
+    if (selectOptions != null && selectOptions.isNotEmpty) {
+      final displayText = selectOptions[value]?.toString();
+      if (displayText != null && displayText != '-Chọn-') {
+        // Truncate long select option text
+        if (displayText.length > 50) {
+          return '${displayText.substring(0, 47)}...';
+        }
+        return displayText;
+      }
     }
 
     final lowerDataType = dataType.toLowerCase();
@@ -471,10 +487,13 @@ class _MonitorScreenState extends State<MonitorScreen> {
                         final fieldName = field['field'] as String;
                         final fieldLabel = field['label'] as String;
                         final dataType = field['data_type'] as String;
+                        final selectOptions =
+                            field['select_options'] as Map<String, dynamic>?;
                         final value = item[fieldName]?.toString() ?? '';
                         final formattedValue = _formatMobileValue(
                           value,
                           dataType,
+                          selectOptions,
                         );
 
                         return Padding(
