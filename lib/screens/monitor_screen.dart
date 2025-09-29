@@ -456,14 +456,57 @@ class _MonitorScreenState extends State<MonitorScreen> {
               title: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Name (always on top)
-                  Text(
-                    item['name']?.toString() ?? 'Item #$itemId',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16,
-                      color: _getNameColor(item),
-                    ),
+                  // Name with edit button
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          item['name']?.toString() ?? 'Item #$itemId',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                            color: _getNameColor(item),
+                          ),
+                        ),
+                      ),
+                      if (!_isSelectionMode)
+                        PopupMenuButton<String>(
+                          padding: EdgeInsets.zero,
+                          icon: Icon(
+                            Icons.more_vert,
+                            size: 20,
+                            color: Colors.grey.shade600,
+                          ),
+                          onSelected: (value) {
+                            switch (value) {
+                              case 'edit':
+                                _showAddEditDialog(item: item);
+                                break;
+                              case 'delete':
+                                _selectedItems = {itemId};
+                                _deleteSelectedItems();
+                                break;
+                            }
+                          },
+                          itemBuilder:
+                              (context) => [
+                                const PopupMenuItem(
+                                  value: 'edit',
+                                  child: ListTile(
+                                    leading: Icon(Icons.edit),
+                                    title: Text('Sửa'),
+                                  ),
+                                ),
+                                const PopupMenuItem(
+                                  value: 'delete',
+                                  child: ListTile(
+                                    leading: Icon(Icons.delete),
+                                    title: Text('Xóa'),
+                                  ),
+                                ),
+                              ],
+                        ),
+                    ],
                   ),
                   const SizedBox(height: 2),
                   // ID (always under name)
@@ -531,39 +574,7 @@ class _MonitorScreenState extends State<MonitorScreen> {
                       .toList(),
                 ],
               ),
-              trailing:
-                  _isSelectionMode
-                      ? null
-                      : PopupMenuButton<String>(
-                        onSelected: (value) {
-                          switch (value) {
-                            case 'edit':
-                              _showAddEditDialog(item: item);
-                              break;
-                            case 'delete':
-                              _selectedItems = {itemId};
-                              _deleteSelectedItems();
-                              break;
-                          }
-                        },
-                        itemBuilder:
-                            (context) => [
-                              const PopupMenuItem(
-                                value: 'edit',
-                                child: ListTile(
-                                  leading: Icon(Icons.edit),
-                                  title: Text('Sửa'),
-                                ),
-                              ),
-                              const PopupMenuItem(
-                                value: 'delete',
-                                child: ListTile(
-                                  leading: Icon(Icons.delete),
-                                  title: Text('Xóa'),
-                                ),
-                              ),
-                            ],
-                      ),
+              trailing: null,
               onTap:
                   _isSelectionMode
                       ? () => _toggleItemSelection(itemId)

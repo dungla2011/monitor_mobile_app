@@ -357,7 +357,7 @@ class MonitorConfigService {
       final idsString = ids.join(',');
       final url = '$_deleteApiUrl?id=$idsString';
 
-      final response = await http.delete(
+      final response = await http.get(
         Uri.parse(url),
         headers: WebAuthService.getAuthenticatedHeaders(),
       );
