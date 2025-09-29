@@ -7,7 +7,7 @@ import 'services/firebase_messaging_service.dart';
 import 'services/web_auth_service.dart';
 import 'widgets/web_auth_wrapper.dart';
 import 'screens/profile_screen.dart';
-import 'screens/monitor_screen.dart';
+import 'screens/monitor_item_screen.dart';
 import 'screens/monitor_config_screen.dart';
 
 void main() async {
@@ -65,7 +65,7 @@ class _MainScreenState extends State<MainScreen> {
   int _selectedIndex = 0;
 
   final List<Widget> _screens = [
-    const MonitorScreen(), // Thay HomeScreen bằng MonitorScreen
+    const MonitorItemScreen(), // Monitor Items Screen
     const MonitorConfigScreen(), // Thêm Monitor Config Screen
     const ProfileScreen(),
     const NotificationScreen(),
@@ -226,7 +226,7 @@ class _MainScreenState extends State<MainScreen> {
 }
 
 // Các màn hình cho từng mục trong menu
-// MonitorScreen đã được chuyển sang file riêng và thay thế HomeScreen
+// MonitorItemScreen đã được chuyển sang file riêng và thay thế HomeScreen
 // ProfileScreen đã được chuyển sang file riêng
 
 class NotificationScreen extends StatefulWidget {

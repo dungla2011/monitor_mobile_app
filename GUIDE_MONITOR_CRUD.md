@@ -60,7 +60,7 @@ class MonitorConfigService {
 }
 ```
 
-### **MonitorScreen** (`lib/screens/monitor_screen.dart`)
+### **MonitorScreen** (`lib/screens/monitor_item_screen.dart`)
 ```dart
 class MonitorScreen extends StatefulWidget {
   // Main CRUD interface
