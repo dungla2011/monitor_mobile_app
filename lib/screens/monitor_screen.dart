@@ -11,6 +11,7 @@ class MonitorScreen extends StatefulWidget {
 class _MonitorScreenState extends State<MonitorScreen> {
   List<Map<String, dynamic>> _monitorItems = [];
   List<Map<String, dynamic>> _formFields = [];
+  List<Map<String, dynamic>> _mobileFields = [];
   bool _isLoading = true;
   String? _errorMessage;
 
@@ -45,7 +46,10 @@ class _MonitorScreenState extends State<MonitorScreen> {
         }
 
         _formFields = MonitorConfigService.getFormFields();
-        print('✅ Config loaded. Fields: ${_formFields.length}');
+        _mobileFields = MonitorConfigService.getMobileFields();
+        print(
+          '✅ Config loaded. Fields: ${_formFields.length}, Mobile Fields: ${_mobileFields.length}',
+        );
       }
 
       // Load monitor items
@@ -199,6 +203,119 @@ class _MonitorScreenState extends State<MonitorScreen> {
     );
   }
 
+  // Format value for mobile field display
+  String _formatMobileValue(String value, String dataType) {
+    if (value.isEmpty || value == 'null') {
+      return 'N/A';
+    }
+
+    final lowerDataType = dataType.toLowerCase();
+
+    if (lowerDataType == 'error_status') {
+      final intValue = int.tryParse(value) ?? 0;
+      if (intValue < 0) return 'Lỗi';
+      if (intValue > 0) return 'OK';
+      return 'N/A';
+    }
+
+    if (lowerDataType.contains('boolean') ||
+        lowerDataType.contains('tinyint')) {
+      if (value == '1' || value.toLowerCase() == 'true') {
+        return 'Có';
+      } else if (value == '0' || value.toLowerCase() == 'false') {
+        return 'Không';
+      }
+    }
+
+    if (lowerDataType.contains('datetime')) {
+      try {
+        final dateTime = DateTime.parse(value);
+        return '${dateTime.day.toString().padLeft(2, '0')}/${dateTime.month.toString().padLeft(2, '0')}/${dateTime.year} ${dateTime.hour.toString().padLeft(2, '0')}:${dateTime.minute.toString().padLeft(2, '0')}';
+      } catch (e) {
+        return value;
+      }
+    }
+
+    // Truncate long strings
+    if (value.length > 30) {
+      return '${value.substring(0, 27)}...';
+    }
+
+    return value;
+  }
+
+  // Get icon for mobile field based on data type
+  IconData _getFieldIcon(String dataType) {
+    final lowerDataType = dataType.toLowerCase();
+
+    if (lowerDataType == 'error_status') return Icons.info_outline;
+    if (lowerDataType.contains('boolean')) return Icons.toggle_on;
+    if (lowerDataType.contains('datetime')) return Icons.access_time;
+    if (lowerDataType.contains('url') || lowerDataType.contains('link'))
+      return Icons.link;
+
+    return Icons.text_fields;
+  }
+
+  // Get color for mobile field value
+  Color _getFieldColor(String value, String dataType) {
+    if (dataType.toLowerCase() == 'error_status') {
+      final intValue = int.tryParse(value) ?? 0;
+      if (intValue < 0) return Colors.red;
+      if (intValue > 0) return Colors.green;
+      return Colors.grey;
+    }
+
+    return Colors.black87;
+  }
+
+  // Get name color based on error_status field
+  Color _getNameColor(Map<String, dynamic> item) {
+    // Get all field definitions to find error_status field
+    final allFields = MonitorConfigService.getMobileFields();
+
+    // Find error_status field
+    final errorStatusField = allFields.firstWhere(
+      (field) => field['data_type']?.toString().toLowerCase() == 'error_status',
+      orElse: () => <String, dynamic>{},
+    );
+
+    if (errorStatusField.isEmpty) {
+      // If not found in mobile fields, check all field details
+      final fieldDetails = MonitorConfigService.fieldDetails;
+      if (fieldDetails is List) {
+        for (final field in fieldDetails) {
+          if (field is Map &&
+              field['data_type']?.toString().toLowerCase() == 'error_status') {
+            final fieldName = field['field_name'] as String?;
+            if (fieldName != null) {
+              final value = item[fieldName]?.toString() ?? '';
+              final intValue = int.tryParse(value) ?? 0;
+
+              if (intValue < 0) return Colors.red.shade700;
+              if (intValue > 0) return Colors.green.shade700;
+            }
+            break;
+          }
+        }
+      }
+      return Colors.black87; // Default color
+    }
+
+    final fieldName = errorStatusField['field'] as String?;
+    if (fieldName == null) {
+      return Colors.black87;
+    }
+
+    final value = item[fieldName]?.toString() ?? '';
+    final intValue = int.tryParse(value) ?? 0;
+
+    if (intValue < 0) return Colors.red.shade700;
+    if (intValue > 0) return Colors.green.shade700;
+
+    return Colors.black87; // Default for 0 or null
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -319,24 +436,80 @@ class _MonitorScreenState extends State<MonitorScreen> {
                         value: isSelected,
                         onChanged: (value) => _toggleItemSelection(itemId),
                       )
-                      : CircleAvatar(
-                        backgroundColor: Colors.blue,
-                        child: Text('${index + 1}'),
-                      ),
-              title: Text(
-                item['name']?.toString() ?? 'Item #$itemId',
-                style: const TextStyle(fontWeight: FontWeight.bold),
-              ),
-              subtitle: Column(
+                      : null,
+              title: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  if (item['description'] != null)
-                    Text(item['description'].toString()),
-                  const SizedBox(height: 4),
+                  // Name (always on top)
+                  Text(
+                    item['name']?.toString() ?? 'Item #$itemId',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                      color: _getNameColor(item),
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  // ID (always under name)
                   Text(
                     'ID: $itemId',
                     style: const TextStyle(fontSize: 12, color: Colors.grey),
                   ),
+                ],
+              ),
+              subtitle: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const SizedBox(height: 8),
+                  // Mobile fields
+                  ..._mobileFields
+                      .where(
+                        (field) =>
+                            field['field'] != 'name' && field['field'] != 'id',
+                      )
+                      .map((field) {
+                        final fieldName = field['field'] as String;
+                        final fieldLabel = field['label'] as String;
+                        final dataType = field['data_type'] as String;
+                        final value = item[fieldName]?.toString() ?? '';
+                        final formattedValue = _formatMobileValue(
+                          value,
+                          dataType,
+                        );
+
+                        return Padding(
+                          padding: const EdgeInsets.only(bottom: 4),
+                          child: Row(
+                            children: [
+                              Icon(
+                                _getFieldIcon(dataType),
+                                size: 16,
+                                color: Colors.grey.shade600,
+                              ),
+                              const SizedBox(width: 6),
+                              Expanded(
+                                child: Text(
+                                  '$fieldLabel: ',
+                                  style: const TextStyle(
+                                    fontSize: 12,
+                                    color: Colors.grey,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ),
+                              Text(
+                                formattedValue,
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  color: _getFieldColor(value, dataType),
+                                  fontWeight: FontWeight.w400,
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      })
+                      .toList(),
                 ],
               ),
               trailing:
@@ -349,6 +522,7 @@ class _MonitorScreenState extends State<MonitorScreen> {
                               _showAddEditDialog(item: item);
                               break;
                             case 'delete':
+                              _selectedItems = {itemId};
                               _deleteSelectedItems();
                               break;
                           }

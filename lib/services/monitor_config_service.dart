@@ -464,6 +464,32 @@ class MonitorConfigService {
     return [];
   }
 
+  // Helper method to get mobile fields for list display
+  static List<Map<String, dynamic>> getMobileFields() {
+    if (_fieldDetails == null) {
+      return [];
+    }
+
+    if (_fieldDetails is List) {
+      final fields = _fieldDetails as List;
+
+      return fields
+          .where((field) => field is Map && field['show_mobile_field'] == 'yes')
+          .map((field) {
+            final fieldMap = field as Map<String, dynamic>;
+            return {
+              'field': fieldMap['field_name'],
+              'label': fieldMap['description'],
+              'data_type': fieldMap['data_type'],
+              'editable': fieldMap['editable'],
+            };
+          })
+          .toList();
+    }
+
+    return [];
+  }
+
   // Helper method to check if field should be shown based on show_dependency
   static bool shouldShowField(
     Map<String, dynamic> field,
