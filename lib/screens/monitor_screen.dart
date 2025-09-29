@@ -866,36 +866,6 @@ class _MonitorItemDialogState extends State<MonitorItemDialog> {
     return value;
   }
 
-  // Build divider widget
-  Widget _buildDivider(String label) {
-    return Container(
-      margin: const EdgeInsets.symmetric(vertical: 16),
-      child: Row(
-        children: [
-          const Expanded(child: Divider(color: Colors.blue, thickness: 1.5)),
-          Container(
-            margin: const EdgeInsets.symmetric(horizontal: 16),
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-            decoration: BoxDecoration(
-              color: Colors.blue.shade50,
-              borderRadius: BorderRadius.circular(20),
-              border: Border.all(color: Colors.blue.shade200),
-            ),
-            child: Text(
-              label,
-              style: TextStyle(
-                fontSize: 13,
-                fontWeight: FontWeight.w600,
-                color: Colors.blue.shade700,
-              ),
-            ),
-          ),
-          const Expanded(child: Divider(color: Colors.blue, thickness: 1.5)),
-        ],
-      ),
-    );
-  }
-
   Widget _buildToggleSwitch(String fieldName, String label, bool required) {
     final isEnabled = _booleanValues[fieldName] ?? false;
 
@@ -1175,14 +1145,11 @@ class _MonitorItemDialogState extends State<MonitorItemDialog> {
                               dataType.contains('datetime') &&
                               field['editable'] == 'yes';
                           final isReadOnly = field['editable'] == 'no';
-                          final isDivider = field['editable'] == 'divider';
 
                           return Padding(
                             padding: const EdgeInsets.only(bottom: 16),
                             child:
-                                isDivider
-                                    ? _buildDivider(label)
-                                    : isReadOnly
+                                isReadOnly
                                     ? _buildReadOnlyField(
                                       fieldName,
                                       label,

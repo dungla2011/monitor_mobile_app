@@ -444,21 +444,8 @@ class MonitorConfigService {
         }
       }
 
-      // Return editable fields first, then read-only fields
-      List<Map<String, dynamic>> result = [...editableFields];
-
-      // Add divider if there are read-only fields
-      if (readOnlyFields.isNotEmpty) {
-        result.add({
-          'field': '__divider__',
-          'label': 'Thông tin Bổ xung',
-          'editable': 'divider',
-          'data_type': 'divider',
-        });
-        result.addAll(readOnlyFields);
-      }
-
-      return result;
+      // Return editable fields first, then read-only fields (without divider)
+      return [...editableFields, ...readOnlyFields];
     }
 
     return [];
@@ -495,11 +482,6 @@ class MonitorConfigService {
     Map<String, dynamic> field,
     Map<String, dynamic>? itemData,
   ) {
-    // Always show dividers
-    if (field['editable'] == 'divider') {
-      return true;
-    }
-
     final showDependency = field['show_dependency'];
 
     // If no show_dependency, always show the field
