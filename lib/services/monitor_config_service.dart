@@ -417,12 +417,143 @@ class MonitorConfigService {
               'editable': fieldMap['editable'], // Add missing editable field
               'select_options':
                   fieldMap['select_option_value'], // For dropdown fields
+              'show_dependency':
+                  fieldMap['show_dependency'], // Add show_dependency support
             };
           })
           .toList();
     }
 
     return [];
+  }
+
+  // Helper method to check if field should be shown based on show_dependency
+  static bool shouldShowField(
+    Map<String, dynamic> field,
+    Map<String, dynamic>? itemData,
+  ) {
+    final showDependency = field['show_dependency'];
+
+    // If no show_dependency, always show the field
+    if (showDependency == null) {
+      return true;
+    }
+
+    // If no item data, hide fields with dependencies (for new items)
+    if (itemData == null) {
+      return false;
+    }
+
+    // Process all dependency conditions
+    if (showDependency is Map) {
+      // Check each dependency condition
+      for (final entry in showDependency.entries) {
+        final dependencyFieldName = entry.key; // e.g., "type", "enable"
+        final allowedValues = entry.value; // e.g., ["web_content"], [1]
+        final currentValue = itemData[dependencyFieldName];
+
+        // Convert current value to appropriate type for comparison
+        String? currentValueStr = currentValue?.toString();
+        int? currentValueInt;
+        bool? currentValueBool;
+
+        // Try to parse as int
+        if (currentValueStr != null) {
+          currentValueInt = int.tryParse(currentValueStr);
+        }
+
+        // Try to parse as bool
+        if (currentValue is bool) {
+          currentValueBool = currentValue;
+        } else if (currentValueStr != null) {
+          if (currentValueStr == '1' ||
+              currentValueStr.toLowerCase() == 'true') {
+            currentValueBool = true;
+          } else if (currentValueStr == '0' ||
+              currentValueStr.toLowerCase() == 'false') {
+            currentValueBool = false;
+          }
+        }
+
+        // Check if current value matches any allowed value
+        bool conditionMet = false;
+
+        if (allowedValues is List) {
+          for (final allowedValue in allowedValues) {
+            if (_valuesMatch(
+              allowedValue,
+              currentValue,
+              currentValueStr,
+              currentValueInt,
+              currentValueBool,
+            )) {
+              conditionMet = true;
+              break;
+            }
+          }
+        } else {
+          // Single value condition
+          conditionMet = _valuesMatch(
+            allowedValues,
+            currentValue,
+            currentValueStr,
+            currentValueInt,
+            currentValueBool,
+          );
+        }
+
+        // If any condition is not met, hide the field
+        if (!conditionMet) {
+          return false;
+        }
+      }
+
+      // All conditions are met
+      return true;
+    }
+
+    // Default: hide if show_dependency exists but is not a Map
+    return false;
+  }
+
+  // Helper method to check if values match (supports different types)
+  static bool _valuesMatch(
+    dynamic allowedValue,
+    dynamic currentValue,
+    String? currentValueStr,
+    int? currentValueInt,
+    bool? currentValueBool,
+  ) {
+    // Direct comparison
+    if (allowedValue == currentValue) {
+      return true;
+    }
+
+    // String comparison
+    if (allowedValue is String && currentValueStr != null) {
+      return allowedValue == currentValueStr;
+    }
+
+    // Int comparison
+    if (allowedValue is int && currentValueInt != null) {
+      return allowedValue == currentValueInt;
+    }
+
+    // Bool comparison
+    if (allowedValue is bool && currentValueBool != null) {
+      return allowedValue == currentValueBool;
+    }
+
+    // Cross-type comparisons
+    if (allowedValue is int && currentValueStr != null) {
+      return allowedValue.toString() == currentValueStr;
+    }
+
+    if (allowedValue is String && currentValueInt != null) {
+      return allowedValue == currentValueInt.toString();
+    }
+
+    return false;
   }
 
   // Helper method to check if config is loaded

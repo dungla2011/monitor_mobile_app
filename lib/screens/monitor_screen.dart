@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../services/monitor_config_service.dart';
-import '../services/web_auth_service.dart';
 
 class MonitorScreen extends StatefulWidget {
   const MonitorScreen({super.key});
@@ -13,7 +12,6 @@ class _MonitorScreenState extends State<MonitorScreen> {
   List<Map<String, dynamic>> _monitorItems = [];
   List<Map<String, dynamic>> _formFields = [];
   bool _isLoading = true;
-  bool _isConfigLoaded = false;
   String? _errorMessage;
 
   // Selected items for bulk actions
@@ -46,7 +44,6 @@ class _MonitorScreenState extends State<MonitorScreen> {
           return;
         }
 
-        _isConfigLoaded = true;
         _formFields = MonitorConfigService.getFormFields();
         print('✅ Config loaded. Fields: ${_formFields.length}');
       }
@@ -405,6 +402,8 @@ class _MonitorItemDialogState extends State<MonitorItemDialog> {
   final Map<String, DateTime?> _dateTimeValues =
       {}; // Track datetime field states
   bool _isLoading = false;
+  Map<String, dynamic> _currentItemData =
+      {}; // Track current form data for dependency checking
 
   @override
   void initState() {
@@ -413,6 +412,9 @@ class _MonitorItemDialogState extends State<MonitorItemDialog> {
   }
 
   void _initializeControllers() {
+    // Initialize current item data for dependency checking
+    _currentItemData = Map<String, dynamic>.from(widget.item ?? {});
+
     for (final field in widget.fields) {
       final fieldName = field['field'] as String;
       final currentValue = widget.item?[fieldName]?.toString() ?? '';
@@ -435,6 +437,8 @@ class _MonitorItemDialogState extends State<MonitorItemDialog> {
         _controllers[fieldName] = TextEditingController(
           text: _booleanValues[fieldName]! ? '1' : '0',
         );
+        // Update current data
+        _currentItemData[fieldName] = _booleanValues[fieldName]! ? '1' : '0';
       } else if (isDateTimeField) {
         // Initialize datetime value
         DateTime? dateTime;
@@ -449,8 +453,13 @@ class _MonitorItemDialogState extends State<MonitorItemDialog> {
         _controllers[fieldName] = TextEditingController(
           text: dateTime != null ? _formatDateTime(dateTime) : '',
         );
+        // Update current data
+        _currentItemData[fieldName] =
+            dateTime != null ? _formatDateTime(dateTime) : '';
       } else {
         _controllers[fieldName] = TextEditingController(text: currentValue);
+        // Update current data
+        _currentItemData[fieldName] = currentValue;
       }
     }
   }
@@ -461,6 +470,13 @@ class _MonitorItemDialogState extends State<MonitorItemDialog> {
       controller.dispose();
     }
     super.dispose();
+  }
+
+  // Update current item data and refresh UI when field changes
+  void _updateFieldValue(String fieldName, String value) {
+    setState(() {
+      _currentItemData[fieldName] = value;
+    });
   }
 
   Widget _buildToggleSwitch(String fieldName, String label, bool required) {
@@ -502,6 +518,7 @@ class _MonitorItemDialogState extends State<MonitorItemDialog> {
               setState(() {
                 _booleanValues[fieldName] = value;
                 _controllers[fieldName]?.text = value ? '1' : '0';
+                _updateFieldValue(fieldName, value ? '1' : '0');
               });
             },
             activeColor: Colors.blue,
@@ -607,6 +624,7 @@ class _MonitorItemDialogState extends State<MonitorItemDialog> {
         setState(() {
           _dateTimeValues[fieldName] = selectedDateTime;
           _controllers[fieldName]?.text = _formatDateTime(selectedDateTime);
+          _updateFieldValue(fieldName, _formatDateTime(selectedDateTime));
         });
       }
     }
@@ -616,6 +634,7 @@ class _MonitorItemDialogState extends State<MonitorItemDialog> {
     setState(() {
       _dateTimeValues[fieldName] = null;
       _controllers[fieldName]?.text = '';
+      _updateFieldValue(fieldName, '');
     });
   }
 
@@ -675,83 +694,107 @@ class _MonitorItemDialogState extends State<MonitorItemDialog> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children:
-                  widget.fields.map((field) {
-                    final fieldName = field['field'] as String;
-                    final label = field['label'] as String? ?? fieldName;
-                    final required = field['required'] == true;
-                    final selectOptions =
-                        field['select_options'] as Map<String, dynamic>?;
-                    final dataType =
-                        field['data_type']?.toString().toLowerCase() ?? '';
-                    final isBooleanField =
-                        dataType.contains('boolean') ||
-                        dataType.contains('tinyint') ||
-                        (fieldName ==
-                            'enable'); // Special case for enable field
-                    final isDateTimeField =
-                        dataType.contains('datetime') &&
-                        field['editable'] == 'yes';
+                  widget.fields
+                      .where((field) {
+                        // Check if field should be shown based on show_dependency
+                        return MonitorConfigService.shouldShowField(
+                          field,
+                          _currentItemData,
+                        );
+                      })
+                      .map((field) {
+                        final fieldName = field['field'] as String;
+                        final label = field['label'] as String? ?? fieldName;
+                        final required = field['required'] == true;
+                        final selectOptions =
+                            field['select_options'] as Map<String, dynamic>?;
+                        final dataType =
+                            field['data_type']?.toString().toLowerCase() ?? '';
+                        final isBooleanField =
+                            dataType.contains('boolean') ||
+                            dataType.contains('tinyint') ||
+                            (fieldName ==
+                                'enable'); // Special case for enable field
+                        final isDateTimeField =
+                            dataType.contains('datetime') &&
+                            field['editable'] == 'yes';
 
-                    return Padding(
-                      padding: const EdgeInsets.only(bottom: 16),
-                      child:
-                          isBooleanField
-                              ? _buildToggleSwitch(fieldName, label, required)
-                              : isDateTimeField
-                              ? _buildDateTimePicker(fieldName, label, required)
-                              : selectOptions != null
-                              ? DropdownButtonFormField<String>(
-                                value:
-                                    _controllers[fieldName]?.text.isNotEmpty ==
-                                            true
-                                        ? _controllers[fieldName]!.text
-                                        : null,
-                                decoration: InputDecoration(
-                                  labelText: required ? '$label *' : label,
-                                  border: const OutlineInputBorder(),
-                                ),
-                                items:
-                                    selectOptions.entries.map((entry) {
-                                      return DropdownMenuItem<String>(
-                                        value: entry.key,
-                                        child: Text(entry.value.toString()),
-                                      );
-                                    }).toList(),
-                                onChanged: (value) {
-                                  _controllers[fieldName]?.text = value ?? '';
-                                },
-                                validator:
-                                    required
-                                        ? (value) {
-                                          if (value == null ||
-                                              value.trim().isEmpty ||
-                                              value == '0') {
-                                            return 'Vui lòng chọn $label';
-                                          }
-                                          return null;
-                                        }
-                                        : null,
-                              )
-                              : TextFormField(
-                                controller: _controllers[fieldName],
-                                decoration: InputDecoration(
-                                  labelText: required ? '$label *' : label,
-                                  border: const OutlineInputBorder(),
-                                ),
-                                maxLines: dataType.contains('text') ? 3 : 1,
-                                validator:
-                                    required
-                                        ? (value) {
-                                          if (value == null ||
-                                              value.trim().isEmpty) {
-                                            return 'Vui lòng nhập $label';
-                                          }
-                                          return null;
-                                        }
-                                        : null,
-                              ),
-                    );
-                  }).toList(),
+                        return Padding(
+                          padding: const EdgeInsets.only(bottom: 16),
+                          child:
+                              isBooleanField
+                                  ? _buildToggleSwitch(
+                                    fieldName,
+                                    label,
+                                    required,
+                                  )
+                                  : isDateTimeField
+                                  ? _buildDateTimePicker(
+                                    fieldName,
+                                    label,
+                                    required,
+                                  )
+                                  : selectOptions != null
+                                  ? DropdownButtonFormField<String>(
+                                    value:
+                                        _controllers[fieldName]
+                                                    ?.text
+                                                    .isNotEmpty ==
+                                                true
+                                            ? _controllers[fieldName]!.text
+                                            : null,
+                                    decoration: InputDecoration(
+                                      labelText: required ? '$label *' : label,
+                                      border: const OutlineInputBorder(),
+                                    ),
+                                    items:
+                                        selectOptions.entries.map((entry) {
+                                          return DropdownMenuItem<String>(
+                                            value: entry.key,
+                                            child: Text(entry.value.toString()),
+                                          );
+                                        }).toList(),
+                                    onChanged: (value) {
+                                      _controllers[fieldName]?.text =
+                                          value ?? '';
+                                      _updateFieldValue(fieldName, value ?? '');
+                                    },
+                                    validator:
+                                        required
+                                            ? (value) {
+                                              if (value == null ||
+                                                  value.trim().isEmpty ||
+                                                  value == '0') {
+                                                return 'Vui lòng chọn $label';
+                                              }
+                                              return null;
+                                            }
+                                            : null,
+                                  )
+                                  : TextFormField(
+                                    controller: _controllers[fieldName],
+                                    decoration: InputDecoration(
+                                      labelText: required ? '$label *' : label,
+                                      border: const OutlineInputBorder(),
+                                    ),
+                                    maxLines: dataType.contains('text') ? 3 : 1,
+                                    onChanged: (value) {
+                                      _updateFieldValue(fieldName, value);
+                                    },
+                                    validator:
+                                        required
+                                            ? (value) {
+                                              if (value == null ||
+                                                  value.trim().isEmpty) {
+                                                return 'Vui lòng nhập $label';
+                                              }
+                                              return null;
+                                            }
+                                            : null,
+                                  ),
+                        );
+                      })
+                      .toList(),
             ),
           ),
         ),
