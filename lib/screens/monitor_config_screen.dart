@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../services/monitor_config_crud_service.dart';
 import '../services/base_crud_service.dart';
+import '../utils/error_dialog_utils.dart';
 
 class MonitorConfigScreen extends StatefulWidget {
   const MonitorConfigScreen({super.key});
@@ -75,9 +76,7 @@ class _MonitorConfigScreenState extends State<MonitorConfigScreen> {
 
   Future<void> _loadMonitorConfigs() async {
     try {
-      print('🔄 Loading monitor configs...');
       final result = await MonitorConfigCrudService.getMonitorConfigs();
-      print('📥 Monitor configs result: $result');
 
       if (result['success']) {
         final data = result['data'];
@@ -184,24 +183,83 @@ class _MonitorConfigScreenState extends State<MonitorConfigScreen> {
     }
   }
 
-  void _showAddEditDialog({Map<String, dynamic>? item}) {
+  void _showAddEditDialog({Map<String, dynamic>? item}) async {
     final isEditMode = item != null;
     final dialogFields = MonitorConfigCrudService.getFormFields(
       isEditMode: isEditMode,
     );
 
-    showDialog(
-      context: context,
-      builder:
-          (context) => MonitorConfigDialog(
-            item: item,
-            fields: dialogFields,
-            onSaved: () async {
-              Navigator.of(context).pop();
-              await _loadMonitorConfigs();
-            },
-          ),
-    );
+    // If editing, load full item data from API
+    Map<String, dynamic>? fullItemData = item;
+    if (isEditMode) {
+      final itemId = item['id'] as int;
+
+      // Show loading dialog while fetching full data
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder:
+            (context) => const AlertDialog(
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  CircularProgressIndicator(),
+                  SizedBox(height: 16),
+                  Text('Đang tải dữ liệu...'),
+                ],
+              ),
+            ),
+      );
+
+      try {
+        final result = await MonitorConfigCrudService.getMonitorConfig(itemId);
+
+        // Close loading dialog
+        if (mounted) Navigator.of(context).pop();
+
+        if (result['success']) {
+          fullItemData = result['data'];
+          print('📥 Full item data loaded: $fullItemData');
+        } else {
+          // Show error and return
+          if (mounted) {
+            await ErrorDialogUtils.showErrorDialog(
+              context,
+              result['message'] ?? 'Không thể tải dữ liệu config',
+            );
+          }
+          return;
+        }
+      } catch (e) {
+        // Close loading dialog
+        if (mounted) Navigator.of(context).pop();
+
+        // Show error and return
+        if (mounted) {
+          await ErrorDialogUtils.showErrorDialog(
+            context,
+            'Lỗi khi tải dữ liệu: $e',
+          );
+        }
+        return;
+      }
+    }
+
+    // Show edit/add dialog with full data
+    if (mounted) {
+      showDialog(
+        context: context,
+        builder:
+            (context) => MonitorConfigDialog(
+              item: fullItemData,
+              fields: dialogFields,
+              onSaved: () async {
+                Navigator.of(context).pop();
+                await _loadMonitorConfigs();
+              },
+            ),
+      );
+    }
   }
 
   // Format value for mobile field display
@@ -261,74 +319,14 @@ class _MonitorConfigScreenState extends State<MonitorConfigScreen> {
     return value;
   }
 
-  // Get icon for mobile field based on data type
-  IconData _getFieldIcon(String dataType) {
-    final lowerDataType = dataType.toLowerCase();
-
-    if (lowerDataType == 'error_status') return Icons.info_outline;
-    if (lowerDataType.contains('boolean')) return Icons.toggle_on;
-    if (lowerDataType.contains('datetime')) return Icons.access_time;
-    if (lowerDataType.contains('url') || lowerDataType.contains('link'))
-      return Icons.link;
-
-    return Icons.text_fields;
-  }
-
-  // Get color for mobile field value
-  Color _getFieldColor(String value, String dataType) {
-    if (dataType.toLowerCase() == 'error_status') {
-      final intValue = int.tryParse(value) ?? 0;
-      if (intValue < 0) return Colors.red;
-      if (intValue > 0) return Colors.green;
-      return Colors.grey;
-    }
-
-    return Colors.black87;
-  }
-
-  // Get name color based on error_status field
+  // Get name color based on error_status
   Color _getNameColor(Map<String, dynamic> item) {
-    // Get all field definitions to find error_status field
-    final allFields = MonitorConfigCrudService.getMobileFields();
-
-    // Find error_status field
-    final errorStatusField = allFields.firstWhere(
-      (field) => field['data_type']?.toString().toLowerCase() == 'error_status',
-      orElse: () => <String, dynamic>{},
-    );
-
-    if (errorStatusField.isEmpty) {
-      // If not found in mobile fields, check all field details
-      final fieldDetails = MonitorConfigCrudService.fieldDetails;
-      if (fieldDetails is List) {
-        for (final field in fieldDetails) {
-          if (field is Map &&
-              field['data_type']?.toString().toLowerCase() == 'error_status') {
-            final fieldName = field['field_name'] as String?;
-            if (fieldName != null) {
-              final value = item[fieldName]?.toString() ?? '';
-              final intValue = int.tryParse(value) ?? 0;
-
-              if (intValue < 0) return Colors.red.shade700;
-              if (intValue > 0) return Colors.green.shade700;
-            }
-            break;
-          }
-        }
-      }
-      return Colors.black87; // Default color
+    final errorStatus = item['error_status'];
+    if (errorStatus != null) {
+      final intValue = int.tryParse(errorStatus.toString()) ?? 0;
+      if (intValue < 0) return Colors.red; // Error
+      if (intValue > 0) return Colors.green; // OK
     }
-
-    final fieldName = errorStatusField['field'] as String?;
-    if (fieldName == null) {
-      return Colors.black87;
-    }
-
-    final value = item[fieldName]?.toString() ?? '';
-    final intValue = int.tryParse(value) ?? 0;
-
-    if (intValue < 0) return Colors.red.shade700;
-    if (intValue > 0) return Colors.green.shade700;
 
     return Colors.black87; // Default for 0 or null
   }
@@ -394,14 +392,12 @@ class _MonitorConfigScreenState extends State<MonitorConfigScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(Icons.error_outline, size: 64, color: Colors.red),
+            Icon(Icons.error_outline, size: 64, color: Colors.red.shade400),
             const SizedBox(height: 16),
-            Text('Lỗi', style: Theme.of(context).textTheme.headlineSmall),
-            const SizedBox(height: 8),
             Text(
-              _errorMessage!,
+              'Lỗi: $_errorMessage',
+              style: const TextStyle(fontSize: 16),
               textAlign: TextAlign.center,
-              style: const TextStyle(color: Colors.grey),
             ),
             const SizedBox(height: 16),
             ElevatedButton(
@@ -414,177 +410,101 @@ class _MonitorConfigScreenState extends State<MonitorConfigScreen> {
     }
 
     if (_monitorConfigs.isEmpty) {
-      return Center(
+      return const Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(Icons.inbox, size: 64, color: Colors.grey),
-            const SizedBox(height: 16),
-            const Text(
-              'Chưa có dữ liệu',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 8),
-            const Text('Nhấn nút + để thêm config mới'),
-            const SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: () => _showAddEditDialog(),
-              child: const Text('Thêm config đầu tiên'),
+            Icon(Icons.inbox_outlined, size: 64, color: Colors.grey),
+            SizedBox(height: 16),
+            Text(
+              'Chưa có monitor config nào',
+              style: TextStyle(fontSize: 16, color: Colors.grey),
             ),
           ],
         ),
       );
     }
 
-    return RefreshIndicator(
-      onRefresh: _loadMonitorConfigs,
-      child: ListView.builder(
-        itemCount: _monitorConfigs.length,
-        itemBuilder: (context, index) {
-          final item = _monitorConfigs[index];
-          final itemId = item['id'] as int? ?? 0;
-          final isSelected = _selectedItems.contains(itemId);
+    return ListView.builder(
+      padding: const EdgeInsets.all(8),
+      itemCount: _monitorConfigs.length,
+      itemBuilder: (context, index) {
+        final item = _monitorConfigs[index];
+        final itemId = item['id'] as int;
+        final isSelected = _selectedItems.contains(itemId);
 
-          return Card(
-            margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-            child: ListTile(
-              leading:
-                  _isSelectionMode
-                      ? Checkbox(
-                        value: isSelected,
-                        onChanged: (value) => _toggleItemSelection(itemId),
-                      )
-                      : null,
-              title: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Name with edit button
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Text(
-                          item['name']?.toString() ?? 'Config #$itemId',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 16,
-                            color: _getNameColor(item),
-                          ),
-                        ),
-                      ),
-                      if (!_isSelectionMode)
-                        PopupMenuButton<String>(
-                          padding: EdgeInsets.zero,
-                          icon: Icon(
-                            Icons.more_vert,
-                            size: 20,
-                            color: Colors.grey.shade600,
-                          ),
-                          onSelected: (value) {
-                            switch (value) {
-                              case 'edit':
-                                _showAddEditDialog(item: item);
-                                break;
-                              case 'delete':
-                                _selectedItems = {itemId};
-                                _deleteSelectedItems();
-                                break;
-                            }
-                          },
-                          itemBuilder:
-                              (context) => [
-                                const PopupMenuItem(
-                                  value: 'edit',
-                                  child: ListTile(
-                                    leading: Icon(Icons.edit),
-                                    title: Text('Sửa'),
-                                  ),
-                                ),
-                                const PopupMenuItem(
-                                  value: 'delete',
-                                  child: ListTile(
-                                    leading: Icon(Icons.delete),
-                                    title: Text('Xóa'),
-                                  ),
-                                ),
-                              ],
-                        ),
-                    ],
+        return Card(
+          margin: const EdgeInsets.symmetric(vertical: 4),
+          child: ListTile(
+            leading:
+                _isSelectionMode
+                    ? Checkbox(
+                      value: isSelected,
+                      onChanged: (_) => _toggleItemSelection(itemId),
+                    )
+                    : null,
+            title: Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    item['name']?.toString() ?? 'N/A',
+                    style: TextStyle(
+                      fontWeight: FontWeight.w600,
+                      color: _getNameColor(item),
+                    ),
                   ),
-                  const SizedBox(height: 2),
-                  // ID (always under name)
-                  Text(
-                    'ID: $itemId',
-                    style: const TextStyle(fontSize: 12, color: Colors.grey),
-                  ),
-                ],
-              ),
-              subtitle: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const SizedBox(height: 8),
-                  // Mobile fields
-                  ..._mobileFields
-                      .where(
-                        (field) =>
-                            field['field'] != 'name' && field['field'] != 'id',
-                      )
-                      .map((field) {
-                        final fieldName = field['field'] as String;
-                        final fieldLabel = field['label'] as String;
-                        final dataType = field['data_type'] as String;
-                        final selectOptions =
-                            field['select_options'] as Map<String, dynamic>?;
-                        final value = item[fieldName]?.toString() ?? '';
-                        final formattedValue = _formatMobileValue(
-                          value,
-                          dataType,
-                          selectOptions,
-                        );
-
-                        return Padding(
-                          padding: const EdgeInsets.only(bottom: 4),
-                          child: Row(
-                            children: [
-                              Icon(
-                                _getFieldIcon(dataType),
-                                size: 16,
-                                color: Colors.grey.shade600,
-                              ),
-                              const SizedBox(width: 6),
-                              Expanded(
-                                child: Text(
-                                  '$fieldLabel: ',
-                                  style: const TextStyle(
-                                    fontSize: 12,
-                                    color: Colors.grey,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                              ),
-                              Text(
-                                formattedValue,
-                                style: TextStyle(
-                                  fontSize: 12,
-                                  color: _getFieldColor(value, dataType),
-                                  fontWeight: FontWeight.w400,
-                                ),
-                              ),
-                            ],
-                          ),
-                        );
-                      })
-                      .toList(),
-                ],
-              ),
-              trailing: null,
-              onTap:
-                  _isSelectionMode
-                      ? () => _toggleItemSelection(itemId)
-                      : () => _showAddEditDialog(item: item),
+                ),
+                IconButton(
+                  icon: const Icon(Icons.edit, size: 18),
+                  onPressed: () => _showAddEditDialog(item: item),
+                  tooltip: 'Sửa',
+                ),
+              ],
             ),
-          );
-        },
-      ),
+            subtitle:
+                _mobileFields.isNotEmpty
+                    ? Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children:
+                          _mobileFields
+                              .where(
+                                (field) =>
+                                    field['field'] != 'id' &&
+                                    field['field'] != 'name',
+                              ) // Skip id and name
+                              .map((field) {
+                                final fieldName = field['field'] as String;
+                                final label = field['label'] as String;
+                                final dataType = field['data_type'] as String;
+                                final selectOptions =
+                                    field['select_options']
+                                        as Map<String, dynamic>?;
+                                final rawValue =
+                                    item[fieldName]?.toString() ?? '';
+                                final formattedValue = _formatMobileValue(
+                                  rawValue,
+                                  dataType,
+                                  selectOptions,
+                                );
+
+                                return Padding(
+                                  padding: const EdgeInsets.only(top: 2),
+                                  child: Text(
+                                    '$label: $formattedValue',
+                                    style: const TextStyle(fontSize: 12),
+                                  ),
+                                );
+                              })
+                              .toList(),
+                    )
+                    : null,
+            onTap:
+                _isSelectionMode
+                    ? () => _toggleItemSelection(itemId)
+                    : () => _showAddEditDialog(item: item),
+          ),
+        );
+      },
     );
   }
 }
@@ -609,12 +529,12 @@ class MonitorConfigDialog extends StatefulWidget {
 class _MonitorConfigDialogState extends State<MonitorConfigDialog> {
   final _formKey = GlobalKey<FormState>();
   final Map<String, TextEditingController> _controllers = {};
-  final Map<String, bool> _booleanValues = {}; // Track boolean field states
-  final Map<String, DateTime?> _dateTimeValues =
-      {}; // Track datetime field states
+  final Map<String, bool> _booleanValues = {};
+  final Map<String, DateTime?> _dateTimeValues = {};
   bool _isLoading = false;
-  Map<String, dynamic> _currentItemData =
-      {}; // Track current form data for dependency checking
+
+  // Track current item data for dependency checking
+  Map<String, dynamic> _currentItemData = {};
 
   @override
   void initState() {
@@ -623,17 +543,18 @@ class _MonitorConfigDialogState extends State<MonitorConfigDialog> {
   }
 
   void _initializeControllers() {
-    // Initialize current item data for dependency checking
-    _currentItemData = Map<String, dynamic>.from(widget.item ?? {});
-
     for (final field in widget.fields) {
       final fieldName = field['field'] as String;
       final currentValue = widget.item?[fieldName]?.toString() ?? '';
+
+      // Update current item data
+      _currentItemData[fieldName] = currentValue;
+
       final dataType = field['data_type']?.toString().toLowerCase() ?? '';
       final isBooleanField =
           dataType.contains('boolean') ||
           dataType.contains('tinyint') ||
-          (fieldName == 'enable');
+          (fieldName == 'enable'); // Special case for enable field
       final isDateTimeField =
           dataType.contains('datetime') && field['editable'] == 'yes';
 
@@ -692,255 +613,49 @@ class _MonitorConfigDialogState extends State<MonitorConfigDialog> {
 
   // Build read-only field widget
   Widget _buildReadOnlyField(String fieldName, String label, String dataType) {
-    final currentValue = widget.item?[fieldName]?.toString() ?? '';
-    final displayValue = _formatDisplayValue(currentValue, dataType);
-    final isErrorStatus = dataType.toLowerCase() == 'error_status';
+    final value = widget.item?[fieldName]?.toString() ?? 'N/A';
+    String displayValue = value;
 
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.grey.shade50,
-        border: Border.all(color: Colors.grey.shade300),
-        borderRadius: BorderRadius.circular(8),
-      ),
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Label bên trái
-          Expanded(
-            flex: 2,
-            child: Padding(
-              padding: const EdgeInsets.only(top: 2),
-              child: Text(
-                label,
-                style: const TextStyle(
-                  fontSize: 14,
-                  color: Colors.black87,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-            ),
-          ),
-          // Separator
-          Container(
-            width: 1,
-            height: 20,
-            color: Colors.grey.shade300,
-            margin: const EdgeInsets.symmetric(horizontal: 12),
-          ),
-          // Data bên phải
-          Expanded(
-            flex: 3,
-            child: Padding(
-              padding: const EdgeInsets.only(top: 2),
-              child:
-                  isErrorStatus
-                      ? _buildErrorStatusDisplay(currentValue)
-                      : Text(
-                        displayValue.isNotEmpty
-                            ? displayValue
-                            : 'Chưa có dữ liệu',
-                        style: TextStyle(
-                          fontSize: 14,
-                          color:
-                              displayValue.isNotEmpty
-                                  ? Colors.black87
-                                  : Colors.grey.shade500,
-                          fontWeight:
-                              displayValue.isNotEmpty
-                                  ? FontWeight.w400
-                                  : FontWeight.w300,
-                        ),
-                        textAlign: TextAlign.end,
-                      ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  // Build error status display with icon
-  Widget _buildErrorStatusDisplay(String value) {
-    if (value.isEmpty || value == 'null') {
-      return Row(
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: [
-          Icon(Icons.help_outline, size: 16, color: Colors.grey.shade500),
-          const SizedBox(width: 4),
-          Text(
-            'N/A',
-            style: TextStyle(
-              fontSize: 14,
-              color: Colors.grey.shade500,
-              fontWeight: FontWeight.w400,
-            ),
-          ),
-        ],
-      );
-    }
-
-    final intValue = int.tryParse(value) ?? 0;
-
-    if (intValue < 0) {
-      // Error status - Red X
-      return Row(
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: [
-          Container(
-            padding: const EdgeInsets.all(2),
-            decoration: BoxDecoration(
-              color: Colors.red.shade100,
-              shape: BoxShape.circle,
-            ),
-            child: Icon(Icons.close, size: 14, color: Colors.red.shade700),
-          ),
-          const SizedBox(width: 6),
-          Text(
-            'Lỗi',
-            style: TextStyle(
-              fontSize: 14,
-              color: Colors.red.shade700,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-        ],
-      );
-    } else if (intValue > 0) {
-      // Success status - Green check
-      return Row(
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: [
-          Container(
-            padding: const EdgeInsets.all(2),
-            decoration: BoxDecoration(
-              color: Colors.green.shade100,
-              shape: BoxShape.circle,
-            ),
-            child: Icon(Icons.check, size: 14, color: Colors.green.shade700),
-          ),
-          const SizedBox(width: 6),
-          Text(
-            'Thành công',
-            style: TextStyle(
-              fontSize: 14,
-              color: Colors.green.shade700,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-        ],
-      );
-    } else {
-      // Neutral status - Gray circle
-      return Row(
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: [
-          Container(
-            width: 18,
-            height: 18,
-            decoration: BoxDecoration(
-              color: Colors.grey.shade300,
-              shape: BoxShape.circle,
-            ),
-            child: Center(
-              child: Text(
-                '?',
-                style: TextStyle(
-                  fontSize: 10,
-                  color: Colors.grey.shade600,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-          ),
-          const SizedBox(width: 6),
-          Text(
-            'N/A',
-            style: TextStyle(
-              fontSize: 14,
-              color: Colors.grey.shade600,
-              fontWeight: FontWeight.w400,
-            ),
-          ),
-        ],
-      );
-    }
-  }
-
-  // Format display value based on data type
-  String _formatDisplayValue(String value, String dataType) {
-    if (value.isEmpty || value == 'null') {
-      return '';
-    }
-
-    final lowerDataType = dataType.toLowerCase();
-
-    // Format datetime
-    if (lowerDataType.contains('datetime')) {
+    // Format read-only field values
+    if (dataType.toLowerCase().contains('datetime') && value != 'N/A') {
       try {
         final dateTime = DateTime.parse(value);
-        return _formatDateTime(dateTime);
+        displayValue = _formatDateTime(dateTime);
       } catch (e) {
-        return value;
+        displayValue = value;
       }
-    }
-
-    // Format boolean/tinyint
-    if (lowerDataType.contains('boolean') ||
-        lowerDataType.contains('tinyint')) {
+    } else if (dataType.toLowerCase().contains('boolean') ||
+        dataType.toLowerCase().contains('tinyint')) {
       if (value == '1' || value.toLowerCase() == 'true') {
-        return 'Có';
+        displayValue = 'Có';
       } else if (value == '0' || value.toLowerCase() == 'false') {
-        return 'Không';
+        displayValue = 'Không';
       }
     }
 
-    return value;
-  }
-
-  Widget _buildToggleSwitch(String fieldName, String label, bool required) {
-    final isEnabled = _booleanValues[fieldName] ?? false;
-
-    return Container(
-      decoration: BoxDecoration(
-        border: Border.all(color: Colors.grey.shade300),
-        borderRadius: BorderRadius.circular(4),
-      ),
-      padding: const EdgeInsets.all(12),
-      child: Row(
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  required ? '$label *' : label,
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  isEnabled ? 'Đã bật' : 'Đã tắt',
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: isEnabled ? Colors.green : Colors.grey,
-                  ),
-                ),
-              ],
+          Text(
+            label,
+            style: TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.w500,
+              color: Colors.grey.shade600,
             ),
           ),
-          Switch(
-            value: isEnabled,
-            onChanged: (value) {
-              setState(() {
-                _booleanValues[fieldName] = value;
-                _controllers[fieldName]?.text = value ? '1' : '0';
-                _updateFieldValue(fieldName, value ? '1' : '0');
-              });
-            },
-            activeColor: Colors.blue,
+          const SizedBox(height: 4),
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            decoration: BoxDecoration(
+              color: Colors.grey.shade50,
+              border: Border.all(color: Colors.grey.shade300),
+              borderRadius: BorderRadius.circular(4),
+            ),
+            child: Text(displayValue, style: const TextStyle(fontSize: 14)),
           ),
         ],
       ),
@@ -948,126 +663,63 @@ class _MonitorConfigDialogState extends State<MonitorConfigDialog> {
   }
 
   String _formatDateTime(DateTime dateTime) {
-    // Format: YYYY-MM-DD HH:mm:ss
-    return '${dateTime.year.toString().padLeft(4, '0')}-${dateTime.month.toString().padLeft(2, '0')}-${dateTime.day.toString().padLeft(2, '0')} ${dateTime.hour.toString().padLeft(2, '0')}:${dateTime.minute.toString().padLeft(2, '0')}:${dateTime.second.toString().padLeft(2, '0')}';
+    return '${dateTime.day.toString().padLeft(2, '0')}/${dateTime.month.toString().padLeft(2, '0')}/${dateTime.year} ${dateTime.hour.toString().padLeft(2, '0')}:${dateTime.minute.toString().padLeft(2, '0')}';
   }
 
-  Widget _buildDateTimePicker(String fieldName, String label, bool required) {
-    final selectedDateTime = _dateTimeValues[fieldName];
+  Future<void> _selectDateTime(String fieldName) async {
+    final currentDateTime = _dateTimeValues[fieldName] ?? DateTime.now();
 
-    return Container(
-      decoration: BoxDecoration(
-        border: Border.all(color: Colors.grey.shade300),
-        borderRadius: BorderRadius.circular(4),
-      ),
-      padding: const EdgeInsets.all(12),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            required ? '$label *' : label,
-            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-          ),
-          const SizedBox(height: 8),
-          Row(
-            children: [
-              Expanded(
-                child: Text(
-                  selectedDateTime != null
-                      ? _formatDateTime(selectedDateTime)
-                      : 'Chưa chọn thời gian',
-                  style: TextStyle(
-                    fontSize: 14,
-                    color:
-                        selectedDateTime != null ? Colors.black87 : Colors.grey,
-                  ),
-                ),
-              ),
-              const SizedBox(width: 8),
-              Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  IconButton(
-                    onPressed: () => _pickDateTime(fieldName),
-                    icon: const Icon(Icons.calendar_today),
-                    tooltip: 'Chọn ngày giờ',
-                  ),
-                  if (selectedDateTime != null)
-                    IconButton(
-                      onPressed: () => _clearDateTime(fieldName),
-                      icon: const Icon(Icons.clear),
-                      tooltip: 'Xóa',
-                    ),
-                ],
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-
-  Future<void> _pickDateTime(String fieldName) async {
-    final now = DateTime.now();
-    final initialDate = _dateTimeValues[fieldName] ?? now;
-
-    // Pick date first
-    final date = await showDatePicker(
+    final selectedDate = await showDatePicker(
       context: context,
-      initialDate: initialDate,
+      initialDate: currentDateTime,
       firstDate: DateTime(2000),
       lastDate: DateTime(2100),
     );
 
-    if (date != null && mounted) {
-      // Pick time
-      final time = await showTimePicker(
+    if (selectedDate != null && mounted) {
+      final selectedTime = await showTimePicker(
         context: context,
-        initialTime: TimeOfDay.fromDateTime(initialDate),
+        initialTime: TimeOfDay.fromDateTime(currentDateTime),
       );
 
-      if (time != null && mounted) {
-        final selectedDateTime = DateTime(
-          date.year,
-          date.month,
-          date.day,
-          time.hour,
-          time.minute,
+      if (selectedTime != null && mounted) {
+        final newDateTime = DateTime(
+          selectedDate.year,
+          selectedDate.month,
+          selectedDate.day,
+          selectedTime.hour,
+          selectedTime.minute,
         );
 
         setState(() {
-          _dateTimeValues[fieldName] = selectedDateTime;
-          _controllers[fieldName]?.text = _formatDateTime(selectedDateTime);
-          _updateFieldValue(fieldName, _formatDateTime(selectedDateTime));
+          _dateTimeValues[fieldName] = newDateTime;
+          _controllers[fieldName]!.text = _formatDateTime(newDateTime);
+          _updateFieldValue(fieldName, _formatDateTime(newDateTime));
         });
       }
     }
   }
 
-  void _clearDateTime(String fieldName) {
-    setState(() {
-      _dateTimeValues[fieldName] = null;
-      _controllers[fieldName]?.text = '';
-      _updateFieldValue(fieldName, '');
-    });
-  }
-
-  Future<void> _save() async {
-    if (!_formKey.currentState!.validate()) return;
+  Future<void> _saveItem() async {
+    if (!_formKey.currentState!.validate()) {
+      return;
+    }
 
     setState(() => _isLoading = true);
 
     try {
       final data = <String, dynamic>{};
-      for (final entry in _controllers.entries) {
-        // Only include editable fields in save data
-        final field = widget.fields.firstWhere(
-          (f) => f['field'] == entry.key,
-          orElse: () => {'editable': 'yes'}, // Default to editable if not found
-        );
 
-        if (field['editable'] == 'yes') {
-          data[entry.key] = entry.value.text;
+      for (final field in widget.fields) {
+        final fieldName = field['field'] as String;
+        final isEditable = field['editable'] == 'yes';
+
+        if (isEditable) {
+          final controller = _controllers[fieldName];
+          if (controller != null) {
+            final value = controller.text.trim();
+            data[fieldName] = value.isEmpty ? null : value;
+          }
         }
       }
 
@@ -1096,10 +748,13 @@ class _MonitorConfigDialogState extends State<MonitorConfigDialog> {
         widget.onSaved();
       } else {
         // Show detailed error dialog instead of snackbar
-        await _showErrorDialog(result['message'] ?? 'Lỗi khi lưu');
+        await ErrorDialogUtils.showErrorDialog(
+          context,
+          result['message'] ?? 'Lỗi khi lưu',
+        );
       }
     } catch (e) {
-      await _showErrorDialog('Lỗi kết nối: $e');
+      await ErrorDialogUtils.showErrorDialog(context, 'Lỗi kết nối: $e');
     } finally {
       if (mounted) {
         setState(() => _isLoading = false);
@@ -1115,20 +770,6 @@ class _MonitorConfigDialogState extends State<MonitorConfigDialog> {
     return null;
   }
 
-  // Decode Unicode escape sequences in error messages
-  String _decodeUnicodeMessage(String message) {
-    try {
-      // Replace Unicode escape sequences like \u1ed7i with actual characters
-      return message.replaceAllMapped(RegExp(r'\\u([0-9a-fA-F]{4})'), (match) {
-        final hexCode = match.group(1)!;
-        final charCode = int.parse(hexCode, radix: 16);
-        return String.fromCharCode(charCode);
-      });
-    } catch (e) {
-      return message; // Return original if decoding fails
-    }
-  }
-
   // Validate alert config field (email format)
   String? _validateAlertConfig(String value) {
     if (value.trim().isEmpty) return null;
@@ -1138,7 +779,6 @@ class _MonitorConfigDialogState extends State<MonitorConfigDialog> {
         .split(',')
         .map((e) => e.trim())
         .where((e) => e.isNotEmpty);
-
     final emailRegex = RegExp(
       r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$',
     );
@@ -1150,179 +790,6 @@ class _MonitorConfigDialogState extends State<MonitorConfigDialog> {
     }
 
     return null;
-  }
-
-  Future<void> _showErrorDialog(String errorMessage) async {
-    return showDialog<void>(
-      context: context,
-      barrierDismissible: false, // User must tap button to close
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Row(
-            children: [
-              Icon(Icons.error_outline, color: Colors.red, size: 28),
-              const SizedBox(width: 12),
-              const Text(
-                'Lỗi',
-                style: TextStyle(
-                  color: Colors.red,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ],
-          ),
-          content: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  'Chi tiết lỗi:',
-                  style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
-                ),
-                const SizedBox(height: 8),
-                Container(
-                  width: double.maxFinite,
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: Colors.red.shade50,
-                    border: Border.all(color: Colors.red.shade200),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // Always try to decode Unicode first
-                      SelectableText(
-                        _decodeUnicodeMessage(errorMessage),
-                        style: const TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w500,
-                          color: Colors.black87,
-                        ),
-                      ),
-                      // Show original if it contains Unicode escape sequences
-                      if (errorMessage.contains('\\u') &&
-                          _decodeUnicodeMessage(errorMessage) != errorMessage)
-                        Padding(
-                          padding: const EdgeInsets.only(top: 8),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                'Raw message:',
-                                style: TextStyle(
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w600,
-                                  color: Colors.grey.shade600,
-                                ),
-                              ),
-                              const SizedBox(height: 4),
-                              SelectableText(
-                                errorMessage,
-                                style: const TextStyle(
-                                  fontSize: 12,
-                                  fontFamily: 'monospace',
-                                  color: Colors.black54,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 16),
-                // Add helpful hints based on error type
-                if (errorMessage.toLowerCase().contains('email'))
-                  Container(
-                    padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      color: Colors.blue.shade50,
-                      border: Border.all(color: Colors.blue.shade200),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: [
-                            Icon(
-                              Icons.info_outline,
-                              color: Colors.blue,
-                              size: 20,
-                            ),
-                            const SizedBox(width: 8),
-                            Text(
-                              'Gợi ý sửa lỗi Email:',
-                              style: TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.w600,
-                                color: Colors.blue.shade800,
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 8),
-                        Text(
-                          '• Định dạng đúng: user@example.com',
-                          style: TextStyle(
-                            fontSize: 13,
-                            color: Colors.blue.shade700,
-                          ),
-                        ),
-                        Text(
-                          '• Nhiều email: user1@gmail.com,user2@yahoo.com',
-                          style: TextStyle(
-                            fontSize: 13,
-                            color: Colors.blue.shade700,
-                          ),
-                        ),
-                        Text(
-                          '• Không có khoảng trắng thừa',
-                          style: TextStyle(
-                            fontSize: 13,
-                            color: Colors.blue.shade700,
-                          ),
-                        ),
-                        Text(
-                          '• Kiểm tra ký tự đặc biệt trong tên miền',
-                          style: TextStyle(
-                            fontSize: 13,
-                            color: Colors.blue.shade700,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-              ],
-            ),
-          ),
-          actions: <Widget>[
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                TextButton(
-                  child: const Text('Đóng'),
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                ),
-                const SizedBox(width: 8),
-                ElevatedButton.icon(
-                  icon: const Icon(Icons.edit, size: 16),
-                  label: const Text('Sửa lại'),
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                    // Focus will return to the form for editing
-                  },
-                ),
-              ],
-            ),
-          ],
-        );
-      },
-    );
   }
 
   @override
@@ -1406,13 +873,13 @@ class _MonitorConfigDialogState extends State<MonitorConfigDialog> {
                                       dataType,
                                     )
                                     : isBooleanField
-                                    ? _buildToggleSwitch(
+                                    ? _buildBooleanField(
                                       fieldName,
                                       label,
                                       required,
                                     )
                                     : isDateTimeField
-                                    ? _buildDateTimePicker(
+                                    ? _buildDateTimeField(
                                       fieldName,
                                       label,
                                       required,
@@ -1524,7 +991,7 @@ class _MonitorConfigDialogState extends State<MonitorConfigDialog> {
             ),
             const SizedBox(width: 16),
             ElevatedButton(
-              onPressed: _isLoading ? null : _save,
+              onPressed: _isLoading ? null : _saveItem,
               child:
                   _isLoading
                       ? const SizedBox(
@@ -1537,6 +1004,111 @@ class _MonitorConfigDialogState extends State<MonitorConfigDialog> {
           ],
         ),
       ],
+    );
+  }
+
+  Widget _buildBooleanField(String fieldName, String label, bool required) {
+    final isEnabled = _booleanValues[fieldName] ?? false;
+
+    return Container(
+      decoration: BoxDecoration(
+        border: Border.all(color: Colors.grey.shade300),
+        borderRadius: BorderRadius.circular(4),
+      ),
+      padding: const EdgeInsets.all(12),
+      child: Row(
+        children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  required ? '$label *' : label,
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  isEnabled ? 'Đã bật' : 'Đã tắt',
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: isEnabled ? Colors.green : Colors.grey,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Switch(
+            value: isEnabled,
+            onChanged: (value) {
+              setState(() {
+                _booleanValues[fieldName] = value;
+                _controllers[fieldName]?.text = value ? '1' : '0';
+                _updateFieldValue(fieldName, value ? '1' : '0');
+              });
+            },
+            activeColor: Colors.blue,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDateTimeField(String fieldName, String label, bool required) {
+    final selectedDateTime = _dateTimeValues[fieldName];
+
+    return Container(
+      decoration: BoxDecoration(
+        border: Border.all(color: Colors.grey.shade300),
+        borderRadius: BorderRadius.circular(4),
+      ),
+      padding: const EdgeInsets.all(12),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            required ? '$label *' : label,
+            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+          ),
+          const SizedBox(height: 8),
+          Row(
+            children: [
+              Expanded(
+                child: Text(
+                  selectedDateTime != null
+                      ? _formatDateTime(selectedDateTime)
+                      : 'Chưa chọn thời gian',
+                  style: TextStyle(
+                    fontSize: 14,
+                    color:
+                        selectedDateTime != null ? Colors.black87 : Colors.grey,
+                  ),
+                ),
+              ),
+              const SizedBox(width: 8),
+              IconButton(
+                onPressed: () => _selectDateTime(fieldName),
+                icon: const Icon(Icons.calendar_today),
+                tooltip: 'Chọn ngày giờ',
+              ),
+              if (selectedDateTime != null)
+                IconButton(
+                  onPressed: () {
+                    setState(() {
+                      _dateTimeValues[fieldName] = null;
+                      _controllers[fieldName]?.text = '';
+                      _updateFieldValue(fieldName, '');
+                    });
+                  },
+                  icon: const Icon(Icons.clear),
+                  tooltip: 'Xóa',
+                ),
+            ],
+          ),
+        ],
+      ),
     );
   }
 }

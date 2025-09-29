@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../services/monitor_service.dart';
 import '../services/base_crud_service.dart';
+import '../utils/error_dialog_utils.dart';
 
 class MonitorScreen extends StatefulWidget {
   const MonitorScreen({super.key});
@@ -189,22 +190,81 @@ class _MonitorScreenState extends State<MonitorScreen> {
     }
   }
 
-  void _showAddEditDialog({Map<String, dynamic>? item}) {
+  void _showAddEditDialog({Map<String, dynamic>? item}) async {
     final isEditMode = item != null;
     final dialogFields = MonitorService.getFormFields(isEditMode: isEditMode);
 
-    showDialog(
-      context: context,
-      builder:
-          (context) => MonitorItemDialog(
-            item: item,
-            fields: dialogFields,
-            onSaved: () async {
-              Navigator.of(context).pop();
-              await _loadMonitorItems();
-            },
-          ),
-    );
+    // If editing, load full item data from API
+    Map<String, dynamic>? fullItemData = item;
+    if (isEditMode) {
+      final itemId = item['id'] as int;
+
+      // Show loading dialog while fetching full data
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder:
+            (context) => const AlertDialog(
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  CircularProgressIndicator(),
+                  SizedBox(height: 16),
+                  Text('Đang tải dữ liệu...'),
+                ],
+              ),
+            ),
+      );
+
+      try {
+        final result = await MonitorService.getMonitorItem(itemId);
+
+        // Close loading dialog
+        if (mounted) Navigator.of(context).pop();
+
+        if (result['success']) {
+          fullItemData = result['data'];
+          print('📥 Full item data loaded: $fullItemData');
+        } else {
+          // Show error and return
+          if (mounted) {
+            await ErrorDialogUtils.showErrorDialog(
+              context,
+              result['message'] ?? 'Không thể tải dữ liệu item',
+            );
+          }
+          return;
+        }
+      } catch (e) {
+        // Close loading dialog
+        if (mounted) Navigator.of(context).pop();
+
+        // Show error and return
+        if (mounted) {
+          await ErrorDialogUtils.showErrorDialog(
+            context,
+            'Lỗi khi tải dữ liệu: $e',
+          );
+        }
+        return;
+      }
+    }
+
+    // Show edit/add dialog with full data
+    if (mounted) {
+      showDialog(
+        context: context,
+        builder:
+            (context) => MonitorItemDialog(
+              item: fullItemData,
+              fields: dialogFields,
+              onSaved: () async {
+                Navigator.of(context).pop();
+                await _loadMonitorItems();
+              },
+            ),
+      );
+    }
   }
 
   // Format value for mobile field display
@@ -1095,10 +1155,13 @@ class _MonitorItemDialogState extends State<MonitorItemDialog> {
         widget.onSaved();
       } else {
         // Show detailed error dialog instead of snackbar
-        await _showErrorDialog(result['message'] ?? 'Lỗi khi lưu');
+        await ErrorDialogUtils.showErrorDialog(
+          context,
+          result['message'] ?? 'Lỗi khi lưu',
+        );
       }
     } catch (e) {
-      await _showErrorDialog('Lỗi kết nối: $e');
+      await ErrorDialogUtils.showErrorDialog(context, 'Lỗi kết nối: $e');
     } finally {
       if (mounted) {
         setState(() => _isLoading = false);
@@ -1295,152 +1358,6 @@ class _MonitorItemDialogState extends State<MonitorItemDialog> {
           ],
         ),
       ],
-    );
-  }
-
-  // Decode Unicode escape sequences in error messages
-  String _decodeUnicodeMessage(String message) {
-    try {
-      // Replace Unicode escape sequences like \u1ed7i with actual characters
-      return message.replaceAllMapped(RegExp(r'\\u([0-9a-fA-F]{4})'), (match) {
-        final hexCode = match.group(1)!;
-        final charCode = int.parse(hexCode, radix: 16);
-        return String.fromCharCode(charCode);
-      });
-    } catch (e) {
-      return message; // Return original if decoding fails
-    }
-  }
-
-  // Show detailed error dialog with Unicode support
-  Future<void> _showErrorDialog(String errorMessage) async {
-    return showDialog<void>(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Row(
-            children: [
-              Icon(Icons.error_outline, color: Colors.red.shade600),
-              const SizedBox(width: 8),
-              const Text('Lỗi'),
-            ],
-          ),
-          content: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const Text(
-                  'Chi tiết lỗi:',
-                  style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
-                ),
-                const SizedBox(height: 12),
-                Container(
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: Colors.red.shade50,
-                    border: Border.all(color: Colors.red.shade200),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // Always try to decode Unicode first
-                      SelectableText(
-                        _decodeUnicodeMessage(errorMessage),
-                        style: const TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w500,
-                          color: Colors.black87,
-                        ),
-                      ),
-                      // Show original if it contains Unicode escape sequences
-                      if (errorMessage.contains('\\u') &&
-                          _decodeUnicodeMessage(errorMessage) != errorMessage)
-                        Padding(
-                          padding: const EdgeInsets.only(top: 8),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                'Raw message:',
-                                style: TextStyle(
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w600,
-                                  color: Colors.grey.shade600,
-                                ),
-                              ),
-                              const SizedBox(height: 4),
-                              SelectableText(
-                                errorMessage,
-                                style: const TextStyle(
-                                  fontSize: 12,
-                                  fontFamily: 'monospace',
-                                  color: Colors.black54,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 16),
-                // Add helpful hints based on error type
-                if (errorMessage.toLowerCase().contains('url'))
-                  Container(
-                    padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      color: Colors.blue.shade50,
-                      border: Border.all(color: Colors.blue.shade200),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: [
-                            Icon(
-                              Icons.info_outline,
-                              color: Colors.blue,
-                              size: 20,
-                            ),
-                            const SizedBox(width: 8),
-                            Text(
-                              'Gợi ý:',
-                              style: TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.w600,
-                                color: Colors.blue.shade800,
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 8),
-                        const Text(
-                          '• URL phải có định dạng hợp lệ (ví dụ: https://example.com)\n'
-                          '• Phải bắt đầu bằng http:// hoặc https://\n'
-                          '• Không được chứa ký tự đặc biệt không hợp lệ',
-                          style: TextStyle(fontSize: 13),
-                        ),
-                      ],
-                    ),
-                  ),
-              ],
-            ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: const Text('Đóng'),
-            ),
-            ElevatedButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: const Text('Sửa lại'),
-            ),
-          ],
-        );
-      },
     );
   }
 }
