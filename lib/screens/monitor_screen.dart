@@ -488,6 +488,7 @@ class _MonitorItemDialogState extends State<MonitorItemDialog> {
   Widget _buildReadOnlyField(String fieldName, String label, String dataType) {
     final currentValue = widget.item?[fieldName]?.toString() ?? '';
     final displayValue = _formatDisplayValue(currentValue, dataType);
+    final isErrorStatus = dataType.toLowerCase() == 'error_status';
 
     return Container(
       decoration: BoxDecoration(
@@ -526,26 +527,138 @@ class _MonitorItemDialogState extends State<MonitorItemDialog> {
             flex: 3,
             child: Padding(
               padding: const EdgeInsets.only(top: 2),
-              child: Text(
-                displayValue.isNotEmpty ? displayValue : 'Chưa có dữ liệu',
-                style: TextStyle(
-                  fontSize: 14,
-                  color:
-                      displayValue.isNotEmpty
-                          ? Colors.black87
-                          : Colors.grey.shade500,
-                  fontWeight:
-                      displayValue.isNotEmpty
-                          ? FontWeight.w400
-                          : FontWeight.w300,
-                ),
-                textAlign: TextAlign.end,
-              ),
+              child:
+                  isErrorStatus
+                      ? _buildErrorStatusDisplay(currentValue)
+                      : Text(
+                        displayValue.isNotEmpty
+                            ? displayValue
+                            : 'Chưa có dữ liệu',
+                        style: TextStyle(
+                          fontSize: 14,
+                          color:
+                              displayValue.isNotEmpty
+                                  ? Colors.black87
+                                  : Colors.grey.shade500,
+                          fontWeight:
+                              displayValue.isNotEmpty
+                                  ? FontWeight.w400
+                                  : FontWeight.w300,
+                        ),
+                        textAlign: TextAlign.end,
+                      ),
             ),
           ),
         ],
       ),
     );
+  }
+
+  // Build error status display with icon
+  Widget _buildErrorStatusDisplay(String value) {
+    if (value.isEmpty || value == 'null') {
+      return Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          Icon(Icons.help_outline, size: 16, color: Colors.grey.shade500),
+          const SizedBox(width: 4),
+          Text(
+            'N/A',
+            style: TextStyle(
+              fontSize: 14,
+              color: Colors.grey.shade500,
+              fontWeight: FontWeight.w400,
+            ),
+          ),
+        ],
+      );
+    }
+
+    final intValue = int.tryParse(value) ?? 0;
+
+    if (intValue < 0) {
+      // Error status - Red X
+      return Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          Container(
+            padding: const EdgeInsets.all(2),
+            decoration: BoxDecoration(
+              color: Colors.red.shade100,
+              shape: BoxShape.circle,
+            ),
+            child: Icon(Icons.close, size: 14, color: Colors.red.shade700),
+          ),
+          const SizedBox(width: 6),
+          Text(
+            'Lỗi',
+            style: TextStyle(
+              fontSize: 14,
+              color: Colors.red.shade700,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ],
+      );
+    } else if (intValue > 0) {
+      // Success status - Green check
+      return Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          Container(
+            padding: const EdgeInsets.all(2),
+            decoration: BoxDecoration(
+              color: Colors.green.shade100,
+              shape: BoxShape.circle,
+            ),
+            child: Icon(Icons.check, size: 14, color: Colors.green.shade700),
+          ),
+          const SizedBox(width: 6),
+          Text(
+            'Thành công',
+            style: TextStyle(
+              fontSize: 14,
+              color: Colors.green.shade700,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ],
+      );
+    } else {
+      // Neutral status - Gray circle
+      return Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          Container(
+            width: 18,
+            height: 18,
+            decoration: BoxDecoration(
+              color: Colors.grey.shade300,
+              shape: BoxShape.circle,
+            ),
+            child: Center(
+              child: Text(
+                '?',
+                style: TextStyle(
+                  fontSize: 10,
+                  color: Colors.grey.shade600,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(width: 6),
+          Text(
+            'N/A',
+            style: TextStyle(
+              fontSize: 14,
+              color: Colors.grey.shade600,
+              fontWeight: FontWeight.w400,
+            ),
+          ),
+        ],
+      );
+    }
   }
 
   // Format display value based on data type

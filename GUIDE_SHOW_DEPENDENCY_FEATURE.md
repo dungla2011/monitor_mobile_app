@@ -110,7 +110,21 @@ Tất cả điều kiện phải được thỏa mãn (AND logic).
 }
 ```
 
-### Ví dụ 3: Multiple conditions
+### Ví dụ 3: Error Status field
+
+```json
+{
+    "field_name": "last_check_status",
+    "description": "Trạng thái gần nhất",
+    "data_type": "error_status",
+    "editable": "no",
+    "show_in_api_edit_one": "yes",
+    "show_dependency": null,
+    "required": "no"
+}
+```
+
+### Ví dụ 4: Multiple conditions
 
 ```json
 {
@@ -219,6 +233,10 @@ Khi edit item, các field có `editable = "no"` nhưng `show_in_api_edit_one = "
 - **String/Text**: Hiển thị nguyên văn
 - **DateTime**: Format thành "DD/MM/YYYY HH:mm:ss"
 - **Boolean/Tinyint**: "Có" (cho 1/true) hoặc "Không" (cho 0/false)
+- **Error Status**: Icon + text dựa trên giá trị:
+  - `< 0`: ❌ "Lỗi" (màu đỏ)
+  - `> 0`: ✅ "Thành công" (màu xanh)
+  - `= 0`: ❓ "N/A" (màu xám)
 - **Null/Empty**: "Chưa có dữ liệu" (màu xám)
 
 **Styling**: Background xám nhạt, border radius 8px, separator line giữa label và data
