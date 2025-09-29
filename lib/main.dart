@@ -8,6 +8,7 @@ import 'services/web_auth_service.dart';
 import 'widgets/web_auth_wrapper.dart';
 import 'screens/profile_screen.dart';
 import 'screens/monitor_screen.dart';
+import 'screens/monitor_config_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -65,6 +66,7 @@ class _MainScreenState extends State<MainScreen> {
 
   final List<Widget> _screens = [
     const MonitorScreen(), // Thay HomeScreen bằng MonitorScreen
+    const MonitorConfigScreen(), // Thêm Monitor Config Screen
     const ProfileScreen(),
     const NotificationScreen(),
     const SettingsScreen(),
@@ -117,8 +119,8 @@ class _MainScreenState extends State<MainScreen> {
               },
             ),
             ListTile(
-              leading: const Icon(Icons.person),
-              title: const Text('Hồ sơ'),
+              leading: const Icon(Icons.settings_applications),
+              title: const Text('Monitor Configs'),
               selected: _selectedIndex == 1,
               onTap: () {
                 setState(() {
@@ -128,8 +130,8 @@ class _MainScreenState extends State<MainScreen> {
               },
             ),
             ListTile(
-              leading: const Icon(Icons.notifications),
-              title: const Text('Thông báo'),
+              leading: const Icon(Icons.person),
+              title: const Text('Hồ sơ'),
               selected: _selectedIndex == 2,
               onTap: () {
                 setState(() {
@@ -139,8 +141,8 @@ class _MainScreenState extends State<MainScreen> {
               },
             ),
             ListTile(
-              leading: const Icon(Icons.settings),
-              title: const Text('Cài đặt'),
+              leading: const Icon(Icons.notifications),
+              title: const Text('Thông báo'),
               selected: _selectedIndex == 3,
               onTap: () {
                 setState(() {
@@ -149,14 +151,25 @@ class _MainScreenState extends State<MainScreen> {
                 Navigator.pop(context);
               },
             ),
-            const Divider(),
             ListTile(
-              leading: const Icon(Icons.info),
-              title: const Text('Giới thiệu'),
+              leading: const Icon(Icons.settings),
+              title: const Text('Cài đặt'),
               selected: _selectedIndex == 4,
               onTap: () {
                 setState(() {
                   _selectedIndex = 4;
+                });
+                Navigator.pop(context);
+              },
+            ),
+            const Divider(),
+            ListTile(
+              leading: const Icon(Icons.info),
+              title: const Text('Giới thiệu'),
+              selected: _selectedIndex == 5,
+              onTap: () {
+                setState(() {
+                  _selectedIndex = 5;
                 });
                 Navigator.pop(context);
               },
