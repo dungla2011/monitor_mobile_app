@@ -7,21 +7,25 @@ import 'services/firebase_messaging_service.dart';
 import 'services/web_auth_service.dart';
 import 'widgets/web_auth_wrapper.dart';
 import 'screens/profile_screen.dart';
+import 'screens/monitor_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Khởi tạo Firebase với options cho web
-  if (kIsWeb) {
-    await Firebase.initializeApp(
-      options: DefaultFirebaseOptions.currentPlatform,
-    );
-  } else {
-    await Firebase.initializeApp();
-  }
+  // Tạm thời disable Firebase trên web để test Monitor CRUD
+  if (!kIsWeb) {
+    // Khởi tạo Firebase với options cho web
+    if (kIsWeb) {
+      await Firebase.initializeApp(
+        options: DefaultFirebaseOptions.currentPlatform,
+      );
+    } else {
+      await Firebase.initializeApp();
+    }
 
-  // Khởi tạo Firebase Messaging
-  await FirebaseMessagingService.initialize();
+    // Khởi tạo Firebase Messaging
+    await FirebaseMessagingService.initialize();
+  }
 
   // Đăng ký background message handler (chỉ cho mobile)
   if (!kIsWeb) {
@@ -60,7 +64,7 @@ class _MainScreenState extends State<MainScreen> {
   int _selectedIndex = 0;
 
   final List<Widget> _screens = [
-    const HomeScreen(),
+    const MonitorScreen(), // Thay HomeScreen bằng MonitorScreen
     const ProfileScreen(),
     const NotificationScreen(),
     const SettingsScreen(),
@@ -102,8 +106,8 @@ class _MainScreenState extends State<MainScreen> {
               ),
             ),
             ListTile(
-              leading: const Icon(Icons.home),
-              title: const Text('Trang chủ'),
+              leading: const Icon(Icons.monitor),
+              title: const Text('Monitor Items'),
               selected: _selectedIndex == 0,
               onTap: () {
                 setState(() {
@@ -209,33 +213,7 @@ class _MainScreenState extends State<MainScreen> {
 }
 
 // Các màn hình cho từng mục trong menu
-class HomeScreen extends StatelessWidget {
-  const HomeScreen({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(Icons.home, size: 100, color: Colors.blue),
-          SizedBox(height: 20),
-          Text(
-            'Trang chủ',
-            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-          ),
-          SizedBox(height: 10),
-          Text(
-            'Chào mừng bạn đến với Monitor App!',
-            style: TextStyle(fontSize: 16),
-            textAlign: TextAlign.center,
-          ),
-        ],
-      ),
-    );
-  }
-}
-
+// MonitorScreen đã được chuyển sang file riêng và thay thế HomeScreen
 // ProfileScreen đã được chuyển sang file riêng
 
 class NotificationScreen extends StatefulWidget {

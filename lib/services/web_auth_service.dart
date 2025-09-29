@@ -32,8 +32,10 @@ class WebAuthService {
   }) async {
     try {
       print('🔗 Calling API: $_loginEndpoint');
-      print('📤 Request body: ${jsonEncode({'username': username, 'password': password})}');
-      
+      print(
+        '📤 Request body: ${jsonEncode({'username': username, 'password': password})}',
+      );
+
       final response = await http.post(
         Uri.parse(_loginEndpoint),
         headers: {
@@ -42,7 +44,7 @@ class WebAuthService {
         },
         body: jsonEncode({'username': username, 'password': password}),
       );
-      
+
       print('📥 Response status: ${response.statusCode}');
       print('📥 Response body: ${response.body}');
 
