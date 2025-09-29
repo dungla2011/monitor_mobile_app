@@ -401,6 +401,9 @@ class MonitorItemDialog extends StatefulWidget {
 class _MonitorItemDialogState extends State<MonitorItemDialog> {
   final _formKey = GlobalKey<FormState>();
   final Map<String, TextEditingController> _controllers = {};
+  final Map<String, bool> _booleanValues = {}; // Track boolean field states
+  final Map<String, DateTime?> _dateTimeValues =
+      {}; // Track datetime field states
   bool _isLoading = false;
 
   @override
@@ -413,7 +416,42 @@ class _MonitorItemDialogState extends State<MonitorItemDialog> {
     for (final field in widget.fields) {
       final fieldName = field['field'] as String;
       final currentValue = widget.item?[fieldName]?.toString() ?? '';
-      _controllers[fieldName] = TextEditingController(text: currentValue);
+      final dataType = field['data_type']?.toString().toLowerCase() ?? '';
+      final isBooleanField =
+          dataType.contains('boolean') ||
+          dataType.contains('tinyint') ||
+          (fieldName == 'enable');
+      final isDateTimeField =
+          dataType.contains('datetime') && field['editable'] == 'yes';
+
+      if (isBooleanField) {
+        // Initialize boolean value: 1, "1", true -> true; others -> false
+        final rawValue = widget.item?[fieldName];
+        _booleanValues[fieldName] =
+            rawValue == 1 ||
+            rawValue == "1" ||
+            rawValue == true ||
+            rawValue?.toString().toLowerCase() == 'true';
+        _controllers[fieldName] = TextEditingController(
+          text: _booleanValues[fieldName]! ? '1' : '0',
+        );
+      } else if (isDateTimeField) {
+        // Initialize datetime value
+        DateTime? dateTime;
+        if (currentValue.isNotEmpty && currentValue != 'null') {
+          try {
+            dateTime = DateTime.parse(currentValue);
+          } catch (e) {
+            dateTime = null;
+          }
+        }
+        _dateTimeValues[fieldName] = dateTime;
+        _controllers[fieldName] = TextEditingController(
+          text: dateTime != null ? _formatDateTime(dateTime) : '',
+        );
+      } else {
+        _controllers[fieldName] = TextEditingController(text: currentValue);
+      }
     }
   }
 
@@ -423,6 +461,162 @@ class _MonitorItemDialogState extends State<MonitorItemDialog> {
       controller.dispose();
     }
     super.dispose();
+  }
+
+  Widget _buildToggleSwitch(String fieldName, String label, bool required) {
+    final isEnabled = _booleanValues[fieldName] ?? false;
+
+    return Container(
+      decoration: BoxDecoration(
+        border: Border.all(color: Colors.grey.shade300),
+        borderRadius: BorderRadius.circular(4),
+      ),
+      padding: const EdgeInsets.all(12),
+      child: Row(
+        children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  required ? '$label *' : label,
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  isEnabled ? 'Đã bật' : 'Đã tắt',
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: isEnabled ? Colors.green : Colors.grey,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Switch(
+            value: isEnabled,
+            onChanged: (value) {
+              setState(() {
+                _booleanValues[fieldName] = value;
+                _controllers[fieldName]?.text = value ? '1' : '0';
+              });
+            },
+            activeColor: Colors.blue,
+          ),
+        ],
+      ),
+    );
+  }
+
+  String _formatDateTime(DateTime dateTime) {
+    // Format: YYYY-MM-DD HH:mm:ss
+    return '${dateTime.year.toString().padLeft(4, '0')}-'
+        '${dateTime.month.toString().padLeft(2, '0')}-'
+        '${dateTime.day.toString().padLeft(2, '0')} '
+        '${dateTime.hour.toString().padLeft(2, '0')}:'
+        '${dateTime.minute.toString().padLeft(2, '0')}:'
+        '${dateTime.second.toString().padLeft(2, '0')}';
+  }
+
+  Widget _buildDateTimePicker(String fieldName, String label, bool required) {
+    final selectedDateTime = _dateTimeValues[fieldName];
+
+    return Container(
+      decoration: BoxDecoration(
+        border: Border.all(color: Colors.grey.shade300),
+        borderRadius: BorderRadius.circular(4),
+      ),
+      padding: const EdgeInsets.all(12),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            required ? '$label *' : label,
+            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+          ),
+          const SizedBox(height: 8),
+          Row(
+            children: [
+              Expanded(
+                child: Text(
+                  selectedDateTime != null
+                      ? _formatDateTime(selectedDateTime)
+                      : 'Chưa chọn thời gian',
+                  style: TextStyle(
+                    fontSize: 14,
+                    color:
+                        selectedDateTime != null ? Colors.black87 : Colors.grey,
+                  ),
+                ),
+              ),
+              const SizedBox(width: 8),
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  IconButton(
+                    onPressed: () => _pickDateTime(fieldName),
+                    icon: const Icon(Icons.calendar_today),
+                    tooltip: 'Chọn ngày giờ',
+                  ),
+                  if (selectedDateTime != null)
+                    IconButton(
+                      onPressed: () => _clearDateTime(fieldName),
+                      icon: const Icon(Icons.clear),
+                      tooltip: 'Xóa',
+                    ),
+                ],
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _pickDateTime(String fieldName) async {
+    final now = DateTime.now();
+    final initialDate = _dateTimeValues[fieldName] ?? now;
+
+    // Pick date first
+    final date = await showDatePicker(
+      context: context,
+      initialDate: initialDate,
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2100),
+    );
+
+    if (date != null && mounted) {
+      // Pick time
+      final time = await showTimePicker(
+        context: context,
+        initialTime: TimeOfDay.fromDateTime(initialDate),
+      );
+
+      if (time != null && mounted) {
+        final selectedDateTime = DateTime(
+          date.year,
+          date.month,
+          date.day,
+          time.hour,
+          time.minute,
+        );
+
+        setState(() {
+          _dateTimeValues[fieldName] = selectedDateTime;
+          _controllers[fieldName]?.text = _formatDateTime(selectedDateTime);
+        });
+      }
+    }
+  }
+
+  void _clearDateTime(String fieldName) {
+    setState(() {
+      _dateTimeValues[fieldName] = null;
+      _controllers[fieldName]?.text = '';
+    });
   }
 
   Future<void> _save() async {
@@ -480,60 +674,84 @@ class _MonitorItemDialogState extends State<MonitorItemDialog> {
           child: SingleChildScrollView(
             child: Column(
               mainAxisSize: MainAxisSize.min,
-               children:
-                   widget.fields.map((field) {
-                     final fieldName = field['field'] as String;
-                     final label = field['label'] as String? ?? fieldName;
-                     final required = field['required'] == true;
-                     final selectOptions = field['select_options'] as Map<String, dynamic>?;
+              children:
+                  widget.fields.map((field) {
+                    final fieldName = field['field'] as String;
+                    final label = field['label'] as String? ?? fieldName;
+                    final required = field['required'] == true;
+                    final selectOptions =
+                        field['select_options'] as Map<String, dynamic>?;
+                    final dataType =
+                        field['data_type']?.toString().toLowerCase() ?? '';
+                    final isBooleanField =
+                        dataType.contains('boolean') ||
+                        dataType.contains('tinyint') ||
+                        (fieldName ==
+                            'enable'); // Special case for enable field
+                    final isDateTimeField =
+                        dataType.contains('datetime') &&
+                        field['editable'] == 'yes';
 
-                     return Padding(
-                       padding: const EdgeInsets.only(bottom: 16),
-                       child: selectOptions != null
-                           ? DropdownButtonFormField<String>(
-                               value: _controllers[fieldName]?.text.isNotEmpty == true 
-                                   ? _controllers[fieldName]!.text 
-                                   : null,
-                               decoration: InputDecoration(
-                                 labelText: required ? '$label *' : label,
-                                 border: const OutlineInputBorder(),
-                               ),
-                               items: selectOptions.entries.map((entry) {
-                                 return DropdownMenuItem<String>(
-                                   value: entry.key,
-                                   child: Text(entry.value.toString()),
-                                 );
-                               }).toList(),
-                               onChanged: (value) {
-                                 _controllers[fieldName]?.text = value ?? '';
-                               },
-                               validator: required
-                                   ? (value) {
-                                       if (value == null || value.trim().isEmpty || value == '0') {
-                                         return 'Vui lòng chọn $label';
-                                       }
-                                       return null;
-                                     }
-                                   : null,
-                             )
-                           : TextFormField(
-                               controller: _controllers[fieldName],
-                               decoration: InputDecoration(
-                                 labelText: required ? '$label *' : label,
-                                 border: const OutlineInputBorder(),
-                               ),
-                               maxLines: field['data_type'].toString().contains('text') ? 3 : 1,
-                               validator: required
-                                   ? (value) {
-                                       if (value == null || value.trim().isEmpty) {
-                                         return 'Vui lòng nhập $label';
-                                       }
-                                       return null;
-                                     }
-                                   : null,
-                             ),
-                     );
-                   }).toList(),
+                    return Padding(
+                      padding: const EdgeInsets.only(bottom: 16),
+                      child:
+                          isBooleanField
+                              ? _buildToggleSwitch(fieldName, label, required)
+                              : isDateTimeField
+                              ? _buildDateTimePicker(fieldName, label, required)
+                              : selectOptions != null
+                              ? DropdownButtonFormField<String>(
+                                value:
+                                    _controllers[fieldName]?.text.isNotEmpty ==
+                                            true
+                                        ? _controllers[fieldName]!.text
+                                        : null,
+                                decoration: InputDecoration(
+                                  labelText: required ? '$label *' : label,
+                                  border: const OutlineInputBorder(),
+                                ),
+                                items:
+                                    selectOptions.entries.map((entry) {
+                                      return DropdownMenuItem<String>(
+                                        value: entry.key,
+                                        child: Text(entry.value.toString()),
+                                      );
+                                    }).toList(),
+                                onChanged: (value) {
+                                  _controllers[fieldName]?.text = value ?? '';
+                                },
+                                validator:
+                                    required
+                                        ? (value) {
+                                          if (value == null ||
+                                              value.trim().isEmpty ||
+                                              value == '0') {
+                                            return 'Vui lòng chọn $label';
+                                          }
+                                          return null;
+                                        }
+                                        : null,
+                              )
+                              : TextFormField(
+                                controller: _controllers[fieldName],
+                                decoration: InputDecoration(
+                                  labelText: required ? '$label *' : label,
+                                  border: const OutlineInputBorder(),
+                                ),
+                                maxLines: dataType.contains('text') ? 3 : 1,
+                                validator:
+                                    required
+                                        ? (value) {
+                                          if (value == null ||
+                                              value.trim().isEmpty) {
+                                            return 'Vui lòng nhập $label';
+                                          }
+                                          return null;
+                                        }
+                                        : null,
+                              ),
+                    );
+                  }).toList(),
             ),
           ),
         ),

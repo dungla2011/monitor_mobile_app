@@ -414,6 +414,7 @@ class MonitorConfigService {
               'label': fieldMap['description'],
               'required': fieldMap['required'] == 'yes',
               'data_type': fieldMap['data_type'],
+              'editable': fieldMap['editable'], // Add missing editable field
               'select_options':
                   fieldMap['select_option_value'], // For dropdown fields
             };
