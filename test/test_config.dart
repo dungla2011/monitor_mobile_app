@@ -76,71 +76,27 @@ class TestUtils {
     throw TestFailure('Could not find text "$text" within timeout');
   }
 
-  /// Mock HTTP response helper
-  static void mockHttpResponse(
-    MockClient mockClient,
-    String url,
-    int statusCode,
-    String responseBody, {
-    Map<String, String>? headers,
-  }) {
-    when(
-      mockClient.get(Uri.parse(url), headers: headers ?? anyNamed('headers')),
-    ).thenAnswer((_) async => http.Response(responseBody, statusCode));
+  /// Create mock HTTP response for testing
+  static http.Response createMockResponse(int statusCode, String responseBody) {
+    return http.Response(responseBody, statusCode);
   }
 
-  /// Mock HTTP POST response helper
-  static void mockHttpPostResponse(
-    MockClient mockClient,
-    String url,
-    int statusCode,
-    String responseBody, {
-    Map<String, String>? headers,
-    dynamic body,
-  }) {
-    when(
-      mockClient.post(
-        Uri.parse(url),
-        headers: headers ?? anyNamed('headers'),
-        body: body ?? anyNamed('body'),
-      ),
-    ).thenAnswer((_) async => http.Response(responseBody, statusCode));
+  /// Create successful API response
+  static http.Response createSuccessResponse(Map<String, dynamic> payload) {
+    final response = {'code': 1, 'message': 'Success', 'payload': payload};
+    return http.Response(response.toString(), 200);
   }
 
-  /// Mock HTTP PUT response helper
-  static void mockHttpPutResponse(
-    MockClient mockClient,
-    String url,
-    int statusCode,
-    String responseBody, {
-    Map<String, String>? headers,
-    dynamic body,
-  }) {
-    when(
-      mockClient.put(
-        Uri.parse(url),
-        headers: headers ?? anyNamed('headers'),
-        body: body ?? anyNamed('body'),
-      ),
-    ).thenAnswer((_) async => http.Response(responseBody, statusCode));
+  /// Create error API response
+  static http.Response createErrorResponse(String message, {int code = 0}) {
+    final response = {'code': code, 'message': message, 'payload': null};
+    return http.Response(response.toString(), 200);
   }
 
-  /// Mock HTTP DELETE response helper
-  static void mockHttpDeleteResponse(
-    MockClient mockClient,
-    String url,
-    int statusCode,
-    String responseBody, {
-    Map<String, String>? headers,
-    dynamic body,
-  }) {
-    when(
-      mockClient.delete(
-        Uri.parse(url),
-        headers: headers ?? anyNamed('headers'),
-        body: body ?? anyNamed('body'),
-      ),
-    ).thenAnswer((_) async => http.Response(responseBody, statusCode));
+  /// Create HTTP error response
+  static http.Response createHttpErrorResponse(int statusCode, String message) {
+    final response = {'error': message};
+    return http.Response(response.toString(), statusCode);
   }
 
   /// Verify widget exists và visible
