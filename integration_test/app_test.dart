@@ -170,10 +170,10 @@ void main() {
         final stopwatch = Stopwatch()..start();
 
         app.main();
-        
+
         // Wait for app to initialize with longer timeout for emulator
         await tester.pumpAndSettle(const Duration(seconds: 30));
-        
+
         // Additional pump to ensure all animations complete
         await tester.pump(const Duration(seconds: 2));
 
@@ -181,11 +181,13 @@ void main() {
 
         // App should load within 30 seconds on CI emulator (very conservative)
         expect(stopwatch.elapsedMilliseconds, lessThan(30000));
-        print('⏱️ App loaded in ${stopwatch.elapsedMilliseconds}ms on emulator');
-        
+        print(
+            '⏱️ App loaded in ${stopwatch.elapsedMilliseconds}ms on emulator');
+
         // Log performance for monitoring
         if (stopwatch.elapsedMilliseconds > 20000) {
-          print('⚠️ Slow load time detected: ${stopwatch.elapsedMilliseconds}ms');
+          print(
+              '⚠️ Slow load time detected: ${stopwatch.elapsedMilliseconds}ms');
         }
       });
 
