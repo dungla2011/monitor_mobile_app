@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+// TODO: Add Firebase dependencies when needed
+// import 'package:firebase_auth/firebase_auth.dart';
 import '../services/auth_service.dart';
 import '../screens/login_screen.dart';
 import '../main.dart';
@@ -9,6 +10,15 @@ class AuthWrapper extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Simplified version without Firebase for now
+    if (AuthService.isLoggedIn) {
+      return const MainScreen();
+    } else {
+      return const LoginScreen();
+    }
+
+    // TODO: Uncomment when Firebase is added
+    /*
     return StreamBuilder<User?>(
       stream: AuthService.authStateChanges,
       builder: (context, snapshot) {
@@ -66,5 +76,6 @@ class AuthWrapper extends StatelessWidget {
         }
       },
     );
+    */
   }
 }

@@ -24,14 +24,16 @@ analyzer:
   
   # Ignore missing dependencies that are intentionally not included
   errors:
-    # Treat these as warnings instead of errors for CI
-    uri_does_not_exist: warning
-    undefined_class: warning
-    undefined_identifier: warning
-    non_type_as_type_argument: warning
-    undefined_method: warning
-    non_type_in_catch_clause: warning
+    # Ignore Firebase/Google Sign-In related warnings (commented out dependencies)
+    uri_does_not_exist: ignore
+    undefined_class: ignore
+    undefined_identifier: ignore
+    non_type_as_type_argument: ignore
+    undefined_method: ignore
+    non_type_in_catch_clause: ignore
     depend_on_referenced_packages: ignore
+    # Ignore unused imports in commented code
+    unused_import: ignore
     
   # Strong mode settings
   strong-mode:

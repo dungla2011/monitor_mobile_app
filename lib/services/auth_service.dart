@@ -1,8 +1,12 @@
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:google_sign_in/google_sign_in.dart';
+// TODO: Add Firebase dependencies to pubspec.yaml when needed
+// import 'package:firebase_auth/firebase_auth.dart';
+// import 'package:google_sign_in/google_sign_in.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+/// Placeholder AuthService - Firebase dependencies not added yet
 class AuthService {
+  // TODO: Uncomment when Firebase dependencies are added
+  /*
   static final FirebaseAuth _auth = FirebaseAuth.instance;
   static final GoogleSignIn _googleSignIn = GoogleSignIn();
 
@@ -195,4 +199,9 @@ class AuthService {
         return 'Đã xảy ra lỗi: ${e.message}';
     }
   }
+  */
+
+  // Placeholder methods for now
+  static bool get isLoggedIn => false;
+  static Future<void> signOut() async {}
 }
