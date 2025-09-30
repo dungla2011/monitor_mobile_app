@@ -622,7 +622,7 @@ abstract class BaseCrudScreenState<T extends BaseCrudScreen> extends State<T> {
               ],
             ),
           );
-        }).toList(),
+        }),
       ],
     );
   }
@@ -662,7 +662,7 @@ class _BaseCrudDialogState extends State<BaseCrudDialog> {
   bool _isLoading = false;
 
   // Track current item data for dependency checking
-  Map<String, dynamic> _currentItemData = {};
+  final Map<String, dynamic> _currentItemData = {};
 
   @override
   void initState() {

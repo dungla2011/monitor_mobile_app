@@ -31,7 +31,7 @@ class _CrudDialogState extends State<CrudDialog> {
   bool _isLoading = false;
 
   // Track current item data for dependency checking
-  Map<String, dynamic> _currentItemData = {};
+  final Map<String, dynamic> _currentItemData = {};
 
   @override
   void initState() {
