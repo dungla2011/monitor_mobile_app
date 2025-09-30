@@ -49,8 +49,7 @@ class _CrudDialogState extends State<CrudDialog> {
       _currentItemData[fieldName] = currentValue;
 
       final dataType = field['data_type']?.toString().toLowerCase() ?? '';
-      final isBooleanField =
-          dataType.contains('boolean') ||
+      final isBooleanField = dataType.contains('boolean') ||
           dataType.contains('tinyint') ||
           (fieldName == 'enable'); // Special case for enable field
       final isDateTimeField =
@@ -59,8 +58,7 @@ class _CrudDialogState extends State<CrudDialog> {
       if (isBooleanField) {
         // Initialize boolean value: 1, "1", true -> true; others -> false
         final rawValue = widget.item?[fieldName];
-        _booleanValues[fieldName] =
-            rawValue == 1 ||
+        _booleanValues[fieldName] = rawValue == 1 ||
             rawValue == "1" ||
             rawValue == true ||
             rawValue?.toString().toLowerCase() == 'true';
@@ -189,34 +187,33 @@ class _CrudDialogState extends State<CrudDialog> {
     return AlertDialog(
       title: Container(
         padding: const EdgeInsets.only(top: 8),
-        child:
-            widget.item != null
-                ? Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text('Sửa ${widget.title}'),
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 8,
-                        vertical: 4,
-                      ),
-                      decoration: BoxDecoration(
-                        color: Colors.blue.shade100,
-                        borderRadius: BorderRadius.circular(12),
-                        border: Border.all(color: Colors.blue.shade300),
-                      ),
-                      child: Text(
-                        '#${widget.item!['id']}',
-                        style: TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.blue.shade700,
-                        ),
+        child: widget.item != null
+            ? Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text('Sửa ${widget.title}'),
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 4,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Colors.blue.shade100,
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(color: Colors.blue.shade300),
+                    ),
+                    child: Text(
+                      '#${widget.item!['id']}',
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.blue.shade700,
                       ),
                     ),
-                  ],
-                )
-                : Text('Thêm ${widget.title}'),
+                  ),
+                ],
+              )
+            : Text('Thêm ${widget.title}'),
       ),
       content: SizedBox(
         width: double.maxFinite,
@@ -227,17 +224,16 @@ class _CrudDialogState extends State<CrudDialog> {
               padding: const EdgeInsets.only(top: 8),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
-                children:
-                    widget.fields
-                        .where((field) {
-                          // Check if field should be shown based on show_dependency
-                          return CrudUtils.shouldShowField(
-                            field,
-                            _currentItemData,
-                          );
-                        })
-                        .map((field) => _buildField(field))
-                        .toList(),
+                children: widget.fields
+                    .where((field) {
+                      // Check if field should be shown based on show_dependency
+                      return CrudUtils.shouldShowField(
+                        field,
+                        _currentItemData,
+                      );
+                    })
+                    .map((field) => _buildField(field))
+                    .toList(),
               ),
             ),
           ),
@@ -254,14 +250,13 @@ class _CrudDialogState extends State<CrudDialog> {
             const SizedBox(width: 16),
             ElevatedButton(
               onPressed: _isLoading ? null : _saveItem,
-              child:
-                  _isLoading
-                      ? const SizedBox(
-                        width: 20,
-                        height: 20,
-                        child: CircularProgressIndicator(strokeWidth: 2),
-                      )
-                      : Text(widget.item != null ? 'Cập nhật' : 'Thêm'),
+              child: _isLoading
+                  ? const SizedBox(
+                      width: 20,
+                      height: 20,
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    )
+                  : Text(widget.item != null ? 'Cập nhật' : 'Thêm'),
             ),
           ],
         ),
@@ -272,8 +267,7 @@ class _CrudDialogState extends State<CrudDialog> {
   Widget _buildField(Map<String, dynamic> field) {
     final fieldName =
         field['field']?.toString() ?? field['field_name']?.toString() ?? '';
-    final label =
-        field['label']?.toString() ??
+    final label = field['label']?.toString() ??
         field['description']?.toString() ??
         fieldName;
     final required = field['required'] == true;
@@ -292,8 +286,7 @@ class _CrudDialogState extends State<CrudDialog> {
     }
 
     final dataType = field['data_type']?.toString().toLowerCase() ?? '';
-    final isBooleanField =
-        dataType.contains('boolean') ||
+    final isBooleanField = dataType.contains('boolean') ||
         dataType.contains('tinyint') ||
         (fieldName == 'enable');
     final isDateTimeField =
@@ -302,16 +295,16 @@ class _CrudDialogState extends State<CrudDialog> {
 
     return Padding(
       padding: const EdgeInsets.only(bottom: 16),
-      child:
-          isReadOnly
-              ? _buildReadOnlyField(fieldName, label, dataType)
-              : isBooleanField
+      child: isReadOnly
+          ? _buildReadOnlyField(fieldName, label, dataType)
+          : isBooleanField
               ? _buildBooleanField(fieldName, label, required)
               : isDateTimeField
-              ? _buildDateTimeField(fieldName, label, required)
-              : selectOptions != null
-              ? _buildDropdownField(fieldName, label, required, selectOptions)
-              : _buildTextField(fieldName, label, required, dataType),
+                  ? _buildDateTimeField(fieldName, label, required)
+                  : selectOptions != null
+                      ? _buildDropdownField(
+                          fieldName, label, required, selectOptions)
+                      : _buildTextField(fieldName, label, required, dataType),
     );
   }
 
@@ -477,34 +470,31 @@ class _CrudDialogState extends State<CrudDialog> {
     Map<String, dynamic> selectOptions,
   ) {
     return DropdownButtonFormField<String>(
-      value:
-          _controllers[fieldName]?.text.isNotEmpty == true
-              ? _controllers[fieldName]!.text
-              : null,
+      value: _controllers[fieldName]?.text.isNotEmpty == true
+          ? _controllers[fieldName]!.text
+          : null,
       decoration: InputDecoration(
         labelText: required ? '$label *' : label,
         border: const OutlineInputBorder(),
       ),
-      items:
-          selectOptions.entries.map((entry) {
-            return DropdownMenuItem<String>(
-              value: entry.key,
-              child: Text(entry.value.toString()),
-            );
-          }).toList(),
+      items: selectOptions.entries.map((entry) {
+        return DropdownMenuItem<String>(
+          value: entry.key,
+          child: Text(entry.value.toString()),
+        );
+      }).toList(),
       onChanged: (value) {
         _controllers[fieldName]?.text = value ?? '';
         _updateFieldValue(fieldName, value ?? '');
       },
-      validator:
-          required
-              ? (value) {
-                if (value == null || value.trim().isEmpty || value == '0') {
-                  return 'Vui lòng chọn $label';
-                }
-                return null;
+      validator: required
+          ? (value) {
+              if (value == null || value.trim().isEmpty || value == '0') {
+                return 'Vui lòng chọn $label';
               }
-              : null,
+              return null;
+            }
+          : null,
     );
   }
 

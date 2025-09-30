@@ -5,8 +5,9 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 class FirebaseMessagingService {
-  static final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
-  static final FlutterLocalNotificationsPlugin _localNotificationsPlugin = 
+  static final FirebaseMessaging _firebaseMessaging =
+      FirebaseMessaging.instance;
+  static final FlutterLocalNotificationsPlugin _localNotificationsPlugin =
       FlutterLocalNotificationsPlugin();
 
   // Khởi tạo Firebase Messaging
@@ -189,7 +190,7 @@ class FirebaseMessagingService {
 @pragma('vm:entry-point')
 Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   await Firebase.initializeApp();
-  
+
   if (kDebugMode) {
     print('Background message received: ${message.messageId}');
     print('Title: ${message.notification?.title}');

@@ -42,21 +42,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
     // Hiển thị dialog xác nhận
     final shouldSignOut = await showDialog<bool>(
       context: context,
-      builder:
-          (context) => AlertDialog(
-            title: const Text('Đăng xuất'),
-            content: const Text('Bạn có chắc chắn muốn đăng xuất?'),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.of(context).pop(false),
-                child: const Text('Hủy'),
-              ),
-              TextButton(
-                onPressed: () => Navigator.of(context).pop(true),
-                child: const Text('Đăng xuất'),
-              ),
-            ],
+      builder: (context) => AlertDialog(
+        title: const Text('Đăng xuất'),
+        content: const Text('Bạn có chắc chắn muốn đăng xuất?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: const Text('Hủy'),
           ),
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            child: const Text('Đăng xuất'),
+          ),
+        ],
+      ),
     );
 
     if (shouldSignOut == true) {
@@ -80,27 +79,26 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
     final result = await showDialog<String>(
       context: context,
-      builder:
-          (context) => AlertDialog(
-            title: const Text('Chỉnh sửa hồ sơ'),
-            content: TextField(
-              controller: nameController,
-              decoration: const InputDecoration(
-                labelText: 'Tên hiển thị',
-                border: OutlineInputBorder(),
-              ),
-            ),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.of(context).pop(),
-                child: const Text('Hủy'),
-              ),
-              TextButton(
-                onPressed: () => Navigator.of(context).pop(nameController.text),
-                child: const Text('Lưu'),
-              ),
-            ],
+      builder: (context) => AlertDialog(
+        title: const Text('Chỉnh sửa hồ sơ'),
+        content: TextField(
+          controller: nameController,
+          decoration: const InputDecoration(
+            labelText: 'Tên hiển thị',
+            border: OutlineInputBorder(),
           ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('Hủy'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(nameController.text),
+            child: const Text('Lưu'),
+          ),
+        ],
+      ),
     );
 
     if (result != null && result.isNotEmpty) {
@@ -265,7 +263,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 12),
-
                   ListTile(
                     leading: const Icon(Icons.refresh, color: Colors.blue),
                     title: const Text('Làm mới thông tin'),
@@ -273,7 +270,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     trailing: const Icon(Icons.arrow_forward_ios),
                     onTap: _loadUserInfo,
                   ),
-
                   ListTile(
                     leading: const Icon(Icons.logout, color: Colors.red),
                     title: const Text('Đăng xuất'),

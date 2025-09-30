@@ -31,8 +31,7 @@ abstract class BaseCrudService {
       // Handle API errors (status 200 but code != 1, or non-200 status)
       return {
         'success': false,
-        'message':
-            jsonResponse['message'] ??
+        'message': jsonResponse['message'] ??
             jsonResponse['payload'] ??
             errorMessage ??
             'Lỗi HTTP ${response.statusCode}',

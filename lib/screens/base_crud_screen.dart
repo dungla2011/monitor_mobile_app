@@ -113,20 +113,19 @@ abstract class BaseCrudScreenState<T extends BaseCrudScreen> extends State<T> {
   void showReauthDialog() {
     showDialog(
       context: context,
-      builder:
-          (context) => AlertDialog(
-            title: const Text('Phiên đăng nhập hết hạn'),
-            content: const Text('Vui lòng đăng nhập lại để tiếp tục.'),
-            actions: [
-              TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                  // Navigate to login screen
-                },
-                child: const Text('Đăng nhập'),
-              ),
-            ],
+      builder: (context) => AlertDialog(
+        title: const Text('Phiên đăng nhập hết hạn'),
+        content: const Text('Vui lòng đăng nhập lại để tiếp tục.'),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+              // Navigate to login screen
+            },
+            child: const Text('Đăng nhập'),
           ),
+        ],
+      ),
     );
   }
 
@@ -154,23 +153,22 @@ abstract class BaseCrudScreenState<T extends BaseCrudScreen> extends State<T> {
 
     final confirmed = await showDialog<bool>(
       context: context,
-      builder:
-          (context) => AlertDialog(
-            title: const Text('Xác nhận xóa'),
-            content: Text(
-              'Bạn có chắc chắn muốn xóa ${selectedItems.length} item(s)?',
-            ),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.of(context).pop(false),
-                child: const Text('Hủy'),
-              ),
-              TextButton(
-                onPressed: () => Navigator.of(context).pop(true),
-                child: const Text('Xóa'),
-              ),
-            ],
+      builder: (context) => AlertDialog(
+        title: const Text('Xác nhận xóa'),
+        content: Text(
+          'Bạn có chắc chắn muốn xóa ${selectedItems.length} item(s)?',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: const Text('Hủy'),
           ),
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            child: const Text('Xóa'),
+          ),
+        ],
+      ),
     );
 
     if (confirmed == true) {
@@ -214,17 +212,16 @@ abstract class BaseCrudScreenState<T extends BaseCrudScreen> extends State<T> {
       showDialog(
         context: context,
         barrierDismissible: false,
-        builder:
-            (context) => const AlertDialog(
-              content: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  CircularProgressIndicator(),
-                  SizedBox(height: 16),
-                  Text('Đang tải dữ liệu...'),
-                ],
-              ),
-            ),
+        builder: (context) => const AlertDialog(
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              CircularProgressIndicator(),
+              SizedBox(height: 16),
+              Text('Đang tải dữ liệu...'),
+            ],
+          ),
+        ),
       );
 
       try {
@@ -265,18 +262,17 @@ abstract class BaseCrudScreenState<T extends BaseCrudScreen> extends State<T> {
     if (mounted) {
       showDialog(
         context: context,
-        builder:
-            (context) => BaseCrudDialog(
-              title: isEditMode ? 'Sửa $itemName' : 'Thêm $itemName',
-              item: fullItemData,
-              fields: dialogFields,
-              onSave: (data) => saveItem(fullItemData?['id'], data),
-              onSaved: () async {
-                Navigator.of(context).pop();
-                await loadItemsData();
-              },
-              shouldShowField: shouldShowField,
-            ),
+        builder: (context) => BaseCrudDialog(
+          title: isEditMode ? 'Sửa $itemName' : 'Thêm $itemName',
+          item: fullItemData,
+          fields: dialogFields,
+          onSave: (data) => saveItem(fullItemData?['id'], data),
+          onSaved: () async {
+            Navigator.of(context).pop();
+            await loadItemsData();
+          },
+          shouldShowField: shouldShowField,
+        ),
       );
     }
   }
@@ -406,13 +402,12 @@ abstract class BaseCrudScreenState<T extends BaseCrudScreen> extends State<T> {
         ],
       ),
       body: buildBody(),
-      floatingActionButton:
-          isSelectionMode
-              ? null
-              : FloatingActionButton(
-                onPressed: () => showAddEditDialog(),
-                child: const Icon(Icons.add),
-              ),
+      floatingActionButton: isSelectionMode
+          ? null
+          : FloatingActionButton(
+              onPressed: () => showAddEditDialog(),
+              child: const Icon(Icons.add),
+            ),
     );
   }
 
@@ -489,20 +484,18 @@ abstract class BaseCrudScreenState<T extends BaseCrudScreen> extends State<T> {
           return Card(
             margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
             child: ListTile(
-              leading:
-                  isSelectionMode
-                      ? Checkbox(
-                        value: isSelected,
-                        onChanged: (value) => toggleItemSelection(itemId),
-                      )
-                      : null,
+              leading: isSelectionMode
+                  ? Checkbox(
+                      value: isSelected,
+                      onChanged: (value) => toggleItemSelection(itemId),
+                    )
+                  : null,
               title: buildItemTitle(item, itemId),
               subtitle: buildItemSubtitle(item),
               trailing: null,
-              onTap:
-                  isSelectionMode
-                      ? () => toggleItemSelection(itemId)
-                      : () => showAddEditDialog(item: item),
+              onTap: isSelectionMode
+                  ? () => toggleItemSelection(itemId)
+                  : () => showAddEditDialog(item: item),
             ),
           );
         },
@@ -546,23 +539,22 @@ abstract class BaseCrudScreenState<T extends BaseCrudScreen> extends State<T> {
                       break;
                   }
                 },
-                itemBuilder:
-                    (context) => [
-                      const PopupMenuItem(
-                        value: 'edit',
-                        child: ListTile(
-                          leading: Icon(Icons.edit),
-                          title: Text('Sửa'),
-                        ),
-                      ),
-                      const PopupMenuItem(
-                        value: 'delete',
-                        child: ListTile(
-                          leading: Icon(Icons.delete),
-                          title: Text('Xóa'),
-                        ),
-                      ),
-                    ],
+                itemBuilder: (context) => [
+                  const PopupMenuItem(
+                    value: 'edit',
+                    child: ListTile(
+                      leading: Icon(Icons.edit),
+                      title: Text('Sửa'),
+                    ),
+                  ),
+                  const PopupMenuItem(
+                    value: 'delete',
+                    child: ListTile(
+                      leading: Icon(Icons.delete),
+                      title: Text('Xóa'),
+                    ),
+                  ),
+                ],
               ),
           ],
         ),
@@ -584,54 +576,53 @@ abstract class BaseCrudScreenState<T extends BaseCrudScreen> extends State<T> {
         // Mobile fields
         ...mobileFields
             .where(
-              (field) => field['field'] != 'name' && field['field'] != 'id',
-            )
+          (field) => field['field'] != 'name' && field['field'] != 'id',
+        )
             .map((field) {
-              final fieldName = field['field'] as String;
-              final fieldLabel = field['label'] as String;
-              final dataType = field['data_type'] as String;
-              final selectOptions =
-                  field['select_options'] as Map<String, dynamic>?;
-              final value = item[fieldName]?.toString() ?? '';
-              final formattedValue = formatMobileValue(
-                value,
-                dataType,
-                selectOptions,
-              );
+          final fieldName = field['field'] as String;
+          final fieldLabel = field['label'] as String;
+          final dataType = field['data_type'] as String;
+          final selectOptions =
+              field['select_options'] as Map<String, dynamic>?;
+          final value = item[fieldName]?.toString() ?? '';
+          final formattedValue = formatMobileValue(
+            value,
+            dataType,
+            selectOptions,
+          );
 
-              return Padding(
-                padding: const EdgeInsets.only(bottom: 4),
-                child: Row(
-                  children: [
-                    Icon(
-                      getFieldIcon(dataType),
-                      size: 16,
-                      color: Colors.grey.shade600,
-                    ),
-                    const SizedBox(width: 6),
-                    Expanded(
-                      child: Text(
-                        '$fieldLabel: ',
-                        style: const TextStyle(
-                          fontSize: 12,
-                          color: Colors.grey,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ),
-                    Text(
-                      formattedValue,
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: getFieldColor(value, dataType),
-                        fontWeight: FontWeight.w400,
-                      ),
-                    ),
-                  ],
+          return Padding(
+            padding: const EdgeInsets.only(bottom: 4),
+            child: Row(
+              children: [
+                Icon(
+                  getFieldIcon(dataType),
+                  size: 16,
+                  color: Colors.grey.shade600,
                 ),
-              );
-            })
-            .toList(),
+                const SizedBox(width: 6),
+                Expanded(
+                  child: Text(
+                    '$fieldLabel: ',
+                    style: const TextStyle(
+                      fontSize: 12,
+                      color: Colors.grey,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ),
+                Text(
+                  formattedValue,
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: getFieldColor(value, dataType),
+                    fontWeight: FontWeight.w400,
+                  ),
+                ),
+              ],
+            ),
+          );
+        }).toList(),
       ],
     );
   }
@@ -647,8 +638,7 @@ class BaseCrudDialog extends StatefulWidget {
   final bool Function(
     Map<String, dynamic> field,
     Map<String, dynamic>? itemData,
-  )
-  shouldShowField;
+  ) shouldShowField;
 
   const BaseCrudDialog({
     super.key,
@@ -690,8 +680,7 @@ class _BaseCrudDialogState extends State<BaseCrudDialog> {
       _currentItemData[fieldName] = currentValue;
 
       final dataType = field['data_type']?.toString().toLowerCase() ?? '';
-      final isBooleanField =
-          dataType.contains('boolean') ||
+      final isBooleanField = dataType.contains('boolean') ||
           dataType.contains('tinyint') ||
           (fieldName == 'enable'); // Special case for enable field
       final isDateTimeField =
@@ -700,8 +689,7 @@ class _BaseCrudDialogState extends State<BaseCrudDialog> {
       if (isBooleanField) {
         // Initialize boolean value: 1, "1", true -> true; others -> false
         final rawValue = widget.item?[fieldName];
-        _booleanValues[fieldName] =
-            rawValue == 1 ||
+        _booleanValues[fieldName] = rawValue == 1 ||
             rawValue == "1" ||
             rawValue == true ||
             rawValue?.toString().toLowerCase() == 'true';
@@ -807,34 +795,33 @@ class _BaseCrudDialogState extends State<BaseCrudDialog> {
     return AlertDialog(
       title: Container(
         padding: const EdgeInsets.only(top: 8),
-        child:
-            widget.item != null
-                ? Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(widget.title),
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 8,
-                        vertical: 4,
-                      ),
-                      decoration: BoxDecoration(
-                        color: Colors.blue.shade100,
-                        borderRadius: BorderRadius.circular(12),
-                        border: Border.all(color: Colors.blue.shade300),
-                      ),
-                      child: Text(
-                        '#${widget.item!['id']}',
-                        style: TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.blue.shade700,
-                        ),
+        child: widget.item != null
+            ? Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(widget.title),
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 4,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Colors.blue.shade100,
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(color: Colors.blue.shade300),
+                    ),
+                    child: Text(
+                      '#${widget.item!['id']}',
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.blue.shade700,
                       ),
                     ),
-                  ],
-                )
-                : Text(widget.title),
+                  ),
+                ],
+              )
+            : Text(widget.title),
       ),
       content: SizedBox(
         width: double.maxFinite,
@@ -845,17 +832,16 @@ class _BaseCrudDialogState extends State<BaseCrudDialog> {
               padding: const EdgeInsets.only(top: 8),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
-                children:
-                    widget.fields
-                        .where((field) {
-                          // Check if field should be shown based on show_dependency
-                          return widget.shouldShowField(
-                            field,
-                            _currentItemData,
-                          );
-                        })
-                        .map((field) => _buildField(field))
-                        .toList(),
+                children: widget.fields
+                    .where((field) {
+                      // Check if field should be shown based on show_dependency
+                      return widget.shouldShowField(
+                        field,
+                        _currentItemData,
+                      );
+                    })
+                    .map((field) => _buildField(field))
+                    .toList(),
               ),
             ),
           ),
@@ -872,14 +858,13 @@ class _BaseCrudDialogState extends State<BaseCrudDialog> {
             const SizedBox(width: 16),
             ElevatedButton(
               onPressed: _isLoading ? null : _save,
-              child:
-                  _isLoading
-                      ? const SizedBox(
-                        width: 20,
-                        height: 20,
-                        child: CircularProgressIndicator(strokeWidth: 2),
-                      )
-                      : Text(widget.item != null ? 'Cập nhật' : 'Thêm'),
+              child: _isLoading
+                  ? const SizedBox(
+                      width: 20,
+                      height: 20,
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    )
+                  : Text(widget.item != null ? 'Cập nhật' : 'Thêm'),
             ),
           ],
         ),
@@ -890,15 +875,13 @@ class _BaseCrudDialogState extends State<BaseCrudDialog> {
   Widget _buildField(Map<String, dynamic> field) {
     final fieldName =
         field['field']?.toString() ?? field['field_name']?.toString() ?? '';
-    final label =
-        field['label']?.toString() ??
+    final label = field['label']?.toString() ??
         field['description']?.toString() ??
         fieldName;
     final required = field['required'] == true;
     final selectOptions = field['select_options'] as Map<String, dynamic>?;
     final dataType = field['data_type']?.toString().toLowerCase() ?? '';
-    final isBooleanField =
-        dataType.contains('boolean') ||
+    final isBooleanField = dataType.contains('boolean') ||
         dataType.contains('tinyint') ||
         (fieldName == 'enable'); // Special case for enable field
     final isDateTimeField =
@@ -907,16 +890,16 @@ class _BaseCrudDialogState extends State<BaseCrudDialog> {
 
     return Padding(
       padding: const EdgeInsets.only(bottom: 16),
-      child:
-          isReadOnly
-              ? _buildReadOnlyField(fieldName, label, dataType)
-              : isBooleanField
+      child: isReadOnly
+          ? _buildReadOnlyField(fieldName, label, dataType)
+          : isBooleanField
               ? _buildToggleSwitch(fieldName, label, required)
               : isDateTimeField
-              ? _buildDateTimePicker(fieldName, label, required)
-              : selectOptions != null
-              ? _buildDropdown(fieldName, label, required, selectOptions)
-              : _buildTextField(fieldName, label, required, dataType),
+                  ? _buildDateTimePicker(fieldName, label, required)
+                  : selectOptions != null
+                      ? _buildDropdown(
+                          fieldName, label, required, selectOptions)
+                      : _buildTextField(fieldName, label, required, dataType),
     );
   }
 
@@ -965,14 +948,12 @@ class _BaseCrudDialogState extends State<BaseCrudDialog> {
                 displayValue.isNotEmpty ? displayValue : 'Chưa có dữ liệu',
                 style: TextStyle(
                   fontSize: 14,
-                  color:
-                      displayValue.isNotEmpty
-                          ? Colors.black87
-                          : Colors.grey.shade500,
-                  fontWeight:
-                      displayValue.isNotEmpty
-                          ? FontWeight.w400
-                          : FontWeight.w300,
+                  color: displayValue.isNotEmpty
+                      ? Colors.black87
+                      : Colors.grey.shade500,
+                  fontWeight: displayValue.isNotEmpty
+                      ? FontWeight.w400
+                      : FontWeight.w300,
                 ),
                 textAlign: TextAlign.end,
               ),
@@ -1169,34 +1150,31 @@ class _BaseCrudDialogState extends State<BaseCrudDialog> {
     Map<String, dynamic> selectOptions,
   ) {
     return DropdownButtonFormField<String>(
-      value:
-          _controllers[fieldName]?.text.isNotEmpty == true
-              ? _controllers[fieldName]!.text
-              : null,
+      value: _controllers[fieldName]?.text.isNotEmpty == true
+          ? _controllers[fieldName]!.text
+          : null,
       decoration: InputDecoration(
         labelText: required ? '$label *' : label,
         border: const OutlineInputBorder(),
       ),
-      items:
-          selectOptions.entries.map((entry) {
-            return DropdownMenuItem<String>(
-              value: entry.key,
-              child: Text(entry.value.toString()),
-            );
-          }).toList(),
+      items: selectOptions.entries.map((entry) {
+        return DropdownMenuItem<String>(
+          value: entry.key,
+          child: Text(entry.value.toString()),
+        );
+      }).toList(),
       onChanged: (value) {
         _controllers[fieldName]?.text = value ?? '';
         _updateFieldValue(fieldName, value ?? '');
       },
-      validator:
-          required
-              ? (value) {
-                if (value == null || value.trim().isEmpty || value == '0') {
-                  return 'Vui lòng chọn $label';
-                }
-                return null;
+      validator: required
+          ? (value) {
+              if (value == null || value.trim().isEmpty || value == '0') {
+                return 'Vui lòng chọn $label';
               }
-              : null,
+              return null;
+            }
+          : null,
     );
   }
 
@@ -1216,15 +1194,14 @@ class _BaseCrudDialogState extends State<BaseCrudDialog> {
       onChanged: (value) {
         _updateFieldValue(fieldName, value);
       },
-      validator:
-          required
-              ? (value) {
-                if (value == null || value.trim().isEmpty) {
-                  return 'Vui lòng nhập $label';
-                }
-                return null;
+      validator: required
+          ? (value) {
+              if (value == null || value.trim().isEmpty) {
+                return 'Vui lòng nhập $label';
               }
-              : null,
+              return null;
+            }
+          : null,
     );
   }
 }

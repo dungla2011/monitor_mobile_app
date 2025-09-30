@@ -40,7 +40,8 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions web = FirebaseOptions(
     apiKey: 'AIzaSyBCHpCDZoONPpwsiBurfvKqOqSMbzFlkio', // Same as Android
-    appId: '1:916524608033:web:YOUR_WEB_APP_ID_HERE', // ⚠️ THAY BẰNG APP ID TỪ FIREBASE CONSOLE
+    appId:
+        '1:916524608033:web:YOUR_WEB_APP_ID_HERE', // ⚠️ THAY BẰNG APP ID TỪ FIREBASE CONSOLE
     messagingSenderId: '916524608033',
     projectId: 'monitorv2-dcf5b',
     authDomain: 'monitorv2-dcf5b.firebaseapp.com',

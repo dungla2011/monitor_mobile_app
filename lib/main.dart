@@ -185,21 +185,20 @@ class _MainScreenState extends State<MainScreen> {
                 Navigator.pop(context);
                 final shouldSignOut = await showDialog<bool>(
                   context: context,
-                  builder:
-                      (context) => AlertDialog(
-                        title: const Text('Đăng xuất'),
-                        content: const Text('Bạn có chắc chắn muốn đăng xuất?'),
-                        actions: [
-                          TextButton(
-                            onPressed: () => Navigator.of(context).pop(false),
-                            child: const Text('Hủy'),
-                          ),
-                          TextButton(
-                            onPressed: () => Navigator.of(context).pop(true),
-                            child: const Text('Đăng xuất'),
-                          ),
-                        ],
+                  builder: (context) => AlertDialog(
+                    title: const Text('Đăng xuất'),
+                    content: const Text('Bạn có chắc chắn muốn đăng xuất?'),
+                    actions: [
+                      TextButton(
+                        onPressed: () => Navigator.of(context).pop(false),
+                        child: const Text('Hủy'),
                       ),
+                      TextButton(
+                        onPressed: () => Navigator.of(context).pop(true),
+                        child: const Text('Đăng xuất'),
+                      ),
+                    ],
+                  ),
                 );
 
                 if (shouldSignOut == true) {

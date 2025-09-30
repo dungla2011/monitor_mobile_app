@@ -24,7 +24,7 @@ class _WebAuthWrapperState extends State<WebAuthWrapper> {
     try {
       await WebAuthService.initialize();
       final isLoggedIn = await WebAuthService.checkAuthStatus();
-      
+
       if (mounted) {
         setState(() {
           _isLoggedIn = isLoggedIn;

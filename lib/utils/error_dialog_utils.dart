@@ -130,54 +130,69 @@ class ErrorDialogUtils {
       // Auto-detect hints based on error message content
       if (lowerErrorMessage.contains('email')) {
         hints.add(
-          _buildHintContainer('Gợi ý về Email:', [
-            'Email phải có định dạng hợp lệ (ví dụ: user@domain.com)',
-            'Nhiều email cách nhau bằng dấu phẩy',
-            'Không được chứa khoảng trắng thừa',
-          ], Colors.blue),
+          _buildHintContainer(
+              'Gợi ý về Email:',
+              [
+                'Email phải có định dạng hợp lệ (ví dụ: user@domain.com)',
+                'Nhiều email cách nhau bằng dấu phẩy',
+                'Không được chứa khoảng trắng thừa',
+              ],
+              Colors.blue),
         );
       }
 
       if (lowerErrorMessage.contains('url')) {
         hints.add(
-          _buildHintContainer('Gợi ý về URL:', [
-            'URL phải có định dạng hợp lệ (ví dụ: https://example.com)',
-            'Phải bắt đầu bằng http:// hoặc https://',
-            'Không được chứa ký tự đặc biệt không hợp lệ',
-          ], Colors.blue),
+          _buildHintContainer(
+              'Gợi ý về URL:',
+              [
+                'URL phải có định dạng hợp lệ (ví dụ: https://example.com)',
+                'Phải bắt đầu bằng http:// hoặc https://',
+                'Không được chứa ký tự đặc biệt không hợp lệ',
+              ],
+              Colors.blue),
         );
       }
 
       if (lowerErrorMessage.contains('password') ||
           lowerErrorMessage.contains('mật khẩu')) {
         hints.add(
-          _buildHintContainer('Gợi ý về Mật khẩu:', [
-            'Mật khẩu phải có ít nhất 8 ký tự',
-            'Nên chứa cả chữ hoa, chữ thường và số',
-            'Không được chứa khoảng trắng',
-          ], Colors.orange),
+          _buildHintContainer(
+              'Gợi ý về Mật khẩu:',
+              [
+                'Mật khẩu phải có ít nhất 8 ký tự',
+                'Nên chứa cả chữ hoa, chữ thường và số',
+                'Không được chứa khoảng trắng',
+              ],
+              Colors.orange),
         );
       }
 
       if (lowerErrorMessage.contains('required') ||
           lowerErrorMessage.contains('bắt buộc')) {
         hints.add(
-          _buildHintContainer('Gợi ý:', [
-            'Vui lòng điền đầy đủ các trường bắt buộc',
-            'Các trường có dấu (*) là bắt buộc',
-            'Kiểm tra lại form trước khi submit',
-          ], Colors.red),
+          _buildHintContainer(
+              'Gợi ý:',
+              [
+                'Vui lòng điền đầy đủ các trường bắt buộc',
+                'Các trường có dấu (*) là bắt buộc',
+                'Kiểm tra lại form trước khi submit',
+              ],
+              Colors.red),
         );
       }
 
       if (lowerErrorMessage.contains('duplicate') ||
           lowerErrorMessage.contains('trùng lặp')) {
         hints.add(
-          _buildHintContainer('Gợi ý:', [
-            'Giá trị này đã tồn tại trong hệ thống',
-            'Vui lòng chọn giá trị khác',
-            'Kiểm tra danh sách hiện có trước khi thêm mới',
-          ], Colors.orange),
+          _buildHintContainer(
+              'Gợi ý:',
+              [
+                'Giá trị này đã tồn tại trong hệ thống',
+                'Vui lòng chọn giá trị khác',
+                'Kiểm tra danh sách hiện có trước khi thêm mới',
+              ],
+              Colors.orange),
         );
       }
     }

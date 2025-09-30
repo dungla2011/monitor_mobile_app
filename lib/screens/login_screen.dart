@@ -113,34 +113,32 @@ class _LoginScreenState extends State<LoginScreen>
   void _showErrorDialog(String message) {
     showDialog(
       context: context,
-      builder:
-          (ctx) => AlertDialog(
-            title: const Text('Lỗi'),
-            content: Text(message),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.of(ctx).pop(),
-                child: const Text('OK'),
-              ),
-            ],
+      builder: (ctx) => AlertDialog(
+        title: const Text('Lỗi'),
+        content: Text(message),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(),
+            child: const Text('OK'),
           ),
+        ],
+      ),
     );
   }
 
   void _showSuccessDialog(String message) {
     showDialog(
       context: context,
-      builder:
-          (ctx) => AlertDialog(
-            title: const Text('Thành công'),
-            content: Text(message),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.of(ctx).pop(),
-                child: const Text('OK'),
-              ),
-            ],
+      builder: (ctx) => AlertDialog(
+        title: const Text('Thành công'),
+        content: Text(message),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(),
+            child: const Text('OK'),
           ),
+        ],
+      ),
     );
   }
 
@@ -312,20 +310,19 @@ class _LoginScreenState extends State<LoginScreen>
                     borderRadius: BorderRadius.circular(8),
                   ),
                 ),
-                child:
-                    _isLoading
-                        ? const SizedBox(
-                          width: 20,
-                          height: 20,
-                          child: CircularProgressIndicator(
-                            color: Colors.white,
-                            strokeWidth: 2,
-                          ),
-                        )
-                        : const Text(
-                          'Đăng nhập',
-                          style: TextStyle(fontSize: 16),
+                child: _isLoading
+                    ? const SizedBox(
+                        width: 20,
+                        height: 20,
+                        child: CircularProgressIndicator(
+                          color: Colors.white,
+                          strokeWidth: 2,
                         ),
+                      )
+                    : const Text(
+                        'Đăng nhập',
+                        style: TextStyle(fontSize: 16),
+                      ),
               ),
             ),
           ],
@@ -462,17 +459,16 @@ class _LoginScreenState extends State<LoginScreen>
                     borderRadius: BorderRadius.circular(8),
                   ),
                 ),
-                child:
-                    _isLoading
-                        ? const SizedBox(
-                          width: 20,
-                          height: 20,
-                          child: CircularProgressIndicator(
-                            color: Colors.white,
-                            strokeWidth: 2,
-                          ),
-                        )
-                        : const Text('Đăng ký', style: TextStyle(fontSize: 16)),
+                child: _isLoading
+                    ? const SizedBox(
+                        width: 20,
+                        height: 20,
+                        child: CircularProgressIndicator(
+                          color: Colors.white,
+                          strokeWidth: 2,
+                        ),
+                      )
+                    : const Text('Đăng ký', style: TextStyle(fontSize: 16)),
               ),
             ),
           ],

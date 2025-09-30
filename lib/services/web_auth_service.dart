@@ -33,7 +33,10 @@ class WebAuthService {
     try {
       print('🔗 Calling API: $_loginEndpoint');
       print(
-        '📤 Request body: ${jsonEncode({'username': username, 'password': password})}',
+        '📤 Request body: ${jsonEncode({
+              'username': username,
+              'password': password
+            })}',
       );
 
       final response = await http.post(
@@ -265,9 +268,9 @@ class WebAuthService {
   // Test connection đến API
   static Future<bool> testApiConnection() async {
     try {
-      final response = await http
-          .get(Uri.parse(_baseUrl), headers: {'Accept': 'application/json'})
-          .timeout(const Duration(seconds: 10));
+      final response = await http.get(Uri.parse(_baseUrl), headers: {
+        'Accept': 'application/json'
+      }).timeout(const Duration(seconds: 10));
 
       return response.statusCode < 500;
     } catch (e) {
