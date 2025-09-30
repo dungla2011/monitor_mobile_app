@@ -87,9 +87,10 @@ if ($hasDevice) {
     }
     Write-Host "✅ Integration tests passed" -ForegroundColor Green
 } else {
-    Write-Host "⚠️ No devices found. Skipping integration tests." -ForegroundColor Yellow
-    Write-Host "💡 To run integration tests:" -ForegroundColor Cyan
-    Write-Host "   1. Connect Android device or start iOS simulator" -ForegroundColor Cyan
+    Write-Host "⚠️ No devices found locally. Skipping integration tests." -ForegroundColor Yellow
+    Write-Host "ℹ️ Note: CI will run integration tests on Android emulator" -ForegroundColor Cyan
+    Write-Host "💡 To run integration tests locally:" -ForegroundColor Cyan
+    Write-Host "   1. Connect Android device or start emulator/iOS simulator" -ForegroundColor Cyan
     Write-Host "   2. Run: flutter test integration_test/" -ForegroundColor Cyan
 }
 Write-Host ""
@@ -107,7 +108,7 @@ Write-Host "- ✅ Unit tests: PASSED"
 if ($hasDevice) {
     Write-Host "- ✅ Integration tests: PASSED"
 } else {
-    Write-Host "- ⚠️ Integration tests: SKIPPED"
+    Write-Host "- ⚠️ Integration tests: SKIPPED (will run on CI with Android emulator)"
 }
 Write-Host "- ✅ Coverage report: Generated"
 Write-Host ""
