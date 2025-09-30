@@ -42,7 +42,7 @@ DELETE api/member-monitor-item/delete?id=1,2,3  // Xóa nhiều items
 
 ## 🏗️ Cấu trúc Code
 
-### **MonitorConfigService** (`lib/services/monitor_config_service.dart`)
+### **MonitorConfigService** (`lib/services/monitor_config_crud_service.dart`)
 ```dart
 class MonitorConfigService {
   // Fetch dynamic config từ API

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../services/monitor_item_service.dart';
+import '../services/monitor_item_crud_service.dart';
 import '../services/base_crud_service.dart';
 import '../utils/error_dialog_utils.dart';
 
@@ -35,9 +35,9 @@ class _MonitorItemScreenState extends State<MonitorItemScreen> {
 
     try {
       // Initialize config if not loaded
-      if (!MonitorItemService.isConfigLoaded) {
+      if (!MonitorItemCrudService.isConfigLoaded) {
         print('📋 Loading Monitor Service...');
-        final configResult = await MonitorItemService.initializeConfig();
+        final configResult = await MonitorItemCrudService.initializeConfig();
 
         if (!configResult['success']) {
           setState(() {
@@ -47,8 +47,8 @@ class _MonitorItemScreenState extends State<MonitorItemScreen> {
           return;
         }
 
-        _formFields = MonitorItemService.getFormFields();
-        _mobileFields = MonitorItemService.getMobileFields();
+        _formFields = MonitorItemCrudService.getFormFields();
+        _mobileFields = MonitorItemCrudService.getMobileFields();
         print(
           '✅ Config loaded. Fields: ${_formFields.length}, Mobile Fields: ${_mobileFields.length}',
         );
@@ -66,7 +66,7 @@ class _MonitorItemScreenState extends State<MonitorItemScreen> {
 
   Future<void> _loadMonitorItems() async {
     try {
-      final result = await MonitorItemService.getMonitorItems();
+      final result = await MonitorItemCrudService.getMonitorItems();
 
       if (result['success']) {
         // Use base service helper to extract pagination data
@@ -162,7 +162,7 @@ class _MonitorItemScreenState extends State<MonitorItemScreen> {
 
     if (confirmed == true) {
       try {
-        final result = await MonitorItemService.deleteMonitorItems(
+        final result = await MonitorItemCrudService.deleteMonitorItems(
           _selectedItems.toList(),
         );
 
@@ -192,7 +192,7 @@ class _MonitorItemScreenState extends State<MonitorItemScreen> {
 
   void _showAddEditDialog({Map<String, dynamic>? item}) async {
     final isEditMode = item != null;
-    final dialogFields = MonitorItemService.getFormFields(
+    final dialogFields = MonitorItemCrudService.getFormFields(
       isEditMode: isEditMode,
     );
 
@@ -219,7 +219,7 @@ class _MonitorItemScreenState extends State<MonitorItemScreen> {
       );
 
       try {
-        final result = await MonitorItemService.getMonitorItem(itemId);
+        final result = await MonitorItemCrudService.getMonitorItem(itemId);
 
         // Close loading dialog
         if (mounted) Navigator.of(context).pop();
@@ -354,7 +354,7 @@ class _MonitorItemScreenState extends State<MonitorItemScreen> {
   // Get name color based on error_status field
   Color _getNameColor(Map<String, dynamic> item) {
     // Get all field definitions to find error_status field
-    final allFields = MonitorItemService.getMobileFields();
+    final allFields = MonitorItemCrudService.getMobileFields();
 
     // Find error_status field
     final errorStatusField = allFields.firstWhere(
@@ -364,7 +364,7 @@ class _MonitorItemScreenState extends State<MonitorItemScreen> {
 
     if (errorStatusField.isEmpty) {
       // If not found in mobile fields, check all field details
-      final fieldDetails = MonitorItemService.fieldDetails;
+      final fieldDetails = MonitorItemCrudService.fieldDetails;
       if (fieldDetails is List) {
         for (final field in fieldDetails) {
           if (field is Map &&
@@ -1144,10 +1144,10 @@ class _MonitorItemDialogState extends State<MonitorItemDialog> {
       if (widget.item != null) {
         // Update existing item
         final itemId = widget.item!['id'] as int;
-        result = await MonitorItemService.updateMonitorItem(itemId, data);
+        result = await MonitorItemCrudService.updateMonitorItem(itemId, data);
       } else {
         // Add new item
-        result = await MonitorItemService.addMonitorItem(data);
+        result = await MonitorItemCrudService.addMonitorItem(data);
       }
 
       if (result['success']) {
@@ -1218,7 +1218,7 @@ class _MonitorItemDialogState extends State<MonitorItemDialog> {
                     widget.fields
                         .where((field) {
                           // Check if field should be shown based on show_dependency
-                          return MonitorItemService.shouldShowField(
+                          return MonitorItemCrudService.shouldShowField(
                             field,
                             _currentItemData,
                           );

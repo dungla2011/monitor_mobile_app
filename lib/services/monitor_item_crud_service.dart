@@ -1,6 +1,6 @@
 import 'base_crud_service.dart';
 
-class MonitorItemService extends BaseCrudService {
+class MonitorItemCrudService extends BaseCrudService {
   static const String _tableName = 'monitor_items';
 
   // API Endpoints
@@ -28,7 +28,7 @@ class MonitorItemService extends BaseCrudService {
   // Fetch all configuration data
   static Future<Map<String, dynamic>> initializeConfig() async {
     try {
-      print('🔄 Initializing Monitor Item Service...');
+      print('🔄 Initializing Monitor Item CRUD Service...');
 
       // Fetch field details
       final fieldDetailsResult = await BaseCrudService.fetchConfig(
@@ -60,7 +60,7 @@ class MonitorItemService extends BaseCrudService {
       }
       _apiGetOne = apiGetOneResult['data'];
 
-      print('✅ Monitor Item Service initialized successfully');
+      print('✅ Monitor Item CRUD Service initialized successfully');
       return {
         'success': true,
         'message': 'Config loaded successfully',

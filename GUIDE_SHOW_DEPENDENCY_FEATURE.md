@@ -143,7 +143,7 @@ Tất cả điều kiện phải được thỏa mãn (AND logic).
 
 ## Implementation Details
 
-### 1. MonitorConfigService.shouldShowField()
+### 1. MonitorConfigCrudService.shouldShowField()
 
 Method này kiểm tra điều kiện hiển thị:
 
@@ -195,7 +195,7 @@ Chỉ hiển thị các field thỏa mãn điều kiện:
 
 ```dart
 widget.fields.where((field) {
-    return MonitorConfigService.shouldShowField(field, _currentItemData);
+    return MonitorConfigCrudService.shouldShowField(field, _currentItemData);
 }).map((field) {
     // Render field
 })
