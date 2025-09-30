@@ -116,6 +116,7 @@ jobs:
         echo "- ✅ Coverage report: Generated" >> $GITHUB_STEP_SUMMARY
         echo "" >> $GITHUB_STEP_SUMMARY
         echo "## 📱 Test Environment" >> $GITHUB_STEP_SUMMARY
-        echo "- **Unit Tests**: Ubuntu runner" >> $GITHUB_STEP_SUMMARY
-        echo "- **Integration Tests**: Android API 29 Emulator" >> $GITHUB_STEP_SUMMARY
-        echo "- **Device Profile**: Nexus 6 (x86_64)" >> $GITHUB_STEP_SUMMARY
+        echo "- **Unit Tests**: Ubuntu runner (28 tests)" >> $GITHUB_STEP_SUMMARY
+        echo "- **Integration Tests**: Android API 29 Emulator (12 tests)" >> $GITHUB_STEP_SUMMARY
+        echo "- **Device Profile**: Nexus 6 (x86_64, 6GB RAM)" >> $GITHUB_STEP_SUMMARY
+        echo "- **Performance Tests**: Disabled (emulator inconsistent)" >> $GITHUB_STEP_SUMMARY
