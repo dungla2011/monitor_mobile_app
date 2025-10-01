@@ -101,7 +101,7 @@ class CrudUtils {
     final errors = <String>[];
 
     for (final field in fieldDetails) {
-      final fieldName = field['field_name'] as String;
+      final fieldName = field['field_name'] as String? ?? '';
       final required = field['required'] as String?;
       final description = field['description'] as String? ?? fieldName;
 
@@ -135,7 +135,7 @@ class CrudUtils {
     final filteredData = <String, dynamic>{};
 
     for (final field in fieldDetails) {
-      final fieldName = field['field_name'] as String;
+      final fieldName = field['field_name'] as String? ?? '';
       final editable = field['editable'] as String?;
 
       if (editable == 'yes' && data.containsKey(fieldName)) {

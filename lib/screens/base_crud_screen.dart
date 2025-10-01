@@ -580,9 +580,9 @@ abstract class BaseCrudScreenState<T extends BaseCrudScreen> extends State<T> {
           (field) => field['field'] != 'name' && field['field'] != 'id',
         )
             .map((field) {
-          final fieldName = field['field'] as String;
-          final fieldLabel = field['label'] as String;
-          final dataType = field['data_type'] as String;
+          final fieldName = field['field'] as String? ?? '';
+          final fieldLabel = field['label'] as String? ?? '';
+          final dataType = field['data_type'] as String? ?? '';
           final selectOptions =
               field['select_options'] as Map<String, dynamic>?;
           final value = item[fieldName]?.toString() ?? '';
