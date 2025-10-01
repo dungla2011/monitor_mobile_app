@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'web_auth_service.dart';
+import '../utils/user_agent_utils.dart';
 
 /// Base CRUD service với common error handling và API utilities
 abstract class BaseCrudService {
@@ -159,7 +160,11 @@ abstract class BaseCrudService {
 
       final response = await http.get(
         Uri.parse(url),
-        headers: {'Accept': 'application/json'},
+        headers: {
+          'X-API-Key': 'glx_mobile',
+          'Accept': 'application/json',
+          'User-Agent': UserAgentUtils.getApiUserAgent(),
+        },
       );
 
       print('📥 $configType Response status: ${response.statusCode}');

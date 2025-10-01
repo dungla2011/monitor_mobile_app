@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+import '../utils/user_agent_utils.dart';
 
 class WebAuthService {
   // Cấu hình API endpoint - Thay đổi URL này theo API của bạn
@@ -44,6 +45,7 @@ class WebAuthService {
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
+          'User-Agent': UserAgentUtils.getApiUserAgent(),
         },
         body: jsonEncode({'username': username, 'password': password}),
       );
@@ -108,6 +110,7 @@ class WebAuthService {
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
+          'User-Agent': UserAgentUtils.getApiUserAgent(),
         },
         body: jsonEncode({
           'username': username,
@@ -225,8 +228,10 @@ class WebAuthService {
   // Lấy headers với Bearer Token cho các request API
   static Map<String, String> getAuthenticatedHeaders() {
     final headers = {
+      'X-API-Key': 'glx_mobile',
       'Content-Type': 'application/json',
       'Accept': 'application/json',
+      'User-Agent': UserAgentUtils.getApiUserAgent(),
     };
 
     if (_bearerToken != null && _bearerToken!.isNotEmpty) {
@@ -269,7 +274,8 @@ class WebAuthService {
   static Future<bool> testApiConnection() async {
     try {
       final response = await http.get(Uri.parse(_baseUrl), headers: {
-        'Accept': 'application/json'
+        'Accept': 'application/json',
+        'User-Agent': 'MonitorApp/1.0.0 (Flutter; Mobile; Android/iOS)',
       }).timeout(const Duration(seconds: 10));
 
       return response.statusCode < 500;
