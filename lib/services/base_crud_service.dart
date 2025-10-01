@@ -160,11 +160,7 @@ abstract class BaseCrudService {
 
       final response = await http.get(
         Uri.parse(url),
-        headers: {
-          'X-API-Key': 'glx_mobile',
-          'Accept': 'application/json',
-          'User-Agent': UserAgentUtils.getApiUserAgent(),
-        },
+        headers: WebAuthService.getAuthenticatedHeaders(),
       );
 
       print('📥 $configType Response status: ${response.statusCode}');
@@ -200,7 +196,8 @@ abstract class BaseCrudService {
                       final fieldMap = Map<String, dynamic>.from(
                         entry.value as Map,
                       );
-                      fieldMap['field_name'] = entry.key; // Add field name
+                      // Don't override field_name if it already exists
+                      // fieldMap['field_name'] = entry.key; // Remove this line
                       fieldsList.add(fieldMap);
                     }
                   }
