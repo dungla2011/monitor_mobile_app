@@ -287,6 +287,7 @@ abstract class BaseCrudService {
             'select_options': fieldMap['select_option_value'],
             'select_options_multi': fieldMap['select_option_multi_value'],
             'show_dependency': fieldMap['show_dependency'],
+            'mobile_action': fieldMap['mobile_action'],
           });
         }
         // Include read-only fields if in edit mode and show_in_api_edit_one = yes
@@ -303,6 +304,7 @@ abstract class BaseCrudService {
             'select_options': fieldMap['select_option_value'],
             'select_options_multi': fieldMap['select_option_multi_value'],
             'show_dependency': fieldMap['show_dependency'],
+            'mobile_action': fieldMap['mobile_action'],
           });
         }
       }

@@ -2,6 +2,8 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import '../services/base_crud_service.dart';
 import '../utils/error_dialog_utils.dart';
+import 'monitor_config_screen.dart';
+import 'monitor_item_screen.dart';
 
 /// Abstract base class for CRUD screens
 abstract class BaseCrudScreen<T> extends StatefulWidget {
@@ -912,7 +914,21 @@ class _BaseCrudDialogState extends State<BaseCrudDialog> {
     final selectOptions = field['select_options'] as Map<String, dynamic>?;
     final selectOptionsMulti =
         field['select_options_multi'] as Map<String, dynamic>?;
+    Map<String, dynamic>? mobileAction =
+        field['mobile_action'] as Map<String, dynamic>?;
     final dataType = field['data_type']?.toString().toLowerCase() ?? '';
+
+    print('🔥 BaseCrudDialog._buildField called for: $fieldName ($label)');
+    if (mobileAction != null) {
+      print('🎯 Found mobile_action: $mobileAction');
+    } else {
+      print('🧪 Adding test mobile_action for field: $fieldName');
+      // Test: Add mobile action for ALL fields
+      mobileAction = {
+        'text_info': '+',
+        'action_cmd': 'open_config',
+      };
+    }
     final isBooleanField = dataType.contains('boolean') ||
         dataType.contains('tinyint') ||
         (fieldName == 'enable'); // Special case for enable field
@@ -929,8 +945,8 @@ class _BaseCrudDialogState extends State<BaseCrudDialog> {
               : isDateTimeField
                   ? _buildDateTimePicker(fieldName, label, required)
                   : selectOptionsMulti != null
-                      ? _buildMultiSelectField(
-                          fieldName, label, required, selectOptionsMulti)
+                      ? _buildMultiSelectField(fieldName, label, required,
+                          selectOptionsMulti, mobileAction)
                       : selectOptions != null
                           ? _buildDropdown(
                               fieldName, label, required, selectOptions)
@@ -1246,6 +1262,7 @@ class _BaseCrudDialogState extends State<BaseCrudDialog> {
     String label,
     bool required,
     Map<String, dynamic> selectOptions,
+    Map<String, dynamic>? mobileAction,
   ) {
     // Get current selected values (could be string or array)
     List<String> selectedValues = [];
@@ -1274,12 +1291,52 @@ class _BaseCrudDialogState extends State<BaseCrudDialog> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          required ? '$label *' : label,
-          style: const TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.w500,
-          ),
+        Row(
+          children: [
+            Expanded(
+              child: Text(
+                required ? '$label *' : label,
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ),
+            // Mobile Action Button
+            if (mobileAction != null) ...[
+              const SizedBox(width: 8),
+              GestureDetector(
+                onTap: () {
+                  final actionCmd = mobileAction['action_cmd'] as String?;
+                  if (actionCmd != null) {
+                    _handleMobileAction(context, actionCmd);
+                  }
+                },
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 4,
+                  ),
+                  decoration: BoxDecoration(
+                    color: Colors.blue.shade50,
+                    borderRadius: BorderRadius.circular(6),
+                    border: Border.all(
+                      color: Colors.blue.shade300,
+                      width: 1,
+                    ),
+                  ),
+                  child: Text(
+                    mobileAction['text_info'] as String? ?? '+',
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: Colors.blue.shade700,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ],
         ),
         const SizedBox(height: 8),
         Container(
@@ -1334,5 +1391,48 @@ class _BaseCrudDialogState extends State<BaseCrudDialog> {
           ),
       ],
     );
+  }
+
+  /// Handle mobile action commands
+  void _handleMobileAction(BuildContext context, String cmd) {
+    switch (cmd.toLowerCase().trim()) {
+      case 'open_config':
+      case 'monitor_config':
+        // Navigate to Monitor Config screen
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const MonitorConfigScreen(),
+          ),
+        );
+        break;
+
+      case 'open_items':
+      case 'monitor_items':
+        // Navigate to Monitor Items screen
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const MonitorItemScreen(),
+          ),
+        );
+        break;
+
+      case 'back':
+        if (Navigator.canPop(context)) {
+          Navigator.pop(context);
+        }
+        break;
+
+      default:
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('🎯 Mobile Action Command: "$cmd"'),
+            backgroundColor: Colors.orange,
+            duration: const Duration(seconds: 2),
+          ),
+        );
+        break;
+    }
   }
 }
