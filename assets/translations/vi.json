@@ -1,0 +1,134 @@
+{
+  "app": {
+    "title": "Monitor App",
+    "loading": "Đang tải...",
+    "error": "Lỗi",
+    "success": "Thành công",
+    "cancel": "Hủy",
+    "save": "Lưu",
+    "add": "Thêm",
+    "edit": "Sửa",
+    "delete": "Xóa",
+    "update": "Cập nhật",
+    "back": "Quay lại",
+    "close": "Đóng",
+    "confirm": "Xác nhận",
+    "yes": "Có",
+    "no": "Không"
+  },
+  "auth": {
+    "login": "Đăng nhập",
+    "logout": "Đăng xuất",
+    "username": "Tên đăng nhập",
+    "password": "Mật khẩu",
+    "loginSuccess": "Đăng nhập thành công",
+    "loginFailed": "Đăng nhập thất bại",
+    "pleaseEnterUsername": "Vui lòng nhập tên đăng nhập",
+    "pleaseEnterPassword": "Vui lòng nhập mật khẩu"
+  },
+  "monitor": {
+    "items": "Monitor Items",
+    "configs": "Monitor Configs",
+    "addItem": "Thêm Monitor Item",
+    "editItem": "Sửa Monitor Item",
+    "deleteItem": "Xóa Monitor Item",
+    "addConfig": "Thêm Monitor Config",
+    "editConfig": "Sửa Monitor Config",
+    "deleteConfig": "Xóa Monitor Config",
+    "name": "Tên monitor",
+    "type": "Kiểu kiểm tra",
+    "url": "Link Web/Domain/IP",
+    "interval": "Khoảng thời gian kiểm tra",
+    "alertConfig": "Cấu hình cảnh báo",
+    "enable": "Bật kiểm tra",
+    "status": "Trạng thái gần nhất",
+    "lastCheck": "Kiểm tra gần nhất",
+    "online": "Online",
+    "offline": "Offline",
+    "allowConsecutiveAlert": "Cho phép gửi cảnh báo liên tiếp khi lỗi",
+    "errorKeyword": "Keyword nếu lỗi",
+    "validKeyword": "Keyword nếu không lỗi",
+    "createdAt": "Ngày tạo"
+  },
+  "config": {
+    "alertType": "Loại cảnh báo",
+    "alertConfig": "Cấu hình cảnh báo",
+    "email": "Gửi Email",
+    "sms": "Gửi SMS", 
+    "telegram": "Gửi Telegram",
+    "webhook": "Gọi Webhook",
+    "selectAlertType": "Chọn loại cảnh báo"
+  },
+  "validation": {
+    "required": "Vui lòng nhập {field}",
+    "pleaseSelect": "Vui lòng chọn {field}",
+    "pleaseSelectAtLeastOne": "Vui lòng chọn ít nhất một {field}",
+    "invalidFormat": "Định dạng {field} không hợp lệ"
+  },
+  "messages": {
+    "saveSuccess": "Lưu thành công",
+    "saveFailed": "Lưu thất bại",
+    "deleteSuccess": "Xóa thành công",
+    "deleteFailed": "Xóa thất bại",
+    "deleteConfirm": "Bạn có chắc chắn muốn xóa {item}?",
+    "networkError": "Lỗi kết nối mạng",
+    "serverError": "Lỗi máy chủ",
+    "unknownError": "Lỗi không xác định"
+  },
+  "navigation": {
+    "home": "Trang chủ",
+    "monitorItems": "Monitor Items",
+    "monitorConfigs": "Monitor Configs", 
+    "profile": "Hồ sơ",
+    "settings": "Cài đặt",
+    "notifications": "Thông báo",
+    "about": "Giới thiệu",
+    "welcome": "Chào mừng bạn!"
+  },
+  "settings": {
+    "title": "Cài đặt",
+    "language": "Ngôn ngữ",
+    "languageDescription": "Chọn ngôn ngữ ưa thích",
+    "notifications": "Thông báo",
+    "notificationsDescription": "Quản lý cài đặt thông báo",
+    "theme": "Giao diện",
+    "themeDescription": "Chọn giao diện ứng dụng",
+    "about": "Về ứng dụng",
+    "aboutDescription": "Phiên bản và thông tin ứng dụng",
+    "version": "Phiên bản",
+    "english": "Tiếng Anh",
+    "vietnamese": "Tiếng Việt",
+    "light": "Sáng",
+    "dark": "Tối",
+    "system": "Theo hệ thống"
+  },
+  "mobileAction": {
+    "navigatingToConfig": "Đang chuyển đến Monitor Config...",
+    "navigatingToItems": "Đang chuyển đến Monitor Items...",
+    "commandNotFound": "Không tìm thấy lệnh: \"{cmd}\""
+  },
+  "time": {
+    "seconds": "Giây",
+    "minutes": "Phút",
+    "hours": "Giờ",
+    "days": "Ngày",
+    "selectTime": "Chọn thời gian",
+    "clearTime": "Xóa thời gian",
+    "notSelected": "Chưa chọn thời gian"
+  },
+  "options": {
+    "select": "-Chọn-",
+    "selectAlertType": "-Chọn Kiểu Alert-",
+    "webContent": "Web Server hoạt động",
+    "ping": "Ping"
+  },
+  "settings": {
+    "title": "Cài đặt",
+    "language": "Ngôn ngữ",
+    "appInfo": "Thông tin ứng dụng",
+    "appName": "Tên ứng dụng",
+    "version": "Phiên bản",
+    "vietnameseDesc": "Tiếng Việt (mặc định)",
+    "englishDesc": "English"
+  }
+}

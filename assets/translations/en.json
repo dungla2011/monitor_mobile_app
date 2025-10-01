@@ -1,0 +1,134 @@
+{
+  "app": {
+    "title": "Monitor App",
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "cancel": "Cancel",
+    "save": "Save",
+    "add": "Add",
+    "edit": "Edit",
+    "delete": "Delete",
+    "update": "Update",
+    "back": "Back",
+    "close": "Close",
+    "confirm": "Confirm",
+    "yes": "Yes",
+    "no": "No"
+  },
+  "auth": {
+    "login": "Login",
+    "logout": "Logout",
+    "username": "Username",
+    "password": "Password",
+    "loginSuccess": "Login successful",
+    "loginFailed": "Login failed",
+    "pleaseEnterUsername": "Please enter username",
+    "pleaseEnterPassword": "Please enter password"
+  },
+  "monitor": {
+    "items": "Monitor Items",
+    "configs": "Monitor Configs",
+    "addItem": "Add Monitor Item",
+    "editItem": "Edit Monitor Item",
+    "deleteItem": "Delete Monitor Item",
+    "addConfig": "Add Monitor Config",
+    "editConfig": "Edit Monitor Config",
+    "deleteConfig": "Delete Monitor Config",
+    "name": "Monitor name",
+    "type": "Check type",
+    "url": "Web/Domain/IP Link",
+    "interval": "Check interval",
+    "alertConfig": "Alert configuration",
+    "enable": "Enable monitoring",
+    "status": "Latest status",
+    "lastCheck": "Last check",
+    "online": "Online",
+    "offline": "Offline",
+    "allowConsecutiveAlert": "Allow consecutive alerts on error",
+    "errorKeyword": "Error keyword",
+    "validKeyword": "Valid keyword",
+    "createdAt": "Created at"
+  },
+  "config": {
+    "alertType": "Alert type",
+    "alertConfig": "Alert configuration",
+    "email": "Send Email",
+    "sms": "Send SMS",
+    "telegram": "Send Telegram",
+    "webhook": "Call Webhook",
+    "selectAlertType": "Select alert type"
+  },
+  "validation": {
+    "required": "Please enter {field}",
+    "pleaseSelect": "Please select {field}",
+    "pleaseSelectAtLeastOne": "Please select at least one {field}",
+    "invalidFormat": "Invalid {field} format"
+  },
+  "messages": {
+    "saveSuccess": "Saved successfully",
+    "saveFailed": "Save failed",
+    "deleteSuccess": "Deleted successfully",
+    "deleteFailed": "Delete failed",
+    "deleteConfirm": "Are you sure you want to delete {item}?",
+    "networkError": "Network error",
+    "serverError": "Server error",
+    "unknownError": "Unknown error"
+  },
+  "navigation": {
+    "home": "Home",
+    "monitorItems": "Monitor Items",
+    "monitorConfigs": "Monitor Configs",
+    "profile": "Profile",
+    "settings": "Settings",
+    "notifications": "Notifications",
+    "about": "About",
+    "welcome": "Welcome!"
+  },
+  "settings": {
+    "title": "Settings",
+    "language": "Language",
+    "languageDescription": "Choose your preferred language",
+    "notifications": "Notifications",
+    "notificationsDescription": "Manage notification preferences",
+    "theme": "Theme",
+    "themeDescription": "Choose app appearance",
+    "about": "About App",
+    "aboutDescription": "Version and app information",
+    "version": "Version",
+    "english": "English",
+    "vietnamese": "Vietnamese",
+    "light": "Light",
+    "dark": "Dark",
+    "system": "System"
+  },
+  "mobileAction": {
+    "navigatingToConfig": "Navigating to Monitor Config...",
+    "navigatingToItems": "Navigating to Monitor Items...",
+    "commandNotFound": "Command not found: \"{cmd}\""
+  },
+  "time": {
+    "seconds": "Seconds",
+    "minutes": "Minutes",
+    "hours": "Hours",
+    "days": "Days",
+    "selectTime": "Select time",
+    "clearTime": "Clear time",
+    "notSelected": "Time not selected"
+  },
+  "options": {
+    "select": "-Select-",
+    "selectAlertType": "-Select Alert Type-",
+    "webContent": "Web Server Active",
+    "ping": "Ping"
+  },
+  "settings": {
+    "title": "Settings",
+    "language": "Language",
+    "appInfo": "App Information",
+    "appName": "App Name",
+    "version": "Version",
+    "vietnameseDesc": "Tiếng Việt (Vietnamese)",
+    "englishDesc": "English (default)"
+  }
+}

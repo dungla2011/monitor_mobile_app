@@ -12,21 +12,21 @@ class MonitorConfigScreen extends BaseCrudScreen {
 class _MonitorConfigScreenState
     extends BaseCrudScreenState<MonitorConfigScreen> {
   @override
-  String get screenTitle => 'Monitor Configs';
+  String get screenTitle => 'Config Alerts';
 
   @override
-  String get itemName => 'Monitor Config';
+  String get itemName => 'Monitor Alert';
 
   @override
-  String get addButtonText => 'Thêm Monitor Config';
+  String get addButtonText => 'Thêm Monitor Alert';
 
   @override
-  String get editButtonText => 'Sửa Monitor Config';
+  String get editButtonText => 'Sửa Monitor Alert';
 
   @override
   Future<Map<String, dynamic>> initializeConfig() async {
     if (!MonitorConfigCrudService.isConfigLoaded) {
-      print('📋 Loading Monitor Config CRUD...');
+      print('📋 Loading Monitor Alert CRUD...');
       return await MonitorConfigCrudService.initializeConfig();
     }
     return {'success': true};

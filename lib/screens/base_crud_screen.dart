@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import '../services/base_crud_service.dart';
 import '../utils/error_dialog_utils.dart';
+import '../utils/app_localizations.dart';
 import 'monitor_config_screen.dart';
 import 'monitor_item_screen.dart';
 
@@ -1425,9 +1426,10 @@ class _BaseCrudDialogState extends State<BaseCrudDialog> {
         break;
 
       default:
+        final localizations = AppLocalizations.of(context);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('🎯 Mobile Action Command: "$cmd"'),
+            content: Text(localizations.mobileActionCommandNotFound(cmd)),
             backgroundColor: Colors.orange,
             duration: const Duration(seconds: 2),
           ),

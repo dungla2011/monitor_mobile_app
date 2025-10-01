@@ -2,13 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:provider/provider.dart';
 import 'firebase_options.dart';
 import 'services/firebase_messaging_service.dart';
 import 'services/web_auth_service.dart';
+import 'services/language_provider.dart';
 import 'widgets/web_auth_wrapper.dart';
 import 'screens/profile_screen.dart';
 import 'screens/monitor_item_screen.dart';
 import 'screens/monitor_config_screen.dart';
+import 'screens/settings_screen.dart';
+import 'utils/app_localizations.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -33,7 +38,12 @@ void main() async {
     FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
   }
 
-  runApp(const MyApp());
+  runApp(
+    ChangeNotifierProvider(
+      create: (_) => LanguageProvider(),
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -41,15 +51,32 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Monitor App',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
-        useMaterial3: true,
-      ),
-      home: const WebAuthWrapper(),
-      routes: {'/home': (context) => const MainScreen()},
-      debugShowCheckedModeBanner: false,
+    return Consumer<LanguageProvider>(
+      builder: (context, languageProvider, child) {
+        return MaterialApp(
+          title: 'Monitor App',
+          theme: ThemeData(
+            colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
+            useMaterial3: true,
+          ),
+          // Internationalization support
+          localizationsDelegates: const [
+            AppLocalizations.delegate,
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+          ],
+          supportedLocales: const [
+            Locale('en', ''), // English
+            Locale('vi', ''), // Vietnamese
+          ],
+          // Use current locale from provider
+          locale: languageProvider.currentLocale,
+          home: const WebAuthWrapper(),
+          routes: {'/home': (context) => const MainScreen()},
+          debugShowCheckedModeBanner: false,
+        );
+      },
     );
   }
 }
@@ -75,9 +102,10 @@ class _MainScreenState extends State<MainScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final localizations = AppLocalizations.of(context);
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Monitor App'),
+        title: Text(localizations.translate('app.title')),
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
       ),
       drawer: Drawer(
@@ -94,14 +122,14 @@ class _MainScreenState extends State<MainScreen> {
                     child: Icon(Icons.person, color: Colors.blue),
                   ),
                   const SizedBox(height: 10),
-                  const Text(
-                    'Monitor App',
-                    style: TextStyle(color: Colors.white, fontSize: 24),
+                  Text(
+                    localizations.translate('app.title'),
+                    style: const TextStyle(color: Colors.white, fontSize: 24),
                   ),
                   Text(
                     WebAuthService.currentUser?['displayName'] ??
                         WebAuthService.currentUser?['username'] ??
-                        'Chào mừng bạn!',
+                        localizations.translate('navigation.welcome'),
                     style: const TextStyle(color: Colors.white70, fontSize: 14),
                   ),
                 ],
@@ -109,7 +137,7 @@ class _MainScreenState extends State<MainScreen> {
             ),
             ListTile(
               leading: const Icon(Icons.monitor),
-              title: const Text('Monitor Items'),
+              title: Text(localizations.translate('navigation.monitorItems')),
               selected: _selectedIndex == 0,
               onTap: () {
                 setState(() {
@@ -120,7 +148,7 @@ class _MainScreenState extends State<MainScreen> {
             ),
             ListTile(
               leading: const Icon(Icons.settings_applications),
-              title: const Text('Monitor Configs'),
+              title: Text(localizations.translate('navigation.monitorConfigs')),
               selected: _selectedIndex == 1,
               onTap: () {
                 setState(() {
@@ -131,7 +159,7 @@ class _MainScreenState extends State<MainScreen> {
             ),
             ListTile(
               leading: const Icon(Icons.person),
-              title: const Text('Hồ sơ'),
+              title: Text(localizations.translate('navigation.profile')),
               selected: _selectedIndex == 2,
               onTap: () {
                 setState(() {
@@ -142,7 +170,7 @@ class _MainScreenState extends State<MainScreen> {
             ),
             ListTile(
               leading: const Icon(Icons.notifications),
-              title: const Text('Thông báo'),
+              title: Text(localizations.translate('navigation.notifications')),
               selected: _selectedIndex == 3,
               onTap: () {
                 setState(() {
@@ -153,7 +181,7 @@ class _MainScreenState extends State<MainScreen> {
             ),
             ListTile(
               leading: const Icon(Icons.settings),
-              title: const Text('Cài đặt'),
+              title: Text(localizations.translate('navigation.settings')),
               selected: _selectedIndex == 4,
               onTap: () {
                 setState(() {
@@ -165,7 +193,7 @@ class _MainScreenState extends State<MainScreen> {
             const Divider(),
             ListTile(
               leading: const Icon(Icons.info),
-              title: const Text('Giới thiệu'),
+              title: Text(localizations.translate('navigation.about')),
               selected: _selectedIndex == 5,
               onTap: () {
                 setState(() {
@@ -177,25 +205,25 @@ class _MainScreenState extends State<MainScreen> {
             const Divider(),
             ListTile(
               leading: const Icon(Icons.logout, color: Colors.red),
-              title: const Text(
-                'Đăng xuất',
-                style: TextStyle(color: Colors.red),
+              title: Text(
+                localizations.translate('auth.logout'),
+                style: const TextStyle(color: Colors.red),
               ),
               onTap: () async {
                 Navigator.pop(context);
                 final shouldSignOut = await showDialog<bool>(
                   context: context,
                   builder: (context) => AlertDialog(
-                    title: const Text('Đăng xuất'),
+                    title: Text(localizations.translate('auth.logout')),
                     content: const Text('Bạn có chắc chắn muốn đăng xuất?'),
                     actions: [
                       TextButton(
                         onPressed: () => Navigator.of(context).pop(false),
-                        child: const Text('Hủy'),
+                        child: Text(localizations.translate('app.cancel')),
                       ),
                       TextButton(
                         onPressed: () => Navigator.of(context).pop(true),
-                        child: const Text('Đăng xuất'),
+                        child: Text(localizations.translate('auth.logout')),
                       ),
                     ],
                   ),
@@ -413,33 +441,6 @@ class _NotificationScreenState extends State<NotificationScreen> {
                 ],
               ),
             ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class SettingsScreen extends StatelessWidget {
-  const SettingsScreen({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(Icons.settings, size: 100, color: Colors.orange),
-          SizedBox(height: 20),
-          Text(
-            'Cài đặt',
-            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-          ),
-          SizedBox(height: 10),
-          Text(
-            'Các tùy chọn cài đặt ứng dụng.',
-            style: TextStyle(fontSize: 16),
-            textAlign: TextAlign.center,
           ),
         ],
       ),

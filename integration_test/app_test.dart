@@ -37,13 +37,13 @@ void main() {
     });
 
     group('Monitor Config CRUD Flow', () {
-      testWidgets('should be able to view monitor configs list', (
+      testWidgets('should be able to view Config Alerts list', (
         WidgetTester tester,
       ) async {
         app.main();
         await tester.pumpAndSettle();
 
-        // Navigate to monitor configs screen
+        // Navigate to Config Alerts screen
         // This will depend on your navigation structure
 
         // For now, we'll skip the actual navigation and just test app stability
@@ -57,7 +57,7 @@ void main() {
         await tester.pumpAndSettle();
 
         // Test creating a new monitor config
-        // 1. Navigate to monitor configs
+        // 1. Navigate to Config Alerts
         // 2. Tap add button
         // 3. Fill form
         // 4. Submit
@@ -74,7 +74,7 @@ void main() {
         await tester.pumpAndSettle();
 
         // Test editing a monitor config
-        // 1. Navigate to monitor configs
+        // 1. Navigate to Config Alerts
         // 2. Tap on an existing item
         // 3. Modify form
         // 4. Submit
@@ -91,7 +91,7 @@ void main() {
         await tester.pumpAndSettle();
 
         // Test deleting a monitor config
-        // 1. Navigate to monitor configs
+        // 1. Navigate to Config Alerts
         // 2. Long press or tap delete button on an item
         // 3. Confirm deletion
         // 4. Verify item is removed

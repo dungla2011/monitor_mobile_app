@@ -78,13 +78,13 @@ class MonitorConfigCrudService extends BaseCrudService {
 
   // CRUD Operations
 
-  // Get list of monitor configs
+  // Get list of Config Alerts
   static Future<Map<String, dynamic>> getMonitorConfigs({
     int page = 1,
     int limit = 20,
   }) async {
     final url = '$_listApiUrl?page=$page&limit=$limit';
-    return BaseCrudService.getRequest(url, 'List Monitor Configs');
+    return BaseCrudService.getRequest(url, 'List Config Alerts');
   }
 
   // Get single monitor config
@@ -123,14 +123,14 @@ class MonitorConfigCrudService extends BaseCrudService {
     );
   }
 
-  // Delete monitor configs
+  // Delete Config Alerts
   static Future<Map<String, dynamic>> deleteMonitorConfigs(
     List<int> ids,
   ) async {
     return BaseCrudService.deleteRequest(
       _deleteApiUrl,
       ids,
-      'Delete Monitor Configs',
+      'Delete Config Alerts',
     );
   }
 
