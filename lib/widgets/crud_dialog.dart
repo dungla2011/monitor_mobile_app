@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import '../utils/crud_utils.dart';
 import '../utils/error_dialog_utils.dart';
@@ -275,6 +276,8 @@ class _CrudDialogState extends State<CrudDialog> {
     // Try to get select options from multiple sources
     Map<String, dynamic>? selectOptions =
         field['select_options'] as Map<String, dynamic>?;
+    Map<String, dynamic>? selectOptionsMulti =
+        field['select_options_multi'] as Map<String, dynamic>?;
 
     // If not found, try to get from item data (API response might include it)
     if (selectOptions == null && widget.item != null) {
@@ -301,10 +304,14 @@ class _CrudDialogState extends State<CrudDialog> {
               ? _buildBooleanField(fieldName, label, required)
               : isDateTimeField
                   ? _buildDateTimeField(fieldName, label, required)
-                  : selectOptions != null
-                      ? _buildDropdownField(
-                          fieldName, label, required, selectOptions)
-                      : _buildTextField(fieldName, label, required, dataType),
+                  : selectOptionsMulti != null
+                      ? _buildMultiSelectField(
+                          fieldName, label, required, selectOptionsMulti)
+                      : selectOptions != null
+                          ? _buildDropdownField(
+                              fieldName, label, required, selectOptions)
+                          : _buildTextField(
+                              fieldName, label, required, dataType),
     );
   }
 
@@ -525,6 +532,101 @@ class _CrudDialogState extends State<CrudDialog> {
           'required': required ? 'yes' : 'no',
         });
       },
+    );
+  }
+
+  Widget _buildMultiSelectField(
+    String fieldName,
+    String label,
+    bool required,
+    Map<String, dynamic> selectOptions,
+  ) {
+    // Get current selected values (could be string or array)
+    List<String> selectedValues = [];
+    final currentValue = _controllers[fieldName]?.text ?? '';
+
+    if (currentValue.isNotEmpty) {
+      try {
+        // Try to parse as JSON array first
+        final decoded = jsonDecode(currentValue);
+        if (decoded is List) {
+          selectedValues = decoded.map((e) => e.toString()).toList();
+        } else {
+          selectedValues = [currentValue];
+        }
+      } catch (e) {
+        // If not JSON, treat as single value or comma-separated
+        if (currentValue.contains(',')) {
+          selectedValues =
+              currentValue.split(',').map((e) => e.trim()).toList();
+        } else {
+          selectedValues = [currentValue];
+        }
+      }
+    }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          required ? '$label *' : label,
+          style: const TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+        const SizedBox(height: 8),
+        Container(
+          decoration: BoxDecoration(
+            border: Border.all(color: Colors.grey),
+            borderRadius: BorderRadius.circular(4),
+          ),
+          child: Column(
+            children: selectOptions.entries.map((entry) {
+              final optionKey = entry.key;
+              final optionValue = entry.value.toString();
+              final isSelected = selectedValues.contains(optionKey);
+
+              // Skip the default "-Chọn-" option
+              if (optionKey == '0' && optionValue.contains('-Chọn')) {
+                return const SizedBox.shrink();
+              }
+
+              return CheckboxListTile(
+                title: Text(optionValue),
+                value: isSelected,
+                onChanged: (bool? value) {
+                  setState(() {
+                    if (value == true) {
+                      if (!selectedValues.contains(optionKey)) {
+                        selectedValues.add(optionKey);
+                      }
+                    } else {
+                      selectedValues.remove(optionKey);
+                    }
+
+                    // Update controller with JSON array
+                    final jsonArray = jsonEncode(selectedValues);
+                    _controllers[fieldName]?.text = jsonArray;
+                    _updateFieldValue(fieldName, jsonArray);
+                  });
+                },
+              );
+            }).toList(),
+          ),
+        ),
+        if (required && selectedValues.isEmpty)
+          Padding(
+            padding: const EdgeInsets.only(top: 8),
+            child: Text(
+              'Vui lòng chọn ít nhất một $label',
+              style: const TextStyle(
+                color: Colors.red,
+                fontSize: 12,
+              ),
+            ),
+          ),
+      ],
     );
   }
 }

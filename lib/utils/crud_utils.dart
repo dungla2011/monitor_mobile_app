@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 /// Utility functions for CRUD operations
 class CrudUtils {
   /// Validates if a field should be shown based on dependency conditions
@@ -142,5 +144,58 @@ class CrudUtils {
     }
 
     return filteredData;
+  }
+
+  /// Prepares data for saving by filtering and validating
+  static Map<String, dynamic> prepareSaveData(
+    Map<String, TextEditingController> controllers,
+    List<Map<String, dynamic>> fieldDetails,
+  ) {
+    final data = <String, dynamic>{};
+
+    // Extract data from controllers
+    for (final entry in controllers.entries) {
+      final fieldName = entry.key;
+      final controller = entry.value;
+      final value = controller.text;
+
+      if (value.isNotEmpty) {
+        // Find the field details for this field
+        final field = fieldDetails.firstWhere(
+          (f) => (f['field'] ?? f['field_name']) == fieldName,
+          orElse: () => <String, dynamic>{},
+        );
+
+        // Check if this is a multi-select field
+        final hasMultiSelect = field['select_options_multi'] != null;
+
+        if (hasMultiSelect) {
+          // Try to parse as JSON array for multi-select fields
+          try {
+            final decoded = jsonDecode(value);
+            if (decoded is List) {
+              // Convert to array of strings/numbers
+              data[fieldName] = decoded;
+            } else {
+              // Single value, wrap in array
+              data[fieldName] = [decoded];
+            }
+          } catch (e) {
+            // If not valid JSON, treat as comma-separated or single value
+            if (value.contains(',')) {
+              data[fieldName] = value.split(',').map((e) => e.trim()).toList();
+            } else {
+              data[fieldName] = [value];
+            }
+          }
+        } else {
+          // Regular field, use as string
+          data[fieldName] = value;
+        }
+      }
+    }
+
+    // Filter to only include editable fields
+    return filterEditableData(data, fieldDetails);
   }
 }

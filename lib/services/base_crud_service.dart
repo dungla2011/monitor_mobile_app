@@ -285,6 +285,7 @@ abstract class BaseCrudService {
             'data_type': fieldMap['data_type'],
             'editable': fieldMap['editable'],
             'select_options': fieldMap['select_option_value'],
+            'select_options_multi': fieldMap['select_option_multi_value'],
             'show_dependency': fieldMap['show_dependency'],
           });
         }
@@ -300,6 +301,7 @@ abstract class BaseCrudService {
             'data_type': fieldMap['data_type'],
             'editable': fieldMap['editable'],
             'select_options': fieldMap['select_option_value'],
+            'select_options_multi': fieldMap['select_option_multi_value'],
             'show_dependency': fieldMap['show_dependency'],
           });
         }
@@ -335,6 +337,7 @@ abstract class BaseCrudService {
             'data_type': fieldMap['data_type'],
             'editable': fieldMap['editable'],
             'select_options': fieldMap['select_option_value'],
+            'select_options_multi': fieldMap['select_option_multi_value'],
           });
         }
       }
@@ -354,6 +357,7 @@ abstract class BaseCrudService {
               'data_type': fieldMap['data_type'],
               'editable': fieldMap['editable'],
               'select_options': fieldMap['select_option_value'],
+              'select_options_multi': fieldMap['select_option_multi_value'],
             });
           }
         }
