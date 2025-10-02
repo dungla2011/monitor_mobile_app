@@ -4,9 +4,10 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:http/http.dart' as http;
 import '../utils/user_agent_utils.dart';
+import '../config/app_config.dart';
 
 class GoogleAuthService {
-  static const String _baseUrl = 'https://mon.lad.vn';
+  static String get _baseUrl => AppConfig.apiBaseUrl;
 
   // Web Client ID - chỉ dùng cho Web, Android tự lấy từ google-services.json
   static const String _webClientId =

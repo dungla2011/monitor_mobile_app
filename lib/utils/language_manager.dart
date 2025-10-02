@@ -3,6 +3,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import '../services/web_auth_service.dart';
+import '../config/app_config.dart';
 
 class LanguageManager extends ChangeNotifier {
   static const String _languageKey = 'selected_language';
@@ -107,7 +108,7 @@ class LanguageManager extends ChangeNotifier {
         };
       }
 
-      const String apiUrl = 'https://mon.lad.vn/api/member-user/update-member';
+      final String apiUrl = '${AppConfig.memberUrl}/update-member';
 
       print('🌐 Updating language to API: $languageCode');
 
@@ -176,7 +177,7 @@ class LanguageManager extends ChangeNotifier {
         };
       }
 
-      const String apiUrl = 'https://mon.lad.vn/api/member-user/get-member';
+      final String apiUrl = '${AppConfig.memberUrl}/get-member';
 
       print('🌐 Loading user info from API...');
 

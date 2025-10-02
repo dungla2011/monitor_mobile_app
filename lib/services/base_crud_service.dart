@@ -2,10 +2,11 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'web_auth_service.dart';
 import '../utils/user_agent_utils.dart';
+import '../config/app_config.dart';
 
 /// Base CRUD service với common error handling và API utilities
 abstract class BaseCrudService {
-  static const String baseUrl = 'https://mon.lad.vn';
+  static String get baseUrl => AppConfig.apiBaseUrl;
 
   /// Parse API response với unified error handling
   static Map<String, dynamic> parseApiResponse(

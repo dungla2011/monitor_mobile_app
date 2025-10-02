@@ -1,6 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 import 'package:monitor_app/services/base_crud_service.dart';
+import 'package:monitor_app/config/app_config.dart';
 import '../fixtures/mock_data.dart';
 
 void main() {
@@ -63,13 +64,13 @@ void main() {
 
     group('baseUrl', () {
       test('should have correct base URL', () {
-        expect(BaseCrudService.baseUrl, 'https://mon.lad.vn');
+        expect(BaseCrudService.baseUrl, AppConfig.apiBaseUrl);
       });
     });
 
     group('constants', () {
       test('should have correct base URL constant', () {
-        const expectedUrl = 'https://mon.lad.vn';
+        final expectedUrl = AppConfig.apiBaseUrl;
         expect(BaseCrudService.baseUrl, expectedUrl);
       });
     });

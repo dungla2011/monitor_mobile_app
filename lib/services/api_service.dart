@@ -1,9 +1,10 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'web_auth_service.dart';
+import '../config/app_config.dart';
 
 class ApiService {
-  static const String _baseUrl = 'https://mon.lad.vn/api';
+  static String get _baseUrl => AppConfig.apiUrl;
 
   // Example: Lấy danh sách user
   static Future<Map<String, dynamic>> getUsers() async {

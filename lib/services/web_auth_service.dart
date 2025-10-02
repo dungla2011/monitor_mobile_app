@@ -6,12 +6,13 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import '../utils/user_agent_utils.dart';
 import 'google_auth_service.dart';
 import 'firebase_messaging_service.dart';
+import '../config/app_config.dart';
 
 class WebAuthService {
   // Cấu hình API endpoint - Thay đổi URL này theo API của bạn
-  static const String _baseUrl = 'https://mon.lad.vn';
-  static const String _loginEndpoint = '$_baseUrl/api/login-api';
-  static const String _registerEndpoint = '$_baseUrl/register';
+  static String get _baseUrl => AppConfig.apiBaseUrl;
+  static String get _loginEndpoint => '${AppConfig.apiUrl}/login-api';
+  static String get _registerEndpoint => '$_baseUrl/register';
 
   // User model đơn giản
   static Map<String, dynamic>? _currentUser;
@@ -302,7 +303,7 @@ class WebAuthService {
   // Lấy headers với Bearer Token và Firebase token cookie cho các request API
   static Future<Map<String, String>> getAuthenticatedHeaders() async {
     final headers = {
-      'X-API-Key': 'glx_mobile',
+      'X-API-Key': AppConfig.apiKey,
       'Content-Type': 'application/json',
       'Accept': 'application/json',
       'User-Agent': UserAgentUtils.getApiUserAgent(),
@@ -328,10 +329,10 @@ class WebAuthService {
   }
 
   // Phiên bản synchronous (deprecated, dùng getAuthenticatedHeaders() thay thế)
-  @deprecated
+  @Deprecated('Use getAuthenticatedHeaders() instead. This synchronous version does not include Firebase FCM token.')
   static Map<String, String> getAuthenticatedHeadersSync() {
     final headers = {
-      'X-API-Key': 'glx_mobile',
+      'X-API-Key': AppConfig.apiKey,
       'Content-Type': 'application/json',
       'Accept': 'application/json',
       'User-Agent': UserAgentUtils.getApiUserAgent(),
@@ -399,7 +400,7 @@ class WebAuthService {
         };
       }
 
-      const String apiUrl = '$_baseUrl/api/member-user/get-member';
+      final String apiUrl = '${AppConfig.memberUrl}/get-member';
 
       print('🔗 Loading user info from: $apiUrl');
 

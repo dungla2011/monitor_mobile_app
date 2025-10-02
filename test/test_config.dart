@@ -4,10 +4,11 @@ library test_config;
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
+import 'package:monitor_app/config/app_config.dart';
 
 /// Test configuration class
 class TestConfig {
-  static const String baseUrl = 'https://mon.lad.vn';
+  static String get baseUrl => AppConfig.apiBaseUrl;
   static const String testToken = 'test_token_12345';
 
   // Test timeouts
