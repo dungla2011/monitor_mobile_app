@@ -161,7 +161,7 @@ class ApiService {
       }
 
       http.Response response;
-      final headers = WebAuthService.getAuthenticatedHeaders();
+      final headers = await WebAuthService.getAuthenticatedHeaders();
 
       switch (method.toUpperCase()) {
         case 'GET':

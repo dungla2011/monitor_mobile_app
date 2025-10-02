@@ -61,9 +61,10 @@ abstract class BaseCrudService {
         };
       }
 
+      final headers = await WebAuthService.getAuthenticatedHeaders();
       final response = await http.get(
         Uri.parse(url),
-        headers: WebAuthService.getAuthenticatedHeaders(),
+        headers: headers,
       );
 
       return parseApiResponse(
@@ -95,9 +96,10 @@ abstract class BaseCrudService {
 
       print('📤 Sending $operation data to server: $data');
 
+      final headers = await WebAuthService.getAuthenticatedHeaders();
       final response = await http.post(
         Uri.parse(url),
-        headers: WebAuthService.getAuthenticatedHeaders(),
+        headers: headers,
         body: jsonEncode(data),
       );
 
@@ -131,9 +133,10 @@ abstract class BaseCrudService {
       final idsString = ids.join(',');
       final deleteUrl = '$url?id=$idsString';
 
+      final headers = await WebAuthService.getAuthenticatedHeaders();
       final response = await http.get(
         Uri.parse(deleteUrl),
-        headers: WebAuthService.getAuthenticatedHeaders(),
+        headers: headers,
       );
 
       return parseApiResponse(
@@ -158,9 +161,10 @@ abstract class BaseCrudService {
     try {
       print('🔗 Fetching $configType for $tableName from: $url');
 
+      final headers = await WebAuthService.getAuthenticatedHeaders();
       final response = await http.get(
         Uri.parse(url),
-        headers: WebAuthService.getAuthenticatedHeaders(),
+        headers: headers,
       );
 
       print('📥 $configType Response status: ${response.statusCode}');

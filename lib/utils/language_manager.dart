@@ -111,9 +111,10 @@ class LanguageManager extends ChangeNotifier {
 
       print('🌐 Updating language to API: $languageCode');
 
+      final headers = await WebAuthService.getAuthenticatedHeaders();
       final response = await http.post(
         Uri.parse(apiUrl),
-        headers: WebAuthService.getAuthenticatedHeaders(),
+        headers: headers,
         body: jsonEncode({
           'language': languageCode,
         }),
@@ -179,9 +180,10 @@ class LanguageManager extends ChangeNotifier {
 
       print('🌐 Loading user info from API...');
 
+      final headers = await WebAuthService.getAuthenticatedHeaders();
       final response = await http.get(
         Uri.parse(apiUrl),
-        headers: WebAuthService.getAuthenticatedHeaders(),
+        headers: headers,
       );
 
       print('📥 Get member API response status: ${response.statusCode}');

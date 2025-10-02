@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:firebase_messaging/firebase_messaging.dart';
 import '../utils/user_agent_utils.dart';
 import 'google_auth_service.dart';
+import 'firebase_messaging_service.dart';
 
 class WebAuthService {
   // Cấu hình API endpoint - Thay đổi URL này theo API của bạn
@@ -298,8 +299,37 @@ class WebAuthService {
     };
   }
 
-  // Lấy headers với Bearer Token cho các request API
-  static Map<String, String> getAuthenticatedHeaders() {
+  // Lấy headers với Bearer Token và Firebase token cookie cho các request API
+  static Future<Map<String, String>> getAuthenticatedHeaders() async {
+    final headers = {
+      'X-API-Key': 'glx_mobile',
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+      'User-Agent': UserAgentUtils.getApiUserAgent(),
+    };
+
+    if (_bearerToken != null && _bearerToken!.isNotEmpty) {
+      headers['Authorization'] = 'Bearer $_bearerToken';
+    }
+
+    // Thêm Firebase FCM token vào cookie
+    if (!kIsWeb) {
+      try {
+        final fcmToken = await FirebaseMessagingService.getToken();
+        if (fcmToken != null && fcmToken.isNotEmpty) {
+          headers['Cookie'] = 'firebase_token_cookie=$fcmToken';
+        }
+      } catch (e) {
+        print('⚠️ Không lấy được FCM token: $e');
+      }
+    }
+
+    return headers;
+  }
+
+  // Phiên bản synchronous (deprecated, dùng getAuthenticatedHeaders() thay thế)
+  @deprecated
+  static Map<String, String> getAuthenticatedHeadersSync() {
     final headers = {
       'X-API-Key': 'glx_mobile',
       'Content-Type': 'application/json',
@@ -321,9 +351,10 @@ class WebAuthService {
 
   // Method để gọi API với authentication
   static Future<http.Response> authenticatedGet(String endpoint) async {
+    final headers = await getAuthenticatedHeaders();
     return await http.get(
       Uri.parse(endpoint),
-      headers: getAuthenticatedHeaders(),
+      headers: headers,
     );
   }
 
@@ -331,9 +362,10 @@ class WebAuthService {
     String endpoint,
     Map<String, dynamic> body,
   ) async {
+    final headers = await getAuthenticatedHeaders();
     return await http.post(
       Uri.parse(endpoint),
-      headers: getAuthenticatedHeaders(),
+      headers: headers,
       body: jsonEncode(body),
     );
   }
@@ -371,9 +403,10 @@ class WebAuthService {
 
       print('🔗 Loading user info from: $apiUrl');
 
+      final headers = await getAuthenticatedHeaders();
       final response = await http.get(
         Uri.parse(apiUrl),
-        headers: getAuthenticatedHeaders(),
+        headers: headers,
       );
 
       print('📥 User info response status: ${response.statusCode}');
