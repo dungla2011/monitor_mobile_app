@@ -4,6 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:firebase_messaging/firebase_messaging.dart';
 import '../utils/user_agent_utils.dart';
+import 'google_auth_service.dart';
 
 class WebAuthService {
   // Cấu hình API endpoint - Thay đổi URL này theo API của bạn
@@ -151,6 +152,10 @@ class WebAuthService {
   // Đăng xuất
   static Future<void> signOut() async {
     try {
+      // Check login method để sign out Google nếu cần
+      final prefs = await SharedPreferences.getInstance();
+      final loginMethod = prefs.getString('login_method');
+      
       // Clear in-memory data
       _currentUser = null;
       _isLoggedIn = false;
@@ -158,6 +163,15 @@ class WebAuthService {
 
       // Clear all stored data
       await _clearUserInfo();
+      
+      // Sign out from Google if using Google login
+      if (loginMethod == 'google') {
+        try {
+          await GoogleAuthService.signOut();
+        } catch (e) {
+          print('⚠️ Error signing out from Google: $e');
+        }
+      }
 
       // Clear Firebase token if available (optional - for more complete logout)
       if (!kIsWeb) {
@@ -185,6 +199,26 @@ class WebAuthService {
   static Future<bool> checkAuthStatus() async {
     await _loadSavedUserInfo();
     return _isLoggedIn;
+  }
+
+  // Lưu user info từ Google Sign-In
+  static Future<void> saveGoogleUser({
+    required String token,
+    required String email,
+    required String username,
+  }) async {
+    _bearerToken = token;
+    _currentUser = {
+      'username': username,
+      'email': email,
+      'displayName': username,
+      'loginTime': DateTime.now().toIso8601String(),
+      'token': _bearerToken,
+    };
+    _isLoggedIn = true;
+
+    // Lưu vào SharedPreferences
+    await _saveUserInfo(username, 'google');
   }
 
   // Lưu thông tin user vào SharedPreferences

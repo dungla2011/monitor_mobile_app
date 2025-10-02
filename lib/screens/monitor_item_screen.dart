@@ -25,7 +25,7 @@ class _MonitorItemScreenState extends BaseCrudScreenState<MonitorItemScreen> {
   @override
   Future<Map<String, dynamic>> initializeConfig() async {
     // Always reload config to get latest field changes
-    print('� Reloading Monitor Items config from server...');
+    print('[RELOAD] Reloading Monitor Items config from server...');
     return await MonitorItemCrudService.reloadConfig();
   }
 

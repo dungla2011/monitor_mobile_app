@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../services/web_auth_service.dart';
+import '../services/google_auth_service.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -108,6 +109,43 @@ class _LoginScreenState extends State<LoginScreen>
     _showErrorDialog(
       'Chức năng reset password chưa được hỗ trợ.\nVui lòng liên hệ admin.',
     );
+  }
+
+  Future<void> _signInWithGoogle() async {
+    setState(() => _isLoading = true);
+    
+    try {
+      final result = await GoogleAuthService.signInWithGoogle();
+      
+      if (mounted) {
+        if (result['success'] == true) {
+          // Lưu token vào WebAuthService
+          final token = result['token'] as String;
+          final email = result['email'] as String?;
+          final username = result['username'] as String?;
+          
+          // Tạo fake user info để lưu
+          await WebAuthService.saveGoogleUser(
+            token: token,
+            email: email ?? '',
+            username: username ?? 'google_user',
+          );
+          
+          // Chuyển sang màn hình chính
+          Navigator.of(context).pushReplacementNamed('/home');
+        } else {
+          _showErrorDialog(result['message'] ?? 'Đăng nhập thất bại');
+        }
+      }
+    } catch (e) {
+      if (mounted) {
+        _showErrorDialog('Lỗi đăng nhập Google: $e');
+      }
+    } finally {
+      if (mounted) {
+        setState(() => _isLoading = false);
+      }
+    }
   }
 
   void _showErrorDialog(String message) {
@@ -307,6 +345,41 @@ class _LoginScreenState extends State<LoginScreen>
                         'Đăng nhập',
                         style: TextStyle(fontSize: 16),
                       ),
+              ),
+            ),
+            
+            // Divider "hoặc"
+            const Padding(
+              padding: EdgeInsets.symmetric(vertical: 16),
+              child: Row(
+                children: [
+                  Expanded(child: Divider()),
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 16),
+                    child: Text('hoặc', style: TextStyle(color: Colors.grey)),
+                  ),
+                  Expanded(child: Divider()),
+                ],
+              ),
+            ),
+            
+            // Nút Google Sign-In
+            SizedBox(
+              width: double.infinity,
+              height: 48,
+              child: OutlinedButton.icon(
+                onPressed: _isLoading ? null : _signInWithGoogle,
+                style: OutlinedButton.styleFrom(
+                  side: const BorderSide(color: Colors.grey),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                ),
+                icon: const Icon(Icons.login, color: Colors.red),
+                label: const Text(
+                  'Đăng nhập với Google',
+                  style: TextStyle(fontSize: 16, color: Colors.black87),
+                ),
               ),
             ),
           ],

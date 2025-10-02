@@ -26,7 +26,7 @@ class _MonitorConfigScreenState
   @override
   Future<Map<String, dynamic>> initializeConfig() async {
     // Always reload config to get latest field changes
-    print('� Reloading Monitor Config from server...');
+    print('[RELOAD] Reloading Monitor Config from server...');
     return await MonitorConfigCrudService.reloadConfig();
   }
 
