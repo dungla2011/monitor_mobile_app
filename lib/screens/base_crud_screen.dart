@@ -209,7 +209,7 @@ abstract class BaseCrudScreenState<T extends BaseCrudScreen> extends State<T> {
     // If editing, reload field_details config first
     if (isEditMode) {
       print('[RELOAD] Reloading field_details before editing item...');
-      
+
       // Show loading dialog
       showDialog(
         context: context,
@@ -229,7 +229,7 @@ abstract class BaseCrudScreenState<T extends BaseCrudScreen> extends State<T> {
       try {
         // Reload config to get latest field_details
         final configResult = await initializeConfig();
-        
+
         // Close loading dialog
         if (mounted) Navigator.of(context).pop();
 
@@ -242,12 +242,12 @@ abstract class BaseCrudScreenState<T extends BaseCrudScreen> extends State<T> {
           }
           return;
         }
-        
+
         print('[RELOAD] Field details reloaded successfully');
       } catch (e) {
         // Close loading dialog
         if (mounted) Navigator.of(context).pop();
-        
+
         if (mounted) {
           await ErrorDialogUtils.showErrorDialog(
             context,
@@ -880,6 +880,8 @@ class _BaseCrudDialogState extends State<BaseCrudDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
+      // Reduce horizontal padding to 10px from each side
+      insetPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 20),
       title: Container(
         padding: const EdgeInsets.only(top: 8),
         child: widget.item != null
