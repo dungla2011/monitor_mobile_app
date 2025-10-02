@@ -25,11 +25,9 @@ class _MonitorConfigScreenState
 
   @override
   Future<Map<String, dynamic>> initializeConfig() async {
-    if (!MonitorConfigCrudService.isConfigLoaded) {
-      print('📋 Loading Monitor Alert CRUD...');
-      return await MonitorConfigCrudService.initializeConfig();
-    }
-    return {'success': true};
+    // Always reload config to get latest field changes
+    print('� Reloading Monitor Config from server...');
+    return await MonitorConfigCrudService.reloadConfig();
   }
 
   @override

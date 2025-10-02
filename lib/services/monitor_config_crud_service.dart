@@ -159,4 +159,44 @@ class MonitorConfigCrudService extends BaseCrudService {
   static bool get isConfigLoaded {
     return _fieldDetails != null && _apiList != null && _apiGetOne != null;
   }
+
+  // Force reload config from server (always refresh)
+  static Future<Map<String, dynamic>> reloadConfig() async {
+    // First time: load everything, subsequent times: only reload field_details
+    if (_apiList == null || _apiGetOne == null) {
+      print('📋 First time loading Monitor Config...');
+      return await initializeConfig();
+    } else {
+      print('🔄 Reloading Monitor Config field_details only...');
+      return await reloadFieldDetails();
+    }
+  }
+
+  // Reload only field_details from server
+  static Future<Map<String, dynamic>> reloadFieldDetails() async {
+    try {
+      // Fetch field details
+      final fieldDetailsResult = await BaseCrudService.fetchConfig(
+        _tableName,
+        'field_details',
+      );
+      if (!fieldDetailsResult['success']) {
+        return fieldDetailsResult;
+      }
+      _fieldDetails = fieldDetailsResult['data'];
+
+      print('✅ Monitor Config field_details reloaded successfully');
+      return {
+        'success': true,
+        'message': 'Field details reloaded successfully',
+        'data': {'field_details': _fieldDetails},
+      };
+    } catch (e) {
+      print('❌ Error reloading Monitor Config field_details: $e');
+      return {
+        'success': false,
+        'message': 'Failed to reload field details: $e',
+      };
+    }
+  }
 }

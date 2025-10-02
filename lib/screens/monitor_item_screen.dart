@@ -24,11 +24,9 @@ class _MonitorItemScreenState extends BaseCrudScreenState<MonitorItemScreen> {
 
   @override
   Future<Map<String, dynamic>> initializeConfig() async {
-    if (!MonitorItemCrudService.isConfigLoaded) {
-      print('📋 Loading Monitor Service...');
-      return await MonitorItemCrudService.initializeConfig();
-    }
-    return {'success': true};
+    // Always reload config to get latest field changes
+    print('� Reloading Monitor Items config from server...');
+    return await MonitorItemCrudService.reloadConfig();
   }
 
   @override
