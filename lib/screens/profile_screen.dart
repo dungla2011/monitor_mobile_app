@@ -78,7 +78,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             '/login',
             (route) => false,
           );
-          
+
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
               content: Text('✅ Đăng xuất thành công'),

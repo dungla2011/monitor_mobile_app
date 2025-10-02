@@ -250,7 +250,7 @@ class _MainScreenState extends State<MainScreen> {
                         '/login',
                         (route) => false,
                       );
-                      
+
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
                           content: Text('✅ Đăng xuất thành công'),

@@ -113,24 +113,24 @@ class _LoginScreenState extends State<LoginScreen>
 
   Future<void> _signInWithGoogle() async {
     setState(() => _isLoading = true);
-    
+
     try {
       final result = await GoogleAuthService.signInWithGoogle();
-      
+
       if (mounted) {
         if (result['success'] == true) {
           // Lưu token vào WebAuthService
           final token = result['token'] as String;
           final email = result['email'] as String?;
           final username = result['username'] as String?;
-          
+
           // Tạo fake user info để lưu
           await WebAuthService.saveGoogleUser(
             token: token,
             email: email ?? '',
             username: username ?? 'google_user',
           );
-          
+
           // Chuyển sang màn hình chính
           Navigator.of(context).pushReplacementNamed('/home');
         } else {
@@ -347,7 +347,7 @@ class _LoginScreenState extends State<LoginScreen>
                       ),
               ),
             ),
-            
+
             // Divider "hoặc"
             const Padding(
               padding: EdgeInsets.symmetric(vertical: 16),
@@ -362,7 +362,7 @@ class _LoginScreenState extends State<LoginScreen>
                 ],
               ),
             ),
-            
+
             // Nút Google Sign-In
             SizedBox(
               width: double.infinity,

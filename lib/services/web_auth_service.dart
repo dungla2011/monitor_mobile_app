@@ -155,7 +155,7 @@ class WebAuthService {
       // Check login method để sign out Google nếu cần
       final prefs = await SharedPreferences.getInstance();
       final loginMethod = prefs.getString('login_method');
-      
+
       // Clear in-memory data
       _currentUser = null;
       _isLoggedIn = false;
@@ -163,7 +163,7 @@ class WebAuthService {
 
       // Clear all stored data
       await _clearUserInfo();
-      
+
       // Sign out from Google if using Google login
       if (loginMethod == 'google') {
         try {
