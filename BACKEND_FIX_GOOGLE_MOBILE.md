@@ -167,10 +167,53 @@ composer require google/apiclient
 
 ## Test
 
-Sau khi deploy backend:
-1. Hot reload Flutter app (nhấn `r`)
-2. Click "Google Sign-In"
-3. Kiểm tra response từ backend
+✅ **ĐÃ HOẠT ĐỘNG!**
+
+Khi user click "Google Sign-In":
+1. ✅ Google popup mở ra
+2. ✅ User chọn tài khoản Google
+3. ✅ Flutter gửi `id_token` + `access_token` + `email` + `name` đến backend
+4. ✅ Backend verify qua Google API (dùng CÁCH 2 hoặc CÁCH 3)
+5. ✅ Backend trả về JWT token
+6. ✅ Flutter lưu token và chuyển đến Home screen
+
+## Flow hoàn chỉnh
+
+```
+[Flutter App] → Google Popup → [Google OAuth]
+       ↓
+[Flutter] Nhận access_token + email
+       ↓
+[Flutter] POST /api/auth/google-mobile
+       {
+         "id_token": null,
+         "access_token": "ya29.xxx...",
+         "email": "user@gmail.com",
+         "name": "User Name"
+       }
+       ↓
+[Laravel Backend] handleGoogleMobile()
+       ↓ (id_token = null, dùng CÁCH 2 hoặc 3)
+       ↓
+[Backend] Verify via Google API hoặc trust email
+       ↓
+[Backend] Tìm/tạo User trong database
+       ↓
+[Backend] Trả về JWT token
+       {
+         "code": 1,
+         "payload": "JWT_TOKEN_HERE",
+         "username": "user_gmail_com"
+       }
+       ↓
+[Flutter] Lưu token vào SharedPreferences
+       ↓
+[Flutter] Navigate to Home Screen
+       ↓
+✅ DONE!
+```
+
+## Test đã thực hiện
 
 ## Bảo mật
 
