@@ -45,7 +45,7 @@ class SettingsScreen extends StatelessWidget {
                       return Column(
                         children:
                             LanguageManager.supportedLocales.map((locale) {
-                           final languageName = LanguageManager
+                          final languageName = LanguageManager
                                   .languageNames[locale.languageCode] ??
                               locale.languageCode;
 

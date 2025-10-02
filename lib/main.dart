@@ -228,13 +228,38 @@ class _MainScreenState extends State<MainScreen> {
 
                 if (shouldSignOut == true) {
                   try {
+                    // Show loading indicator
+                    if (mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('Đang đăng xuất...'),
+                          duration: Duration(seconds: 1),
+                        ),
+                      );
+                    }
+
                     await WebAuthService.signOut();
+
+                    // Show success message
+                    if (mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('✅ Đăng xuất thành công'),
+                          duration: Duration(seconds: 2),
+                          backgroundColor: Colors.green,
+                        ),
+                      );
+                    }
+
                     // WebAuthWrapper sẽ tự động điều hướng về LoginScreen
                   } catch (e) {
                     if (mounted) {
                       final messenger = ScaffoldMessenger.of(context);
                       messenger.showSnackBar(
-                        SnackBar(content: Text('Lỗi khi đăng xuất: $e')),
+                        SnackBar(
+                          content: Text('❌ Lỗi khi đăng xuất: $e'),
+                          backgroundColor: Colors.red,
+                        ),
                       );
                     }
                   }
@@ -462,7 +487,7 @@ class AboutScreen extends StatelessWidget {
           ),
           SizedBox(height: 10),
           Text(
-            'Monitor App v1.0.0\nỨng dụng Flutter cơ bản với Left Menu',
+            'Monitor App v1.0.1',
             style: TextStyle(fontSize: 16),
             textAlign: TextAlign.center,
           ),

@@ -18,6 +18,9 @@ class _WebAuthWrapperState extends State<WebAuthWrapper> {
   void initState() {
     super.initState();
     _checkAuthStatus();
+
+    // Listen for auth status changes every few seconds to detect logout
+    _startAuthStatusListener();
   }
 
   Future<void> _checkAuthStatus() async {
@@ -39,6 +42,21 @@ class _WebAuthWrapperState extends State<WebAuthWrapper> {
         });
       }
     }
+  }
+
+  void _startAuthStatusListener() {
+    // Check auth status every 2 seconds to detect logout
+    Future.delayed(const Duration(seconds: 2), () {
+      if (mounted) {
+        final currentAuthStatus = WebAuthService.isLoggedIn;
+        if (_isLoggedIn != currentAuthStatus) {
+          setState(() {
+            _isLoggedIn = currentAuthStatus;
+          });
+        }
+        _startAuthStatusListener(); // Continue listening
+      }
+    });
   }
 
   @override

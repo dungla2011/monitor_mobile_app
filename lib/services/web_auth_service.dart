@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:firebase_messaging/firebase_messaging.dart';
 import '../utils/user_agent_utils.dart';
 
 class WebAuthService {
@@ -148,10 +150,35 @@ class WebAuthService {
 
   // Đăng xuất
   static Future<void> signOut() async {
-    _currentUser = null;
-    _isLoggedIn = false;
-    _bearerToken = null;
-    await _clearUserInfo();
+    try {
+      // Clear in-memory data
+      _currentUser = null;
+      _isLoggedIn = false;
+      _bearerToken = null;
+
+      // Clear all stored data
+      await _clearUserInfo();
+
+      // Clear Firebase token if available (optional - for more complete logout)
+      if (!kIsWeb) {
+        try {
+          // Delete FCM token to stop receiving notifications
+          await FirebaseMessaging.instance.deleteToken();
+          print('🔥 Firebase token deleted');
+        } catch (e) {
+          print('⚠️ Error deleting Firebase token: $e');
+        }
+      }
+
+      print('✅ User signed out successfully');
+    } catch (e) {
+      print('❌ Error during sign out: $e');
+      // Even if there's an error, we still want to clear local data
+      _currentUser = null;
+      _isLoggedIn = false;
+      _bearerToken = null;
+      await _clearUserInfo();
+    }
   }
 
   // Kiểm tra trạng thái đăng nhập từ storage
@@ -202,14 +229,26 @@ class WebAuthService {
 
   // Xóa thông tin user
   static Future<void> _clearUserInfo() async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.remove('user_username');
-    await prefs.remove('user_email');
-    await prefs.remove('user_display_name');
-    await prefs.remove('login_method');
-    await prefs.remove('login_time');
-    await prefs.remove('bearer_token'); // Xóa Bearer Token
-    await prefs.setBool('is_logged_in', false);
+    try {
+      final prefs = await SharedPreferences.getInstance();
+
+      // Clear all user-related data
+      await Future.wait([
+        prefs.remove('user_username'),
+        prefs.remove('user_email'),
+        prefs.remove('user_display_name'),
+        prefs.remove('login_method'),
+        prefs.remove('login_time'),
+        prefs.remove('bearer_token'),
+        prefs.remove('fcm_token'), // Clear FCM token if stored
+        prefs.remove('user_preferences'), // Clear any user preferences
+        prefs.setBool('is_logged_in', false),
+      ]);
+
+      print('🗑️ All user data cleared from storage');
+    } catch (e) {
+      print('❌ Error clearing user info: $e');
+    }
   }
 
   // Lấy thông tin đăng nhập đã lưu
@@ -282,5 +321,17 @@ class WebAuthService {
     } catch (e) {
       return false;
     }
+  }
+
+  // Debug method to check current auth state
+  static Map<String, dynamic> getAuthDebugInfo() {
+    return {
+      'isLoggedIn': _isLoggedIn,
+      'hasToken': _bearerToken != null && _bearerToken!.isNotEmpty,
+      'tokenLength': _bearerToken?.length ?? 0,
+      'hasCurrentUser': _currentUser != null,
+      'username': _currentUser?['username'] ?? 'null',
+      'timestamp': DateTime.now().toIso8601String(),
+    };
   }
 }

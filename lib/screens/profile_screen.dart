@@ -60,13 +60,38 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
     if (shouldSignOut == true) {
       try {
+        // Show loading indicator
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Đang đăng xuất...'),
+              duration: Duration(seconds: 1),
+            ),
+          );
+        }
+
         await WebAuthService.signOut();
+
+        // Show success message
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('✅ Đăng xuất thành công'),
+              duration: Duration(seconds: 2),
+              backgroundColor: Colors.green,
+            ),
+          );
+        }
+
         // WebAuthWrapper sẽ tự động điều hướng về LoginScreen
       } catch (e) {
         if (mounted) {
           ScaffoldMessenger.of(
             context,
-          ).showSnackBar(SnackBar(content: Text('Lỗi khi đăng xuất: $e')));
+          ).showSnackBar(SnackBar(
+            content: Text('❌ Lỗi khi đăng xuất: $e'),
+            backgroundColor: Colors.red,
+          ));
         }
       }
     }
