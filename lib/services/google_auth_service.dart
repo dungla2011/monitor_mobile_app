@@ -9,7 +9,8 @@ class GoogleAuthService {
   static const String _baseUrl = 'https://mon.lad.vn';
 
   // Web Client ID - chỉ dùng cho Web, Android tự lấy từ google-services.json
-  static const String _webClientId = '916524608033-pqqvfdhqsosklb0cfb4nrogi6tm5cpvu.apps.googleusercontent.com';
+  static const String _webClientId =
+      '916524608033-pqqvfdhqsosklb0cfb4nrogi6tm5cpvu.apps.googleusercontent.com';
 
   static final GoogleSignIn _googleSignIn = GoogleSignIn(
     // Chỉ set clientId cho Web, Android không cần (lấy từ google-services.json)
