@@ -7,7 +7,7 @@ import 'package:provider/provider.dart';
 import 'firebase_options.dart';
 import 'services/firebase_messaging_service.dart';
 import 'services/web_auth_service.dart';
-import 'services/language_provider.dart';
+import 'utils/language_manager.dart';
 import 'widgets/web_auth_wrapper.dart';
 import 'screens/profile_screen.dart';
 import 'screens/monitor_item_screen.dart';
@@ -40,7 +40,7 @@ void main() async {
 
   runApp(
     ChangeNotifierProvider(
-      create: (_) => LanguageProvider(),
+      create: (_) => LanguageManager(),
       child: const MyApp(),
     ),
   );
@@ -51,8 +51,8 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<LanguageProvider>(
-      builder: (context, languageProvider, child) {
+    return Consumer<LanguageManager>(
+      builder: (context, languageManager, child) {
         return MaterialApp(
           title: 'Monitor App',
           theme: ThemeData(
@@ -66,12 +66,9 @@ class MyApp extends StatelessWidget {
             GlobalWidgetsLocalizations.delegate,
             GlobalCupertinoLocalizations.delegate,
           ],
-          supportedLocales: const [
-            Locale('en', ''), // English
-            Locale('vi', ''), // Vietnamese
-          ],
+          supportedLocales: LanguageManager.supportedLocales,
           // Use current locale from provider
-          locale: languageProvider.currentLocale,
+          locale: languageManager.currentLocale,
           home: const WebAuthWrapper(),
           routes: {'/home': (context) => const MainScreen()},
           debugShowCheckedModeBanner: false,

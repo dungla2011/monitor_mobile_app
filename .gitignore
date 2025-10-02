@@ -12,7 +12,7 @@
 .swiftpm/
 migrate_working_dir/
 .history
-
+build/
 fb.json
 
 # IntelliJ related

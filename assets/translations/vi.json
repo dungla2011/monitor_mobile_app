@@ -77,8 +77,8 @@
   },
   "navigation": {
     "home": "Trang chủ",
-    "monitorItems": "Monitor Items",
-    "monitorConfigs": "Monitor Configs", 
+    "monitorItems": "Danh sách Monitor",
+    "monitorConfigs": "Cấu hình Cảnh báo",
     "profile": "Hồ sơ",
     "settings": "Cài đặt",
     "notifications": "Thông báo",
