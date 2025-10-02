@@ -1,14 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:provider/provider.dart';
 import 'package:monitor_app/main.dart';
+import 'package:monitor_app/utils/language_manager.dart';
 
 void main() {
   group('Simple Widget Tests', () {
     testWidgets('MyApp should build without errors', (
       WidgetTester tester,
     ) async {
-      // Build the app
-      await tester.pumpWidget(const MyApp());
+      // Build the app with Provider context
+      await tester.pumpWidget(
+        ChangeNotifierProvider(
+          create: (_) => LanguageManager(),
+          child: const MyApp(),
+        ),
+      );
 
       // Verify the app builds successfully
       expect(find.byType(MaterialApp), findsOneWidget);
