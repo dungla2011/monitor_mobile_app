@@ -56,8 +56,8 @@ class SettingsScreen extends StatelessWidget {
                                   languageManager.currentLocale.languageCode,
                               onChanged: (value) async {
                                 if (value != null) {
-                                  await _changeLanguage(
-                                      context, languageManager, Locale(value, ''));
+                                  await _changeLanguage(context,
+                                      languageManager, Locale(value, ''));
                                 }
                               },
                             ),
@@ -157,7 +157,7 @@ class SettingsScreen extends StatelessWidget {
       // Show result message
       if (context.mounted) {
         final scaffoldMessenger = ScaffoldMessenger.of(context);
-        
+
         if (result['success'] == true) {
           scaffoldMessenger.showSnackBar(
             SnackBar(

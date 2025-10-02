@@ -323,6 +323,80 @@ class WebAuthService {
     }
   }
 
+  // Load current user info from API
+  static Future<Map<String, dynamic>> loadUserInfo() async {
+    try {
+      if (!hasValidToken()) {
+        return {
+          'success': false,
+          'message': 'Người dùng chưa đăng nhập',
+        };
+      }
+
+      const String apiUrl = '$_baseUrl/api/member-user/get-member';
+
+      print('🔗 Loading user info from: $apiUrl');
+
+      final response = await http.get(
+        Uri.parse(apiUrl),
+        headers: getAuthenticatedHeaders(),
+      );
+
+      print('📥 User info response status: ${response.statusCode}');
+      print('📥 User info response body: ${response.body}');
+
+      if (response.statusCode == 200) {
+        final jsonResponse = jsonDecode(response.body);
+
+        if (jsonResponse['code'] == 1 && jsonResponse['payload'] != null) {
+          final userInfo = jsonResponse['payload'];
+
+          // Update current user info
+          _currentUser = {
+            'username': userInfo['username'],
+            'email': userInfo['email'],
+            'language': userInfo['language'] ?? 'vi',
+            'created_at': userInfo['created_at'],
+          };
+
+          // Save updated user info
+          await _saveUserInfo(userInfo['username'], 'api_refresh');
+
+          return {
+            'success': true,
+            'user': _currentUser,
+            'message': 'Tải thông tin người dùng thành công',
+          };
+        } else {
+          return {
+            'success': false,
+            'message':
+                jsonResponse['message'] ?? 'API trả về dữ liệu không hợp lệ',
+          };
+        }
+      } else if (response.statusCode == 401) {
+        // Token expired
+        await signOut();
+        return {
+          'success': false,
+          'message': 'Phiên đăng nhập hết hạn',
+          'needReauth': true,
+        };
+      } else {
+        return {
+          'success': false,
+          'message': 'Lỗi HTTP ${response.statusCode}',
+        };
+      }
+    } catch (e) {
+      print('❌ Error loading user info: $e');
+      return {
+        'success': false,
+        'message': 'Lỗi kết nối: $e',
+      };
+    }
+  }
+
   // Debug method to check current auth state
   static Map<String, dynamic> getAuthDebugInfo() {
     return {
@@ -331,6 +405,7 @@ class WebAuthService {
       'tokenLength': _bearerToken?.length ?? 0,
       'hasCurrentUser': _currentUser != null,
       'username': _currentUser?['username'] ?? 'null',
+      'language': _currentUser?['language'] ?? 'null',
       'timestamp': DateTime.now().toIso8601String(),
     };
   }

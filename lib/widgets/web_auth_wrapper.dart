@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../services/web_auth_service.dart';
 import '../screens/login_screen.dart';
+import '../utils/language_manager.dart';
 import '../main.dart';
 
 class WebAuthWrapper extends StatefulWidget {
@@ -33,14 +35,43 @@ class _WebAuthWrapperState extends State<WebAuthWrapper> {
           _isLoggedIn = isLoggedIn;
           _isLoading = false;
         });
+
+        // If user is logged in, load user info and language from API
+        // Do this after setState to ensure context is ready
+        if (isLoggedIn) {
+          _loadUserInfoAndLanguage();
+        }
       }
     } catch (e) {
+      print('❌ Error checking auth status: $e');
       if (mounted) {
         setState(() {
           _isLoggedIn = false;
           _isLoading = false;
         });
       }
+    }
+  }
+
+  Future<void> _loadUserInfoAndLanguage() async {
+    try {
+      print('✅ User is logged in, loading user info from API...');
+      final userInfoResult = await WebAuthService.loadUserInfo();
+
+      if (userInfoResult['success'] && mounted) {
+        print('🌍 User info loaded, syncing language...');
+
+        // Sync language with LanguageManager
+        final languageManager =
+            Provider.of<LanguageManager>(context, listen: false);
+        await languageManager.syncLanguageFromUserInfo();
+
+        print('✅ Language synced successfully');
+      } else {
+        print('⚠️ Failed to load user info: ${userInfoResult['message']}');
+      }
+    } catch (e) {
+      print('❌ Error loading user info and language: $e');
     }
   }
 
