@@ -54,18 +54,19 @@ class SettingsScreen extends StatelessWidget {
                               value: locale.languageCode,
                               groupValue:
                                   languageManager.currentLocale.languageCode,
-                              onChanged: (value) {
+                              onChanged: (value) async {
                                 if (value != null) {
-                                  languageManager
-                                      .changeLanguage(Locale(value, ''));
+                                  await _changeLanguage(
+                                      context, languageManager, Locale(value, ''));
                                 }
                               },
                             ),
                             title: Text(languageName),
                             subtitle: Text(_getLanguageDescription(
                                 locale.languageCode, l10n)),
-                            onTap: () {
-                              languageManager.changeLanguage(locale);
+                            onTap: () async {
+                              await _changeLanguage(
+                                  context, languageManager, locale);
                             },
                           );
                         }).toList(),
@@ -127,6 +128,89 @@ class SettingsScreen extends StatelessWidget {
         return l10n.translate('settings.englishDesc');
       default:
         return '';
+    }
+  }
+
+  Future<void> _changeLanguage(
+    BuildContext context,
+    LanguageManager languageManager,
+    Locale locale,
+  ) async {
+    // Show loading indicator
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => const Center(
+        child: CircularProgressIndicator(),
+      ),
+    );
+
+    try {
+      // Call API to change language
+      final result = await languageManager.changeLanguage(locale);
+
+      // Hide loading
+      if (context.mounted) {
+        Navigator.of(context).pop();
+      }
+
+      // Show result message
+      if (context.mounted) {
+        final scaffoldMessenger = ScaffoldMessenger.of(context);
+        
+        if (result['success'] == true) {
+          scaffoldMessenger.showSnackBar(
+            SnackBar(
+              content: Text(
+                result['message'] ?? 'Đã thay đổi ngôn ngữ thành công',
+              ),
+              backgroundColor: Colors.green,
+              duration: const Duration(seconds: 2),
+            ),
+          );
+
+          // Show warning if API failed but local change succeeded
+          if (result['warning'] != null) {
+            Future.delayed(const Duration(seconds: 2), () {
+              if (context.mounted) {
+                scaffoldMessenger.showSnackBar(
+                  SnackBar(
+                    content: Text('⚠️ ${result['warning']}'),
+                    backgroundColor: Colors.orange,
+                    duration: const Duration(seconds: 3),
+                  ),
+                );
+              }
+            });
+          }
+        } else {
+          scaffoldMessenger.showSnackBar(
+            SnackBar(
+              content: Text(
+                result['message'] ?? 'Lỗi khi thay đổi ngôn ngữ',
+              ),
+              backgroundColor: Colors.red,
+              duration: const Duration(seconds: 3),
+            ),
+          );
+        }
+      }
+    } catch (e) {
+      // Hide loading
+      if (context.mounted) {
+        Navigator.of(context).pop();
+      }
+
+      // Show error message
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Lỗi: $e'),
+            backgroundColor: Colors.red,
+            duration: const Duration(seconds: 3),
+          ),
+        );
+      }
     }
   }
 }
