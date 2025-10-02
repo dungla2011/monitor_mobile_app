@@ -17,6 +17,11 @@ void main() {
       languageManager = LanguageManager();
     });
 
+    tearDown(() {
+      // Dispose to prevent memory leaks and segfaults
+      languageManager.dispose();
+    });
+
     test('Should have default Vietnamese locale', () {
       expect(languageManager.currentLocale.languageCode, 'vi');
     });
