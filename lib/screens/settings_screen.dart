@@ -9,7 +9,7 @@ class SettingsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    
+
     return Scaffold(
       appBar: AppBar(
         title: Text(l10n.navSettings),
@@ -43,22 +43,30 @@ class SettingsScreen extends StatelessWidget {
                   Consumer<LanguageManager>(
                     builder: (context, languageManager, child) {
                       return Column(
-                        children: LanguageManager.supportedLocales.map((locale) {
-                          final isSelected = languageManager.currentLocale.languageCode == locale.languageCode;
-                          final languageName = LanguageManager.languageNames[locale.languageCode] ?? locale.languageCode;
-                          
+                        children:
+                            LanguageManager.supportedLocales.map((locale) {
+                          final isSelected =
+                              languageManager.currentLocale.languageCode ==
+                                  locale.languageCode;
+                          final languageName = LanguageManager
+                                  .languageNames[locale.languageCode] ??
+                              locale.languageCode;
+
                           return ListTile(
                             leading: Radio<String>(
                               value: locale.languageCode,
-                              groupValue: languageManager.currentLocale.languageCode,
+                              groupValue:
+                                  languageManager.currentLocale.languageCode,
                               onChanged: (value) {
                                 if (value != null) {
-                                  languageManager.changeLanguage(Locale(value, ''));
+                                  languageManager
+                                      .changeLanguage(Locale(value, ''));
                                 }
                               },
                             ),
                             title: Text(languageName),
-                            subtitle: Text(_getLanguageDescription(locale.languageCode, l10n)),
+                            subtitle: Text(_getLanguageDescription(
+                                locale.languageCode, l10n)),
                             onTap: () {
                               languageManager.changeLanguage(locale);
                             },
@@ -71,9 +79,9 @@ class SettingsScreen extends StatelessWidget {
               ),
             ),
           ),
-          
+
           const SizedBox(height: 16),
-          
+
           // App Info Section
           Card(
             child: Padding(
@@ -113,7 +121,7 @@ class SettingsScreen extends StatelessWidget {
       ),
     );
   }
-  
+
   String _getLanguageDescription(String languageCode, AppLocalizations l10n) {
     switch (languageCode) {
       case 'vi':
