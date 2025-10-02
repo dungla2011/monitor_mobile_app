@@ -9,6 +9,7 @@ import 'services/firebase_messaging_service.dart';
 import 'services/web_auth_service.dart';
 import 'utils/language_manager.dart';
 import 'widgets/web_auth_wrapper.dart';
+import 'screens/login_screen.dart';
 import 'screens/profile_screen.dart';
 import 'screens/monitor_item_screen.dart';
 import 'screens/monitor_config_screen.dart';
@@ -70,7 +71,10 @@ class MyApp extends StatelessWidget {
           // Use current locale from provider
           locale: languageManager.currentLocale,
           home: const WebAuthWrapper(),
-          routes: {'/home': (context) => const MainScreen()},
+          routes: {
+            '/home': (context) => const MainScreen(),
+            '/login': (context) => const LoginScreen(),
+          },
           debugShowCheckedModeBanner: false,
         );
       },
@@ -240,8 +244,13 @@ class _MainScreenState extends State<MainScreen> {
 
                     await WebAuthService.signOut();
 
-                    // Show success message
+                    // Navigate to login screen immediately
                     if (mounted) {
+                      Navigator.of(context).pushNamedAndRemoveUntil(
+                        '/login',
+                        (route) => false,
+                      );
+                      
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
                           content: Text('✅ Đăng xuất thành công'),
@@ -250,8 +259,6 @@ class _MainScreenState extends State<MainScreen> {
                         ),
                       );
                     }
-
-                    // WebAuthWrapper sẽ tự động điều hướng về LoginScreen
                   } catch (e) {
                     if (mounted) {
                       final messenger = ScaffoldMessenger.of(context);

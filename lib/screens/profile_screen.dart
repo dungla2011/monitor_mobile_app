@@ -72,8 +72,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
         await WebAuthService.signOut();
 
-        // Show success message
+        // Navigate to login screen immediately
         if (mounted) {
+          Navigator.of(context).pushNamedAndRemoveUntil(
+            '/login',
+            (route) => false,
+          );
+          
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
               content: Text('✅ Đăng xuất thành công'),
@@ -82,8 +87,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
           );
         }
-
-        // WebAuthWrapper sẽ tự động điều hướng về LoginScreen
       } catch (e) {
         if (mounted) {
           ScaffoldMessenger.of(
