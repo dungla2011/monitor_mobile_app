@@ -303,11 +303,9 @@ void main() {
     });
 
     group('Complete CRUD Workflow', () {
-      test('should simulate full CRUD lifecycle', () {
-        TestUtils.logTestStep('Starting complete CRUD lifecycle test');
-
+      test('should simulate full CRUD lifecycle', () async {
+        // Simplified test to prevent CI segfault
         // Step 1: CREATE
-        TestUtils.logTestStep('Step 1: CREATE');
         final createData = TestDataGenerator.generateMonitorConfig(
           name: 'Lifecycle Test',
           status: true,
@@ -327,7 +325,6 @@ void main() {
         expect(createResult['success'], true);
 
         // Step 2: READ
-        TestUtils.logTestStep('Step 2: READ');
         final readResult = BaseCrudService.parseApiResponse(
           http.Response(
             jsonEncode({
@@ -342,7 +339,6 @@ void main() {
         expect(readResult['success'], true);
 
         // Step 3: UPDATE
-        TestUtils.logTestStep('Step 3: UPDATE');
         final updatedData = {...createData, 'name': 'Updated Lifecycle Test'};
         final updateResult = BaseCrudService.parseApiResponse(
           http.Response(
@@ -359,7 +355,6 @@ void main() {
         expect(updateResult['data']['name'], 'Updated Lifecycle Test');
 
         // Step 4: DELETE
-        TestUtils.logTestStep('Step 4: DELETE');
         final deleteResult = BaseCrudService.parseApiResponse(
           http.Response(
             jsonEncode({
@@ -372,8 +367,6 @@ void main() {
           'Lifecycle DELETE',
         );
         expect(deleteResult['success'], true);
-
-        TestUtils.logTestResult('Complete CRUD lifecycle', true);
       });
     });
   });
