@@ -882,6 +882,10 @@ class _BaseCrudDialogState extends State<BaseCrudDialog> {
     return AlertDialog(
       // Reduce horizontal padding to 10px from each side
       insetPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 20),
+      // Reduce content padding (default is 24px all sides)
+      contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+      titlePadding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+      actionsPadding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
       title: Container(
         padding: const EdgeInsets.only(top: 8),
         child: widget.item != null

@@ -12,7 +12,20 @@
           "package_name": "com.example.monitor_app"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "916524608033-vdnktsibi6fivca3eddtequ2o4hk0h2n.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.monitor_app",
+            "certificate_hash": "d609d982d43ccf051ef4ea72cf7ba0ae29ad69b2"
+          }
+        },
+        {
+          "client_id": "916524608033-pqqvfdhqsosklb0cfb4nrogi6tm5cpvu.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyBCHpCDZoONPpwsiBurfvKqOqSMbzFlkio"
@@ -20,7 +33,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "916524608033-pqqvfdhqsosklb0cfb4nrogi6tm5cpvu.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }

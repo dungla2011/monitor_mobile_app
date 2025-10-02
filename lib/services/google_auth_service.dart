@@ -1,4 +1,6 @@
 import 'dart:convert';
+import 'dart:io' show Platform;
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:http/http.dart' as http;
 import '../utils/user_agent_utils.dart';
@@ -6,9 +8,12 @@ import '../utils/user_agent_utils.dart';
 class GoogleAuthService {
   static const String _baseUrl = 'https://mon.lad.vn';
 
+  // Web Client ID - chỉ dùng cho Web, Android tự lấy từ google-services.json
+  static const String _webClientId = '916524608033-pqqvfdhqsosklb0cfb4nrogi6tm5cpvu.apps.googleusercontent.com';
+
   static final GoogleSignIn _googleSignIn = GoogleSignIn(
-    clientId:
-        '211733424826-d7dns77hrghn70tugmlbo7p15ugfed4m.apps.googleusercontent.com',
+    // Chỉ set clientId cho Web, Android không cần (lấy từ google-services.json)
+    clientId: kIsWeb ? _webClientId : null,
     scopes: ['email', 'profile', 'openid'],
   );
 

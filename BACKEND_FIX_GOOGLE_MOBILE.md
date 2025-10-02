@@ -18,6 +18,9 @@ public function handleGoogleMobile(Request $request)
         $email = $request->input('email');
         $name = $request->input('name');
         
+
+        
+
         $client = new \Google_Client([
             'client_id' => env('GOOGLE_CLIENT_ID', '211733424826-d7dns77hrghn70tugmlbo7p15ugfed4m.apps.googleusercontent.com')
         ]);
