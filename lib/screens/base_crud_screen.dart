@@ -205,6 +205,60 @@ abstract class BaseCrudScreenState<T extends BaseCrudScreen> extends State<T> {
 
   void showAddEditDialog({Map<String, dynamic>? item}) async {
     final isEditMode = item != null;
+
+    // If editing, reload field_details config first
+    if (isEditMode) {
+      print('[RELOAD] Reloading field_details before editing item...');
+      
+      // Show loading dialog
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) => const AlertDialog(
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              CircularProgressIndicator(),
+              SizedBox(height: 16),
+              Text('Đang tải cấu hình...'),
+            ],
+          ),
+        ),
+      );
+
+      try {
+        // Reload config to get latest field_details
+        final configResult = await initializeConfig();
+        
+        // Close loading dialog
+        if (mounted) Navigator.of(context).pop();
+
+        if (!configResult['success']) {
+          if (mounted) {
+            await ErrorDialogUtils.showErrorDialog(
+              context,
+              'Không thể tải cấu hình: ${configResult['message']}',
+            );
+          }
+          return;
+        }
+        
+        print('[RELOAD] Field details reloaded successfully');
+      } catch (e) {
+        // Close loading dialog
+        if (mounted) Navigator.of(context).pop();
+        
+        if (mounted) {
+          await ErrorDialogUtils.showErrorDialog(
+            context,
+            'Lỗi khi tải cấu hình: $e',
+          );
+        }
+        return;
+      }
+    }
+
+    // Get form fields after config reload
     final dialogFields = getFormFields(isEditMode: isEditMode);
 
     // If editing, load full item data from API

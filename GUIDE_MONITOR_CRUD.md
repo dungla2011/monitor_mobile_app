@@ -98,8 +98,22 @@ class MonitorItemDialog extends StatefulWidget {
 ### **4. Sửa item**
 - Tap vào item trong danh sách
 - Hoặc nhấn menu **⋮** → **"Sửa"**
+- **Tự động reload field_details** từ API để có config mới nhất
 - Form sẽ pre-fill với data hiện tại
 - Nhấn **"Cập nhật"** để lưu
+
+**Flow khi edit:**
+```
+User click "Sửa"
+    ↓
+Reload field_details từ API
+    ↓ 
+Load item data với GET /get/{id}
+    ↓
+Show dialog với form fields mới nhất
+    ↓
+User sửa và save
+```
 
 ### **5. Xóa items**
 - **Single delete**: Menu **⋮** → **"Xóa"**
