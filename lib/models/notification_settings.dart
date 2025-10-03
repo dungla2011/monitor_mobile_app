@@ -3,7 +3,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 /// Model để quản lý cài đặt thông báo
 class NotificationSettings {
   // Các loại âm thanh có sẵn
-  static const String soundDefault = 'default'; // Âm thanh mặc định của hệ điều hành
+  static const String soundDefault =
+      'default'; // Âm thanh mặc định của hệ điều hành
   static const String soundNone = 'none'; // Không có âm thanh
   static const String soundCustom1 = 'notification_alert'; // Custom sound 1
   static const String soundCustom2 = 'notification_gentle'; // Custom sound 2
@@ -55,9 +56,10 @@ class NotificationSettings {
   static Future<NotificationSettings> load() async {
     try {
       final prefs = await SharedPreferences.getInstance();
-      
+
       return NotificationSettings(
-        notificationSound: prefs.getString(_keyNotificationSound) ?? soundDefault,
+        notificationSound:
+            prefs.getString(_keyNotificationSound) ?? soundDefault,
         notificationEnabled: prefs.getBool(_keyNotificationEnabled) ?? true,
         notificationVibrate: prefs.getBool(_keyNotificationVibrate) ?? true,
       );
@@ -71,11 +73,11 @@ class NotificationSettings {
   Future<bool> save() async {
     try {
       final prefs = await SharedPreferences.getInstance();
-      
+
       await prefs.setString(_keyNotificationSound, notificationSound);
       await prefs.setBool(_keyNotificationEnabled, notificationEnabled);
       await prefs.setBool(_keyNotificationVibrate, notificationVibrate);
-      
+
       return true;
     } catch (e) {
       print('Error saving notification settings: $e');

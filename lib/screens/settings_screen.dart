@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../utils/app_localizations.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../utils/language_manager.dart';
 import '../models/notification_settings.dart';
 import '../services/notification_sound_service.dart';
@@ -15,7 +15,6 @@ class SettingsScreen extends StatefulWidget {
 class _SettingsScreenState extends State<SettingsScreen> {
   NotificationSettings? _notificationSettings;
   bool _isLoadingSettings = true;
-  Map<String, String> _availableSounds = {};
 
   @override
   void initState() {
@@ -25,22 +24,21 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   Future<void> _loadNotificationSettings() async {
     setState(() => _isLoadingSettings = true);
-    
+
     try {
       final settings = await NotificationSoundService.getSettings();
-      final sounds = await NotificationSoundService.getAvailableSounds();
-      
+
       setState(() {
         _notificationSettings = settings;
-        _availableSounds = sounds;
         _isLoadingSettings = false;
       });
     } catch (e) {
       setState(() => _isLoadingSettings = false);
       if (mounted) {
+        final l10n = AppLocalizations.of(context)!;
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Lỗi khi tải cài đặt: $e'),
+            content: Text(l10n.messagesLoadingSettingsError(e.toString())),
             backgroundColor: Colors.red,
           ),
         );
@@ -48,13 +46,24 @@ class _SettingsScreenState extends State<SettingsScreen> {
     }
   }
 
+  // Get localized sound names
+  Map<String, String> _getAvailableSounds(AppLocalizations l10n) {
+    return {
+      NotificationSettings.soundDefault: l10n.notificationSoundDefault,
+      NotificationSettings.soundNone: l10n.notificationSoundNone,
+      NotificationSettings.soundCustom1: l10n.notificationSoundAlert,
+      NotificationSettings.soundCustom2: l10n.notificationSoundGentle,
+      NotificationSettings.soundCustom3: l10n.notificationSoundUrgent,
+    };
+  }
+
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context);
+    final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(l10n.navSettings),
+        title: Text(l10n.navigationSettings),
         backgroundColor: Colors.blue,
         foregroundColor: Colors.white,
       ),
@@ -73,7 +82,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       const Icon(Icons.language, color: Colors.blue),
                       const SizedBox(width: 12),
                       Text(
-                        l10n.translate('settings.language'),
+                        l10n.settingsLanguage,
                         style: const TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.w600,
@@ -133,8 +142,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     children: [
                       const Icon(Icons.notifications, color: Colors.orange),
                       const SizedBox(width: 12),
-                      const Text(
-                        'Cài đặt Thông báo',
+                      Text(
+                        l10n.settingsNotificationSettings,
                         style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.w600,
@@ -143,18 +152,20 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     ],
                   ),
                   const SizedBox(height: 16),
-                  
+
                   // Enable/Disable Notifications
                   if (!_isLoadingSettings && _notificationSettings != null)
                     SwitchListTile(
-                      title: const Text('Bật thông báo'),
-                      subtitle: const Text('Nhận thông báo từ ứng dụng'),
+                      title: Text(l10n.settingsEnableNotifications),
+                      subtitle: Text(l10n.settingsEnableNotificationsDesc),
                       value: _notificationSettings!.notificationEnabled,
                       onChanged: (value) async {
                         final updated = _notificationSettings!.copyWith(
                           notificationEnabled: value,
                         );
-                        final success = await NotificationSoundService.saveSettings(updated);
+                        final success =
+                            await NotificationSoundService.saveSettings(
+                                updated);
                         if (success) {
                           setState(() {
                             _notificationSettings = updated;
@@ -162,34 +173,40 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         }
                       },
                     ),
-                  
+
                   // Sound Selection
                   if (!_isLoadingSettings && _notificationSettings != null)
                     Opacity(
-                      opacity: _notificationSettings!.notificationEnabled ? 1.0 : 0.5,
+                      opacity: _notificationSettings!.notificationEnabled
+                          ? 1.0
+                          : 0.5,
                       child: ListTile(
                         leading: const Icon(Icons.volume_up),
-                        title: const Text('Âm thanh thông báo'),
-                        subtitle: Text(_availableSounds[_notificationSettings!.notificationSound] ?? 'Chưa chọn'),
+                        title: Text(l10n.settingsNotificationSound),
+                        subtitle: Text(_getAvailableSounds(l10n)[
+                                _notificationSettings!.notificationSound] ??
+                            l10n.settingsNotificationSoundNotSelected),
                         trailing: const Icon(Icons.arrow_forward_ios, size: 16),
-                        onTap: _notificationSettings!.notificationEnabled 
+                        onTap: _notificationSettings!.notificationEnabled
                             ? () => _showSoundPicker(context)
                             : null,
                       ),
                     ),
-                  
+
                   // Vibrate toggle
                   if (!_isLoadingSettings && _notificationSettings != null)
                     SwitchListTile(
-                      title: const Text('Rung'),
-                      subtitle: const Text('Rung khi có thông báo'),
+                      title: Text(l10n.settingsVibrate),
+                      subtitle: Text(l10n.settingsVibrateDesc),
                       value: _notificationSettings!.notificationVibrate,
-                      onChanged: _notificationSettings!.notificationEnabled 
+                      onChanged: _notificationSettings!.notificationEnabled
                           ? (value) async {
                               final updated = _notificationSettings!.copyWith(
                                 notificationVibrate: value,
                               );
-                              final success = await NotificationSoundService.saveSettings(updated);
+                              final success =
+                                  await NotificationSoundService.saveSettings(
+                                      updated);
                               if (success) {
                                 setState(() {
                                   _notificationSettings = updated;
@@ -198,7 +215,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                             }
                           : null,
                     ),
-                  
+
                   // Loading indicator
                   if (_isLoadingSettings)
                     const Center(
@@ -226,7 +243,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       const Icon(Icons.info_outline, color: Colors.blue),
                       const SizedBox(width: 12),
                       Text(
-                        l10n.translate('settings.appInfo'),
+                        l10n.settingsAppInfo,
                         style: const TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.w600,
@@ -237,12 +254,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   const SizedBox(height: 16),
                   ListTile(
                     leading: const Icon(Icons.apps),
-                    title: Text(l10n.translate('settings.appName')),
+                    title: Text(l10n.settingsAppName),
                     subtitle: Text(l10n.appTitle),
                   ),
                   ListTile(
                     leading: const Icon(Icons.info),
-                    title: Text(l10n.translate('settings.version')),
+                    title: Text(l10n.settingsVersion),
                     subtitle: const Text('1.0.0+1'),
                   ),
                 ],
@@ -257,9 +274,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
   String _getLanguageDescription(String languageCode, AppLocalizations l10n) {
     switch (languageCode) {
       case 'vi':
-        return l10n.translate('settings.vietnameseDesc');
+        return l10n.settingsVietnameseDesc;
       case 'en':
-        return l10n.translate('settings.englishDesc');
+        return l10n.settingsEnglishDesc;
       default:
         return '';
     }
@@ -351,6 +368,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   // Show sound picker dialog
   Future<void> _showSoundPicker(BuildContext context) async {
     String? selectedSound = _notificationSettings?.notificationSound;
+    final l10n = AppLocalizations.of(context)!;
 
     final result = await showDialog<String>(
       context: context,
@@ -358,26 +376,31 @@ class _SettingsScreenState extends State<SettingsScreen> {
         return StatefulBuilder(
           builder: (context, setState) {
             return AlertDialog(
-              title: const Text('Chọn âm thanh thông báo'),
+              title: Text(l10n.notificationSoundSelectTitle),
               content: SingleChildScrollView(
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
-                  children: _availableSounds.entries.map((entry) {
+                  children: _getAvailableSounds(l10n).entries.map((entry) {
                     return RadioListTile<String>(
                       title: Text(entry.value),
-                      subtitle: entry.key != NotificationSettings.soundDefault &&
+                      subtitle: entry.key !=
+                                  NotificationSettings.soundDefault &&
                               entry.key != NotificationSettings.soundNone
                           ? TextButton.icon(
                               icon: const Icon(Icons.play_arrow, size: 16),
-                              label: const Text('Nghe thử'),
+                              label: Text(l10n.notificationSoundPreview),
                               onPressed: () async {
                                 try {
-                                  await NotificationSoundService.previewSound(entry.key);
+                                  await NotificationSoundService.previewSound(
+                                      entry.key);
                                 } catch (e) {
                                   if (context.mounted) {
+                                    final errorL10n =
+                                        AppLocalizations.of(context)!;
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       SnackBar(
-                                        content: Text('Lỗi khi phát âm thanh: $e'),
+                                        content:
+                                            Text('${errorL10n.appError}: $e'),
                                         backgroundColor: Colors.red,
                                       ),
                                     );
@@ -400,11 +423,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
               actions: [
                 TextButton(
                   onPressed: () => Navigator.of(context).pop(),
-                  child: const Text('Hủy'),
+                  child: Text(l10n.appCancel),
                 ),
                 TextButton(
                   onPressed: () => Navigator.of(context).pop(selectedSound),
-                  child: const Text('Lưu'),
+                  child: Text(l10n.appSave),
                 ),
               ],
             );

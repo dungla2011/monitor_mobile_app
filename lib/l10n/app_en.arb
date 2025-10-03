@@ -1,0 +1,241 @@
+{
+  "@@locale": "en",
+  
+  "appTitle": "Monitor App",
+  "@appTitle": {
+    "description": "The title of the application"
+  },
+  
+  "appLoading": "Loading...",
+  "appError": "Error",
+  "appSuccess": "Success",
+  "appCancel": "Cancel",
+  "appSave": "Save",
+  "appAdd": "Add",
+  "appEdit": "Edit",
+  "appDelete": "Delete",
+  "appUpdate": "Update",
+  "appBack": "Back",
+  "appClose": "Close",
+  "appConfirm": "Confirm",
+  "appYes": "Yes",
+  "appNo": "No",
+  
+  "authLogin": "Login",
+  "authLogout": "Logout",
+  "authUsername": "Username",
+  "authPassword": "Password",
+  "authLoginSuccess": "Login successful",
+  "authLoginFailed": "Login failed",
+  "authPleaseEnterUsername": "Please enter username",
+  "authPleaseEnterPassword": "Please enter password",
+  
+  "monitorItems": "Monitor Items",
+  "monitorConfigs": "Monitor Alerts",
+  "monitorAddItem": "Add Monitor Item",
+  "monitorEditItem": "Edit Monitor Item",
+  "monitorDeleteItem": "Delete Monitor Item",
+  "monitorAddConfig": "Add Monitor Alert",
+  "monitorEditConfig": "Edit Monitor Alert",
+  "monitorDeleteConfig": "Delete Monitor Alert",
+  "monitorName": "Monitor name",
+  "monitorType": "Check type",
+  "monitorUrl": "Web/Domain/IP Link",
+  "monitorInterval": "Check interval",
+  "monitorAlertConfig": "Alert configuration",
+  "monitorEnable": "Enable monitoring",
+  "monitorStatus": "Latest status",
+  "monitorLastCheck": "Last check",
+  "monitorOnline": "Online",
+  "monitorOffline": "Offline",
+  "monitorAllowConsecutiveAlert": "Allow consecutive alerts on error",
+  "monitorErrorKeyword": "Error keyword",
+  "monitorValidKeyword": "Valid keyword",
+  "monitorCreatedAt": "Created at",
+  
+  "configAlertType": "Alert type",
+  "configAlertConfig": "Alert configuration",
+  "configEmail": "Send Email",
+  "configSms": "Send SMS",
+  "configTelegram": "Send Telegram",
+  "configWebhook": "Call Webhook",
+  "configSelectAlertType": "Select alert type",
+  
+  "validationRequired": "Please enter {field}",
+  "@validationRequired": {
+    "description": "Validation message for required fields",
+    "placeholders": {
+      "field": {
+        "type": "String",
+        "example": "username"
+      }
+    }
+  },
+  
+  "validationPleaseSelect": "Please select {field}",
+  "@validationPleaseSelect": {
+    "placeholders": {
+      "field": {
+        "type": "String"
+      }
+    }
+  },
+  
+  "validationPleaseSelectAtLeastOne": "Please select at least one {field}",
+  "@validationPleaseSelectAtLeastOne": {
+    "placeholders": {
+      "field": {
+        "type": "String"
+      }
+    }
+  },
+  
+  "validationInvalidFormat": "Invalid {field} format",
+  "@validationInvalidFormat": {
+    "placeholders": {
+      "field": {
+        "type": "String"
+      }
+    }
+  },
+  
+  "messagesSaveSuccess": "Saved successfully",
+  "messagesSaveFailed": "Save failed",
+  "messagesDeleteSuccess": "Deleted successfully",
+  "messagesDeleteFailed": "Delete failed",
+  
+  "messagesDeleteConfirm": "Are you sure you want to delete {item}?",
+  "@messagesDeleteConfirm": {
+    "placeholders": {
+      "item": {
+        "type": "String"
+      }
+    }
+  },
+  
+  "messagesNetworkError": "Network error",
+  "messagesServerError": "Server error",
+  "messagesUnknownError": "Unknown error",
+  "messagesLoadingSettingsError": "Error loading settings: {error}",
+  "@messagesLoadingSettingsError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  
+  "navigationHome": "Home",
+  "navigationMonitorItems": "Monitor Items",
+  "navigationMonitorConfigs": "Monitor Configs",
+  "navigationProfile": "Profile",
+  "navigationSettings": "Settings",
+  "navigationNotifications": "Notifications",
+  "navigationAbout": "About",
+  "navigationWelcome": "Welcome!",
+  
+  "settingsTitle": "Settings",
+  "settingsLanguage": "Language",
+  "settingsLanguageDescription": "Choose your preferred language",
+  "settingsNotifications": "Notifications",
+  "settingsNotificationsDescription": "Manage notification preferences",
+  "settingsNotificationSettings": "Notification Settings",
+  "settingsEnableNotifications": "Enable notifications",
+  "settingsEnableNotificationsDesc": "Receive notifications from app",
+  "settingsNotificationSound": "Notification sound",
+  "settingsNotificationSoundNotSelected": "Not selected",
+  "settingsVibrate": "Vibrate",
+  "settingsVibrateDesc": "Vibrate on notification",
+  "settingsTheme": "Theme",
+  "settingsThemeDescription": "Choose app appearance",
+  "settingsAbout": "About App",
+  "settingsAboutDescription": "Version and app information",
+  "settingsVersion": "Version",
+  "settingsEnglish": "English",
+  "settingsVietnamese": "Vietnamese",
+  "settingsLight": "Light",
+  "settingsDark": "Dark",
+  "settingsSystem": "System",
+  "settingsAppInfo": "App Information",
+  "settingsAppName": "App Name",
+  "settingsVietnameseDesc": "Tiếng Việt (Vietnamese)",
+  "settingsEnglishDesc": "English (default)",
+  
+  "notificationSoundDefault": "Default (System)",
+  "notificationSoundNone": "None (Silent)",
+  "notificationSoundAlert": "Alert",
+  "notificationSoundGentle": "Gentle",
+  "notificationSoundUrgent": "Urgent",
+  "notificationSoundSelectTitle": "Select notification sound",
+  "notificationSoundPreview": "Preview",
+  
+  "mobileActionNavigatingToConfig": "Navigating to Monitor Config...",
+  "mobileActionNavigatingToItems": "Navigating to Monitor Items...",
+  "mobileActionCommandNotFound": "Command not found: \"{cmd}\"",
+  "@mobileActionCommandNotFound": {
+    "placeholders": {
+      "cmd": {
+        "type": "String"
+      }
+    }
+  },
+  
+  "timeSeconds": "Seconds",
+  "timeMinutes": "Minutes",
+  "timeHours": "Hours",
+  "timeDays": "Days",
+  "timeSelectTime": "Select time",
+  "timeClearTime": "Clear time",
+  "timeNotSelected": "Time not selected",
+  
+  "optionsSelect": "-Select-",
+  "optionsSelectAlertType": "-Select Alert Type-",
+  "optionsWebContent": "Web Server Active",
+  "optionsPing": "Ping",
+  
+  "profileTitle": "Profile",
+  "profileEditProfile": "Edit Profile",
+  "profileEditProfileTooltip": "Edit profile",
+  "profileDisplayName": "Display Name",
+  "profileNoName": "No name",
+  "profileNoUsername": "No username",
+  "profileNoEmail": "No email",
+  "profileLoggedIn": "Logged in",
+  "profileLoginInfo": "Login Information",
+  "profileLoginMethod": "Login method",
+  "profileLoginTime": "Login time",
+  "profileBearerToken": "Bearer Token",
+  "profileActions": "Actions",
+  "profileRefreshInfo": "Refresh information",
+  "profileRefreshInfoDesc": "Update latest information",
+  "profileLogoutDesc": "Sign out of account",
+  "profileLogoutConfirm": "Are you sure you want to sign out?",
+  "profileLoggingOut": "Signing out...",
+  "profileLogoutSuccess": "✅ Signed out successfully",
+  "profileLogoutError": "❌ Error signing out: {error}",
+  "@profileLogoutError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "profileLoadError": "Error loading information: {error}",
+  "@profileLoadError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "profileUpdateNotSupported": "Profile update feature is not yet supported",
+  "profileLoginMethodWebApi": "Web API (Username & Password)",
+  "profileLoginMethodEmail": "Email & Password",
+  "profileLoginMethodUnknown": "Unknown",
+  
+  "aboutTitle": "About",
+  "aboutAppVersion": "Monitor App v1.0.0",
+  "aboutCopyright": "GalaxyCloud \u00a9 2025",
+  "aboutDescription": "Application for monitoring and managing your services.",
+  "aboutDeveloper": "Developed by GalaxyCloud.vn"
+}

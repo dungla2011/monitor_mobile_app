@@ -4,17 +4,16 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'firebase_options.dart';
 import 'services/firebase_messaging_service.dart';
 import 'services/web_auth_service.dart';
 import 'utils/language_manager.dart';
 import 'widgets/web_auth_wrapper.dart';
-import 'screens/login_screen.dart';
 import 'screens/profile_screen.dart';
 import 'screens/monitor_item_screen.dart';
 import 'screens/monitor_config_screen.dart';
 import 'screens/settings_screen.dart';
-import 'utils/app_localizations.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -71,10 +70,7 @@ class MyApp extends StatelessWidget {
           // Use current locale from provider
           locale: languageManager.currentLocale,
           home: const WebAuthWrapper(),
-          routes: {
-            '/home': (context) => const MainScreen(),
-            '/login': (context) => const LoginScreen(),
-          },
+          routes: {'/home': (context) => const MainScreen()},
           debugShowCheckedModeBanner: false,
         );
       },
@@ -94,19 +90,19 @@ class _MainScreenState extends State<MainScreen> {
 
   final List<Widget> _screens = [
     const MonitorItemScreen(), // Monitor Items Screen
-    const MonitorConfigScreen(), // Thêm Monitor Config Screen
+    const MonitorConfigScreen(), // Monitor Config Screen
     const ProfileScreen(),
-    const NotificationScreen(),
+    // const NotificationScreen(), // Hidden - auto-managed
     const SettingsScreen(),
     const AboutScreen(),
   ];
 
   @override
   Widget build(BuildContext context) {
-    final localizations = AppLocalizations.of(context);
+    final localizations = AppLocalizations.of(context)!;
     return Scaffold(
       appBar: AppBar(
-        title: Text(localizations.translate('app.title')),
+        title: Text(localizations.appTitle),
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
       ),
       drawer: Drawer(
@@ -124,13 +120,13 @@ class _MainScreenState extends State<MainScreen> {
                   ),
                   const SizedBox(height: 10),
                   Text(
-                    localizations.translate('app.title'),
+                    localizations.appTitle,
                     style: const TextStyle(color: Colors.white, fontSize: 24),
                   ),
                   Text(
                     WebAuthService.currentUser?['displayName'] ??
                         WebAuthService.currentUser?['username'] ??
-                        localizations.translate('navigation.welcome'),
+                        localizations.navigationWelcome,
                     style: const TextStyle(color: Colors.white70, fontSize: 14),
                   ),
                 ],
@@ -138,7 +134,7 @@ class _MainScreenState extends State<MainScreen> {
             ),
             ListTile(
               leading: const Icon(Icons.monitor),
-              title: Text(localizations.translate('navigation.monitorItems')),
+              title: Text(localizations.navigationMonitorItems),
               selected: _selectedIndex == 0,
               onTap: () {
                 setState(() {
@@ -149,7 +145,7 @@ class _MainScreenState extends State<MainScreen> {
             ),
             ListTile(
               leading: const Icon(Icons.settings_applications),
-              title: Text(localizations.translate('navigation.monitorConfigs')),
+              title: Text(localizations.navigationMonitorConfigs),
               selected: _selectedIndex == 1,
               onTap: () {
                 setState(() {
@@ -160,7 +156,7 @@ class _MainScreenState extends State<MainScreen> {
             ),
             ListTile(
               leading: const Icon(Icons.person),
-              title: Text(localizations.translate('navigation.profile')),
+              title: Text(localizations.navigationProfile),
               selected: _selectedIndex == 2,
               onTap: () {
                 setState(() {
@@ -169,9 +165,21 @@ class _MainScreenState extends State<MainScreen> {
                 Navigator.pop(context);
               },
             ),
+            // Notifications menu hidden - auto-managed by system
+            // ListTile(
+            //   leading: const Icon(Icons.notifications),
+            //   title: Text(localizations.translate('navigation.notifications')),
+            //   selected: _selectedIndex == 3,
+            //   onTap: () {
+            //     setState(() {
+            //       _selectedIndex = 3;
+            //     });
+            //     Navigator.pop(context);
+            //   },
+            // ),
             ListTile(
-              leading: const Icon(Icons.notifications),
-              title: Text(localizations.translate('navigation.notifications')),
+              leading: const Icon(Icons.settings),
+              title: Text(localizations.navigationSettings),
               selected: _selectedIndex == 3,
               onTap: () {
                 setState(() {
@@ -180,9 +188,10 @@ class _MainScreenState extends State<MainScreen> {
                 Navigator.pop(context);
               },
             ),
+            const Divider(),
             ListTile(
-              leading: const Icon(Icons.settings),
-              title: Text(localizations.translate('navigation.settings')),
+              leading: const Icon(Icons.info),
+              title: Text(localizations.navigationAbout),
               selected: _selectedIndex == 4,
               onTap: () {
                 setState(() {
@@ -193,21 +202,9 @@ class _MainScreenState extends State<MainScreen> {
             ),
             const Divider(),
             ListTile(
-              leading: const Icon(Icons.info),
-              title: Text(localizations.translate('navigation.about')),
-              selected: _selectedIndex == 5,
-              onTap: () {
-                setState(() {
-                  _selectedIndex = 5;
-                });
-                Navigator.pop(context);
-              },
-            ),
-            const Divider(),
-            ListTile(
               leading: const Icon(Icons.logout, color: Colors.red),
               title: Text(
-                localizations.translate('auth.logout'),
+                localizations.authLogout,
                 style: const TextStyle(color: Colors.red),
               ),
               onTap: () async {
@@ -215,16 +212,16 @@ class _MainScreenState extends State<MainScreen> {
                 final shouldSignOut = await showDialog<bool>(
                   context: context,
                   builder: (context) => AlertDialog(
-                    title: Text(localizations.translate('auth.logout')),
+                    title: Text(localizations.authLogout),
                     content: const Text('Bạn có chắc chắn muốn đăng xuất?'),
                     actions: [
                       TextButton(
                         onPressed: () => Navigator.of(context).pop(false),
-                        child: Text(localizations.translate('app.cancel')),
+                        child: Text(localizations.appCancel),
                       ),
                       TextButton(
                         onPressed: () => Navigator.of(context).pop(true),
-                        child: Text(localizations.translate('auth.logout')),
+                        child: Text(localizations.authLogout),
                       ),
                     ],
                   ),
@@ -244,13 +241,8 @@ class _MainScreenState extends State<MainScreen> {
 
                     await WebAuthService.signOut();
 
-                    // Navigate to login screen immediately
+                    // Show success message
                     if (mounted) {
-                      Navigator.of(context).pushNamedAndRemoveUntil(
-                        '/login',
-                        (route) => false,
-                      );
-
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
                           content: Text('✅ Đăng xuất thành công'),
@@ -259,6 +251,8 @@ class _MainScreenState extends State<MainScreen> {
                         ),
                       );
                     }
+
+                    // WebAuthWrapper sẽ tự động điều hướng về LoginScreen
                   } catch (e) {
                     if (mounted) {
                       final messenger = ScaffoldMessenger.of(context);
@@ -482,20 +476,22 @@ class AboutScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Center(
+    final l10n = AppLocalizations.of(context)!;
+
+    return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.info, size: 100, color: Colors.purple),
-          SizedBox(height: 20),
+          const Icon(Icons.info, size: 100, color: Colors.purple),
+          const SizedBox(height: 20),
           Text(
-            'Giới thiệu',
-            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+            l10n.aboutTitle,
+            style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
           ),
-          SizedBox(height: 10),
+          const SizedBox(height: 10),
           Text(
-            'Monitor App v1.0.1',
-            style: TextStyle(fontSize: 16),
+            '${l10n.aboutAppVersion}\n${l10n.aboutCopyright}\n\n${l10n.aboutDescription}\n\n${l10n.aboutDeveloper}',
+            style: const TextStyle(fontSize: 16),
             textAlign: TextAlign.center,
           ),
         ],

@@ -329,7 +329,8 @@ class WebAuthService {
   }
 
   // Phiên bản synchronous (deprecated, dùng getAuthenticatedHeaders() thay thế)
-  @Deprecated('Use getAuthenticatedHeaders() instead. This synchronous version does not include Firebase FCM token.')
+  @Deprecated(
+      'Use getAuthenticatedHeaders() instead. This synchronous version does not include Firebase FCM token.')
   static Map<String, String> getAuthenticatedHeadersSync() {
     final headers = {
       'X-API-Key': AppConfig.apiKey,

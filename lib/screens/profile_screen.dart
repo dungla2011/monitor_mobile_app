@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../services/web_auth_service.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -27,9 +28,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
       _loginInfo = await WebAuthService.getSavedLoginInfo();
     } catch (e) {
       if (mounted) {
+        final l10n = AppLocalizations.of(context)!;
         ScaffoldMessenger.of(
           context,
-        ).showSnackBar(SnackBar(content: Text('Lỗi khi tải thông tin: $e')));
+        ).showSnackBar(
+            SnackBar(content: Text(l10n.profileLoadError(e.toString()))));
       }
     } finally {
       if (mounted) {
@@ -39,20 +42,21 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Future<void> _signOut() async {
+    final l10n = AppLocalizations.of(context)!;
     // Hiển thị dialog xác nhận
     final shouldSignOut = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Đăng xuất'),
-        content: const Text('Bạn có chắc chắn muốn đăng xuất?'),
+        title: Text(l10n.authLogout),
+        content: Text(l10n.profileLogoutConfirm),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
-            child: const Text('Hủy'),
+            child: Text(l10n.appCancel),
           ),
           TextButton(
             onPressed: () => Navigator.of(context).pop(true),
-            child: const Text('Đăng xuất'),
+            child: Text(l10n.authLogout),
           ),
         ],
       ),
@@ -63,8 +67,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
         // Show loading indicator
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Đang đăng xuất...'),
+            SnackBar(
+              content: Text(l10n.profileLoggingOut),
               duration: Duration(seconds: 1),
             ),
           );
@@ -80,8 +84,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
           );
 
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('✅ Đăng xuất thành công'),
+            SnackBar(
+              content: Text(l10n.profileLogoutSuccess),
               duration: Duration(seconds: 2),
               backgroundColor: Colors.green,
             ),
@@ -92,7 +96,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ScaffoldMessenger.of(
             context,
           ).showSnackBar(SnackBar(
-            content: Text('❌ Lỗi khi đăng xuất: $e'),
+            content: Text(l10n.profileLogoutError(e.toString())),
             backgroundColor: Colors.red,
           ));
         }
@@ -101,6 +105,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Future<void> _showEditProfileDialog() async {
+    final l10n = AppLocalizations.of(context)!;
     final nameController = TextEditingController(
       text: _user?['displayName'] ?? '',
     );
@@ -108,22 +113,22 @@ class _ProfileScreenState extends State<ProfileScreen> {
     final result = await showDialog<String>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Chỉnh sửa hồ sơ'),
+        title: Text(l10n.profileEditProfile),
         content: TextField(
           controller: nameController,
-          decoration: const InputDecoration(
-            labelText: 'Tên hiển thị',
+          decoration: InputDecoration(
+            labelText: l10n.profileDisplayName,
             border: OutlineInputBorder(),
           ),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Hủy'),
+            child: Text(l10n.appCancel),
           ),
           TextButton(
             onPressed: () => Navigator.of(context).pop(nameController.text),
-            child: const Text('Lưu'),
+            child: Text(l10n.appSave),
           ),
         ],
       ),
@@ -132,9 +137,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
     if (result != null && result.isNotEmpty) {
       // TODO: Implement profile update với API của bạn
       if (mounted) {
+        final l10n = AppLocalizations.of(context)!;
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Chức năng cập nhật hồ sơ chưa được hỗ trợ'),
+          SnackBar(
+            content: Text(l10n.profileUpdateNotSupported),
           ),
         );
       }
@@ -143,6 +149,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     if (_isLoading) {
       return const Center(child: CircularProgressIndicator());
     }
@@ -152,8 +160,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            'Hồ sơ cá nhân',
+          Text(
+            l10n.profileTitle,
             style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 20),
@@ -177,7 +185,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         Text(
                           _user?['displayName'] ??
                               _user?['username'] ??
-                              'Chưa có tên',
+                              l10n.profileNoName,
                           style: const TextStyle(
                             fontSize: 20,
                             fontWeight: FontWeight.bold,
@@ -185,7 +193,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         ),
                         const SizedBox(height: 4),
                         Text(
-                          _user?['username'] ?? 'Chưa có username',
+                          _user?['username'] ?? l10n.profileNoUsername,
                           style: const TextStyle(
                             fontSize: 16,
                             color: Colors.grey,
@@ -194,7 +202,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         ),
                         const SizedBox(height: 4),
                         Text(
-                          _user?['email'] ?? 'Chưa có email',
+                          _user?['email'] ?? l10n.profileNoEmail,
                           style: const TextStyle(
                             fontSize: 14,
                             color: Colors.grey,
@@ -210,7 +218,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             ),
                             const SizedBox(width: 4),
                             Text(
-                              'Đã đăng nhập',
+                              l10n.profileLoggedIn,
                               style: TextStyle(
                                 fontSize: 12,
                                 color: Colors.green,
@@ -224,7 +232,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   IconButton(
                     onPressed: _showEditProfileDialog,
                     icon: const Icon(Icons.edit),
-                    tooltip: 'Chỉnh sửa hồ sơ',
+                    tooltip: l10n.profileEditProfileTooltip,
                   ),
                 ],
               ),
@@ -240,33 +248,36 @@ class _ProfileScreenState extends State<ProfileScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
-                    'Thông tin đăng nhập',
+                  Text(
+                    l10n.profileLoginInfo,
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 12),
                   _buildInfoRow(
-                    'Phương thức đăng nhập',
+                    l10n.profileLoginMethod,
                     _getLoginMethodText(_loginInfo['login_method']),
                     Icons.login,
                   ),
                   const SizedBox(height: 8),
                   _buildInfoRow(
-                    'Username',
+                    l10n.authUsername,
                     _user?['username'] ?? 'N/A',
                     Icons.account_circle,
                   ),
                   const SizedBox(height: 8),
-                  _buildInfoRow('Email', _user?['email'] ?? 'N/A', Icons.email),
+                  _buildInfoRow(
+                      l10n.authPassword.replaceAll('Password', 'Email'),
+                      _user?['email'] ?? 'N/A',
+                      Icons.email),
                   const SizedBox(height: 8),
                   _buildInfoRow(
-                    'Thời gian đăng nhập',
+                    l10n.profileLoginTime,
                     _loginInfo['login_time']?.split('T')[0] ?? 'N/A',
                     Icons.access_time,
                   ),
                   const SizedBox(height: 8),
                   _buildInfoRow(
-                    'Bearer Token',
+                    l10n.profileBearerToken,
                     WebAuthService.bearerToken != null
                         ? '${WebAuthService.bearerToken!.substring(0, 20)}...'
                         : 'N/A',
@@ -286,22 +297,22 @@ class _ProfileScreenState extends State<ProfileScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
-                    'Hành động',
+                  Text(
+                    l10n.profileActions,
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 12),
                   ListTile(
                     leading: const Icon(Icons.refresh, color: Colors.blue),
-                    title: const Text('Làm mới thông tin'),
-                    subtitle: const Text('Cập nhật thông tin mới nhất'),
+                    title: Text(l10n.profileRefreshInfo),
+                    subtitle: Text(l10n.profileRefreshInfoDesc),
                     trailing: const Icon(Icons.arrow_forward_ios),
                     onTap: _loadUserInfo,
                   ),
                   ListTile(
                     leading: const Icon(Icons.logout, color: Colors.red),
-                    title: const Text('Đăng xuất'),
-                    subtitle: const Text('Thoát khỏi tài khoản'),
+                    title: Text(l10n.authLogout),
+                    subtitle: Text(l10n.profileLogoutDesc),
                     trailing: const Icon(Icons.arrow_forward_ios),
                     onTap: _signOut,
                   ),
@@ -340,13 +351,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   String _getLoginMethodText(String? method) {
+    final l10n = AppLocalizations.of(context)!;
     switch (method) {
       case 'web_api':
-        return 'Web API (Username & Password)';
+        return l10n.profileLoginMethodWebApi;
       case 'email':
-        return 'Email & Mật khẩu';
+        return l10n.profileLoginMethodEmail;
       default:
-        return 'Không xác định';
+        return l10n.profileLoginMethodUnknown;
     }
   }
 }

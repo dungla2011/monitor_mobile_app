@@ -105,7 +105,7 @@ class FirebaseMessagingService {
         .resolvePlatformSpecificImplementation<
             AndroidFlutterLocalNotificationsPlugin>()
         ?.createNotificationChannel(channel);
-    
+
     if (kDebugMode) {
       print('✅ Notification channel created: ${channel.id}');
     }
@@ -139,7 +139,7 @@ class FirebaseMessagingService {
   }) async {
     // Lấy cài đặt thông báo
     final settings = await NotificationSoundService.getSettings();
-    
+
     // Kiểm tra xem notification có được bật không
     if (!settings.notificationEnabled) {
       if (kDebugMode) {
@@ -150,13 +150,16 @@ class FirebaseMessagingService {
 
     // Xác định âm thanh
     String? soundFileName;
-    bool shouldPlaySound = playSound && 
-        settings.notificationSound != app_settings.NotificationSettings.soundNone;
-    
-    if (settings.notificationSound == app_settings.NotificationSettings.soundDefault) {
+    bool shouldPlaySound = playSound &&
+        settings.notificationSound !=
+            app_settings.NotificationSettings.soundNone;
+
+    if (settings.notificationSound ==
+        app_settings.NotificationSettings.soundDefault) {
       // Sử dụng âm thanh mặc định của hệ điều hành
       soundFileName = null; // Null = default sound
-    } else if (settings.notificationSound == app_settings.NotificationSettings.soundNone) {
+    } else if (settings.notificationSound ==
+        app_settings.NotificationSettings.soundNone) {
       // Không có âm thanh
       soundFileName = null;
       shouldPlaySound = false;
@@ -172,7 +175,7 @@ class FirebaseMessagingService {
       importance: Importance.high,
       priority: Priority.high,
       playSound: shouldPlaySound,
-      sound: soundFileName != null 
+      sound: soundFileName != null
           ? RawResourceAndroidNotificationSound(soundFileName)
           : null, // null = default sound
       enableVibration: settings.notificationVibrate,
