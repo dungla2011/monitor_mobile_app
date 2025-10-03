@@ -1,0 +1,23 @@
+{
+  "INSTRUCTION": "This is a template file. Replace with actual Firebase Service Account key",
+  "HOW_TO_GET": [
+    "1. Go to Firebase Console: https://console.firebase.google.com/",
+    "2. Select project: MonitorV2",
+    "3. Go to Project Settings (gear icon) → Service accounts tab",
+    "4. Click 'Generate new private key'",
+    "5. Download the JSON file",
+    "6. Rename it to 'fb.json' and replace this file"
+  ],
+  "SECURITY_WARNING": "DO NOT commit the real fb.json to Git! It contains sensitive credentials.",
+  "type": "service_account",
+  "project_id": "YOUR_PROJECT_ID",
+  "private_key_id": "YOUR_PRIVATE_KEY_ID",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nYOUR_PRIVATE_KEY_HERE\n-----END PRIVATE KEY-----\n",
+  "client_email": "firebase-adminsdk-xxxxx@YOUR_PROJECT_ID.iam.gserviceaccount.com",
+  "client_id": "YOUR_CLIENT_ID",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "YOUR_CERT_URL",
+  "universe_domain": "googleapis.com"
+}

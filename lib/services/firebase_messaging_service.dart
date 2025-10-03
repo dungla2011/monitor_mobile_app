@@ -3,6 +3,8 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import '../models/notification_settings.dart' as app_settings;
+import 'notification_sound_service.dart';
 
 class FirebaseMessagingService {
   static final FirebaseMessaging _firebaseMessaging =
@@ -95,12 +97,18 @@ class FirebaseMessagingService {
       'High Importance Notifications',
       description: 'This channel is used for important notifications.',
       importance: Importance.high,
+      playSound: true, // Channel hỗ trợ âm thanh
+      enableVibration: true,
     );
 
     await _localNotificationsPlugin
         .resolvePlatformSpecificImplementation<
             AndroidFlutterLocalNotificationsPlugin>()
         ?.createNotificationChannel(channel);
+    
+    if (kDebugMode) {
+      print('✅ Notification channel created: ${channel.id}');
+    }
   }
 
   // Xử lý tin nhắn khi app đang chạy foreground
@@ -112,28 +120,71 @@ class FirebaseMessagingService {
       print('Data: ${message.data}');
     }
 
-    // Hiển thị local notification (chỉ cho mobile)
+    // Phát âm thanh thông báo custom (chỉ phát 1 lần)
     if (!kIsWeb) {
-      await _showLocalNotification(message);
+      await NotificationSoundService.playNotificationSound();
+    }
+
+    // Hiển thị local notification (KHÔNG phát âm thanh vì đã phát ở trên)
+    if (!kIsWeb) {
+      await _showLocalNotification(message, playSound: false);
     }
     // Trên web, browser sẽ tự động hiển thị notification
   }
 
   // Hiển thị local notification
-  static Future<void> _showLocalNotification(RemoteMessage message) async {
-    const AndroidNotificationDetails androidPlatformChannelSpecifics =
-        AndroidNotificationDetails(
+  static Future<void> _showLocalNotification(
+    RemoteMessage message, {
+    bool playSound = true, // Mặc định phát âm thanh cho background
+  }) async {
+    // Lấy cài đặt thông báo
+    final settings = await NotificationSoundService.getSettings();
+    
+    // Kiểm tra xem notification có được bật không
+    if (!settings.notificationEnabled) {
+      if (kDebugMode) {
+        print('Notifications are disabled in settings');
+      }
+      return;
+    }
+
+    // Xác định âm thanh
+    String? soundFileName;
+    bool shouldPlaySound = playSound && 
+        settings.notificationSound != app_settings.NotificationSettings.soundNone;
+    
+    if (settings.notificationSound == app_settings.NotificationSettings.soundDefault) {
+      // Sử dụng âm thanh mặc định của hệ điều hành
+      soundFileName = null; // Null = default sound
+    } else if (settings.notificationSound == app_settings.NotificationSettings.soundNone) {
+      // Không có âm thanh
+      soundFileName = null;
+      shouldPlaySound = false;
+    } else {
+      // Custom sound - dùng tên file (không có .mp3)
+      soundFileName = settings.notificationSound;
+    }
+
+    final androidPlatformChannelSpecifics = AndroidNotificationDetails(
       'high_importance_channel',
       'High Importance Notifications',
       channelDescription: 'This channel is used for important notifications.',
       importance: Importance.high,
       priority: Priority.high,
+      playSound: shouldPlaySound,
+      sound: soundFileName != null 
+          ? RawResourceAndroidNotificationSound(soundFileName)
+          : null, // null = default sound
+      enableVibration: settings.notificationVibrate,
     );
 
-    const DarwinNotificationDetails iOSPlatformChannelSpecifics =
-        DarwinNotificationDetails();
+    const iOSPlatformChannelSpecifics = DarwinNotificationDetails(
+      presentAlert: true,
+      presentBadge: true,
+      presentSound: true,
+    );
 
-    const NotificationDetails platformChannelSpecifics = NotificationDetails(
+    final platformChannelSpecifics = NotificationDetails(
       android: androidPlatformChannelSpecifics,
       iOS: iOSPlatformChannelSpecifics,
     );

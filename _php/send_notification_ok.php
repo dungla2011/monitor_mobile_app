@@ -16,7 +16,7 @@ $cloudMessaging = $factory->createMessaging();
 // ===== CẤU HÌNH TIN NHẮN =====
 
 // 1. Thay thế bằng Device Registration Token thực tế của bạn
-$deviceToken = 'cU3wOL67hQTl_K1MZ9dYAx:APA91bGJdDQ-rzLplWpDqz39-JSVrvewlQ8WWU0T6zR9BxAHfgQt8zGjoQQO4thFePXJTguimxEQeDp028OILI01DV2Y48vrhHJKAMq-FrBFdwjToTn-OSg';
+$deviceToken = 'cc15S_s4T2SDIX5eRjZMg1:APA91bF7drTZouofeRzA-aFXIKEmJlLrtbU5VnwQh9359gdKvYk3-r3Q3SmzY0lLEJsOAjKsOz-0M2ISGEHCdHiGUmKP9jMwsmdj55F8Z9aeAIHdy4TtVwY';
 // Ví dụ token: 'fA1B2c3D4e5F6g7H8i9J0k1L2m3N4o5P6q7R8s9T0u1V2w3X4y5Z6a7B8c9D0e1F2'
 
 // 2. Cấu hình nội dung thông báo

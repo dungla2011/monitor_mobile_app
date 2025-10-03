@@ -100,7 +100,11 @@
     "vietnamese": "Tiếng Việt",
     "light": "Sáng",
     "dark": "Tối",
-    "system": "Theo hệ thống"
+    "system": "Theo hệ thống",
+    "appInfo": "Thông tin ứng dụng",
+    "appName": "Tên ứng dụng",
+    "vietnameseDesc": "Tiếng Việt (mặc định)",
+    "englishDesc": "English"
   },
   "mobileAction": {
     "navigatingToConfig": "Đang chuyển đến Monitor Config...",
@@ -121,14 +125,5 @@
     "selectAlertType": "-Chọn Kiểu Alert-",
     "webContent": "Web Server hoạt động",
     "ping": "Ping"
-  },
-  "settings": {
-    "title": "Cài đặt",
-    "language": "Ngôn ngữ",
-    "appInfo": "Thông tin ứng dụng",
-    "appName": "Tên ứng dụng",
-    "version": "Phiên bản",
-    "vietnameseDesc": "Tiếng Việt (mặc định)",
-    "englishDesc": "English"
   }
 }

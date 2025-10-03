@@ -1,0 +1,13 @@
+# PLACEHOLDER FILE - Replace with real MP3
+
+This is a placeholder. Please download a real notification sound MP3 file and replace this file.
+
+Recommended sources:
+- https://mixkit.co/free-sound-effects/notification/
+- https://freesound.org/
+
+File name should be: notification_urgent.mp3
+Format: MP3
+Duration: 1-3 seconds
+Size: < 500KB
+Bitrate: 128kbps

@@ -2,9 +2,51 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../utils/app_localizations.dart';
 import '../utils/language_manager.dart';
+import '../models/notification_settings.dart';
+import '../services/notification_sound_service.dart';
 
-class SettingsScreen extends StatelessWidget {
+class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
+
+  @override
+  State<SettingsScreen> createState() => _SettingsScreenState();
+}
+
+class _SettingsScreenState extends State<SettingsScreen> {
+  NotificationSettings? _notificationSettings;
+  bool _isLoadingSettings = true;
+  Map<String, String> _availableSounds = {};
+
+  @override
+  void initState() {
+    super.initState();
+    _loadNotificationSettings();
+  }
+
+  Future<void> _loadNotificationSettings() async {
+    setState(() => _isLoadingSettings = true);
+    
+    try {
+      final settings = await NotificationSoundService.getSettings();
+      final sounds = await NotificationSoundService.getAvailableSounds();
+      
+      setState(() {
+        _notificationSettings = settings;
+        _availableSounds = sounds;
+        _isLoadingSettings = false;
+      });
+    } catch (e) {
+      setState(() => _isLoadingSettings = false);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Lỗi khi tải cài đặt: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -73,6 +115,98 @@ class SettingsScreen extends StatelessWidget {
                       );
                     },
                   ),
+                ],
+              ),
+            ),
+          ),
+
+          const SizedBox(height: 16),
+
+          // Notification Settings Section
+          Card(
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      const Icon(Icons.notifications, color: Colors.orange),
+                      const SizedBox(width: 12),
+                      const Text(
+                        'Cài đặt Thông báo',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 16),
+                  
+                  // Enable/Disable Notifications
+                  if (!_isLoadingSettings && _notificationSettings != null)
+                    SwitchListTile(
+                      title: const Text('Bật thông báo'),
+                      subtitle: const Text('Nhận thông báo từ ứng dụng'),
+                      value: _notificationSettings!.notificationEnabled,
+                      onChanged: (value) async {
+                        final updated = _notificationSettings!.copyWith(
+                          notificationEnabled: value,
+                        );
+                        final success = await NotificationSoundService.saveSettings(updated);
+                        if (success) {
+                          setState(() {
+                            _notificationSettings = updated;
+                          });
+                        }
+                      },
+                    ),
+                  
+                  // Sound Selection
+                  if (!_isLoadingSettings && _notificationSettings != null)
+                    Opacity(
+                      opacity: _notificationSettings!.notificationEnabled ? 1.0 : 0.5,
+                      child: ListTile(
+                        leading: const Icon(Icons.volume_up),
+                        title: const Text('Âm thanh thông báo'),
+                        subtitle: Text(_availableSounds[_notificationSettings!.notificationSound] ?? 'Chưa chọn'),
+                        trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+                        onTap: _notificationSettings!.notificationEnabled 
+                            ? () => _showSoundPicker(context)
+                            : null,
+                      ),
+                    ),
+                  
+                  // Vibrate toggle
+                  if (!_isLoadingSettings && _notificationSettings != null)
+                    SwitchListTile(
+                      title: const Text('Rung'),
+                      subtitle: const Text('Rung khi có thông báo'),
+                      value: _notificationSettings!.notificationVibrate,
+                      onChanged: _notificationSettings!.notificationEnabled 
+                          ? (value) async {
+                              final updated = _notificationSettings!.copyWith(
+                                notificationVibrate: value,
+                              );
+                              final success = await NotificationSoundService.saveSettings(updated);
+                              if (success) {
+                                setState(() {
+                                  _notificationSettings = updated;
+                                });
+                              }
+                            }
+                          : null,
+                    ),
+                  
+                  // Loading indicator
+                  if (_isLoadingSettings)
+                    const Center(
+                      child: Padding(
+                        padding: EdgeInsets.all(16.0),
+                        child: CircularProgressIndicator(),
+                      ),
+                    ),
                 ],
               ),
             ),
@@ -210,6 +344,94 @@ class SettingsScreen extends StatelessWidget {
             duration: const Duration(seconds: 3),
           ),
         );
+      }
+    }
+  }
+
+  // Show sound picker dialog
+  Future<void> _showSoundPicker(BuildContext context) async {
+    String? selectedSound = _notificationSettings?.notificationSound;
+
+    final result = await showDialog<String>(
+      context: context,
+      builder: (BuildContext context) {
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return AlertDialog(
+              title: const Text('Chọn âm thanh thông báo'),
+              content: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: _availableSounds.entries.map((entry) {
+                    return RadioListTile<String>(
+                      title: Text(entry.value),
+                      subtitle: entry.key != NotificationSettings.soundDefault &&
+                              entry.key != NotificationSettings.soundNone
+                          ? TextButton.icon(
+                              icon: const Icon(Icons.play_arrow, size: 16),
+                              label: const Text('Nghe thử'),
+                              onPressed: () async {
+                                try {
+                                  await NotificationSoundService.previewSound(entry.key);
+                                } catch (e) {
+                                  if (context.mounted) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text('Lỗi khi phát âm thanh: $e'),
+                                        backgroundColor: Colors.red,
+                                      ),
+                                    );
+                                  }
+                                }
+                              },
+                            )
+                          : null,
+                      value: entry.key,
+                      groupValue: selectedSound,
+                      onChanged: (value) {
+                        setState(() {
+                          selectedSound = value;
+                        });
+                      },
+                    );
+                  }).toList(),
+                ),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  child: const Text('Hủy'),
+                ),
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(selectedSound),
+                  child: const Text('Lưu'),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+
+    // Save selected sound
+    if (result != null && _notificationSettings != null) {
+      final updated = _notificationSettings!.copyWith(
+        notificationSound: result,
+      );
+      final success = await NotificationSoundService.saveSettings(updated);
+      if (success) {
+        setState(() {
+          _notificationSettings = updated;
+        });
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Đã lưu âm thanh thông báo'),
+              backgroundColor: Colors.green,
+              duration: Duration(seconds: 2),
+            ),
+          );
+        }
       }
     }
   }

@@ -100,7 +100,11 @@
     "vietnamese": "Vietnamese",
     "light": "Light",
     "dark": "Dark",
-    "system": "System"
+    "system": "System",
+    "appInfo": "App Information",
+    "appName": "App Name",
+    "vietnameseDesc": "Tiếng Việt (Vietnamese)",
+    "englishDesc": "English (default)"
   },
   "mobileAction": {
     "navigatingToConfig": "Navigating to Monitor Config...",
@@ -121,14 +125,5 @@
     "selectAlertType": "-Select Alert Type-",
     "webContent": "Web Server Active",
     "ping": "Ping"
-  },
-  "settings": {
-    "title": "Settings",
-    "language": "Language",
-    "appInfo": "App Information",
-    "appName": "App Name",
-    "version": "Version",
-    "vietnameseDesc": "Tiếng Việt (Vietnamese)",
-    "englishDesc": "English (default)"
   }
 }
