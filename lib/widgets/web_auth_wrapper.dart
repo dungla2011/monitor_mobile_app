@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../services/web_auth_service.dart';
@@ -15,6 +16,7 @@ class WebAuthWrapper extends StatefulWidget {
 class _WebAuthWrapperState extends State<WebAuthWrapper> {
   bool _isLoading = true;
   bool _isLoggedIn = false;
+  Timer? _authStatusTimer;
 
   @override
   void initState() {
@@ -23,6 +25,12 @@ class _WebAuthWrapperState extends State<WebAuthWrapper> {
 
     // Listen for auth status changes every few seconds to detect logout
     _startAuthStatusListener();
+  }
+
+  @override
+  void dispose() {
+    _authStatusTimer?.cancel();
+    super.dispose();
   }
 
   Future<void> _checkAuthStatus() async {
@@ -77,15 +85,17 @@ class _WebAuthWrapperState extends State<WebAuthWrapper> {
 
   void _startAuthStatusListener() {
     // Check auth status every 2 seconds to detect logout
-    Future.delayed(const Duration(seconds: 2), () {
-      if (mounted) {
-        final currentAuthStatus = WebAuthService.isLoggedIn;
-        if (_isLoggedIn != currentAuthStatus) {
-          setState(() {
-            _isLoggedIn = currentAuthStatus;
-          });
-        }
-        _startAuthStatusListener(); // Continue listening
+    _authStatusTimer = Timer.periodic(const Duration(seconds: 2), (timer) {
+      if (!mounted) {
+        timer.cancel();
+        return;
+      }
+
+      final currentAuthStatus = WebAuthService.isLoggedIn;
+      if (_isLoggedIn != currentAuthStatus) {
+        setState(() {
+          _isLoggedIn = currentAuthStatus;
+        });
       }
     });
   }
