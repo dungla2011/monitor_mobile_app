@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../services/web_auth_service.dart';
+import '../widgets/web_auth_wrapper.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -76,20 +77,25 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
         await WebAuthService.signOut();
 
-        // Navigate to login screen immediately
+        // Navigate to WebAuthWrapper (root) to trigger auth check
         if (mounted) {
-          Navigator.of(context).pushNamedAndRemoveUntil(
-            '/login',
+          Navigator.of(context).pushAndRemoveUntil(
+            MaterialPageRoute(builder: (context) => const WebAuthWrapper()),
             (route) => false,
           );
 
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(l10n.profileLogoutSuccess),
-              duration: Duration(seconds: 2),
-              backgroundColor: Colors.green,
-            ),
-          );
+          // Show success message after navigation
+          Future.delayed(const Duration(milliseconds: 500), () {
+            if (mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(l10n.profileLogoutSuccess),
+                  duration: Duration(seconds: 2),
+                  backgroundColor: Colors.green,
+                ),
+              );
+            }
+          });
         }
       } catch (e) {
         if (mounted) {

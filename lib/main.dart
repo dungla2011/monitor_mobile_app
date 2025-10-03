@@ -230,7 +230,7 @@ class _MainScreenState extends State<MainScreen> {
                 if (shouldSignOut == true) {
                   try {
                     // Show loading indicator
-                    if (mounted) {
+                    if (context.mounted) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
                           content: Text('Đang đăng xuất...'),
@@ -241,20 +241,29 @@ class _MainScreenState extends State<MainScreen> {
 
                     await WebAuthService.signOut();
 
-                    // Show success message
-                    if (mounted) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('✅ Đăng xuất thành công'),
-                          duration: Duration(seconds: 2),
-                          backgroundColor: Colors.green,
-                        ),
+                    // Navigate to WebAuthWrapper (root) to trigger auth check
+                    if (context.mounted) {
+                      Navigator.of(context).pushAndRemoveUntil(
+                        MaterialPageRoute(
+                            builder: (context) => const WebAuthWrapper()),
+                        (route) => false,
                       );
-                    }
 
-                    // WebAuthWrapper sẽ tự động điều hướng về LoginScreen
+                      // Show success message after navigation
+                      Future.delayed(const Duration(milliseconds: 500), () {
+                        if (context.mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('✅ Đăng xuất thành công'),
+                              duration: Duration(seconds: 2),
+                              backgroundColor: Colors.green,
+                            ),
+                          );
+                        }
+                      });
+                    }
                   } catch (e) {
-                    if (mounted) {
+                    if (context.mounted) {
                       final messenger = ScaffoldMessenger.of(context);
                       messenger.showSnackBar(
                         SnackBar(
