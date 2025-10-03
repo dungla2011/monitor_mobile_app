@@ -48,3 +48,4 @@ app.*.map.json
 /android/app/release
 _php/fb.json
 _php/vendor
+ 
