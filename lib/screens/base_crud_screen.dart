@@ -467,12 +467,10 @@ abstract class BaseCrudScreenState<T extends BaseCrudScreen> extends State<T> {
       // 1 day or more: show days and hours
       final days = (seconds / 86400).floor();
       final remainingHours = ((seconds % 86400) / 3600).floor();
-      final dayUnit =
-          days == 1 ? l10n.timeDay : l10n.timeDays.toLowerCase();
+      final dayUnit = days == 1 ? l10n.timeDay : l10n.timeDays.toLowerCase();
       if (remainingHours > 0) {
-        final hourUnit = remainingHours == 1
-            ? l10n.timeHour
-            : l10n.timeHours.toLowerCase();
+        final hourUnit =
+            remainingHours == 1 ? l10n.timeHour : l10n.timeHours.toLowerCase();
         final ago = l10n.timeAgo;
         return '$days $dayUnit $remainingHours $hourUnit $ago';
       }
@@ -1032,12 +1030,10 @@ class _BaseCrudDialogState extends State<BaseCrudDialog> {
       // 1 day or more: show days and hours
       final days = (seconds / 86400).floor();
       final remainingHours = ((seconds % 86400) / 3600).floor();
-      final dayUnit =
-          days == 1 ? l10n.timeDay : l10n.timeDays.toLowerCase();
+      final dayUnit = days == 1 ? l10n.timeDay : l10n.timeDays.toLowerCase();
       if (remainingHours > 0) {
-        final hourUnit = remainingHours == 1
-            ? l10n.timeHour
-            : l10n.timeHours.toLowerCase();
+        final hourUnit =
+            remainingHours == 1 ? l10n.timeHour : l10n.timeHours.toLowerCase();
         final ago = l10n.timeAgo;
         return '$days $dayUnit $remainingHours $hourUnit $ago';
       }
@@ -1267,16 +1263,16 @@ class _BaseCrudDialogState extends State<BaseCrudDialog> {
     );
   }
 
-  Widget _buildReadOnlyField(
-      String fieldName, String label, String dataType, String? extraMobileInfo) {
+  Widget _buildReadOnlyField(String fieldName, String label, String dataType,
+      String? extraMobileInfo) {
     final currentValue = widget.item?[fieldName]?.toString() ?? '';
     final displayValue =
         _formatDisplayValue(currentValue, dataType, extraMobileInfo);
-    
+
     // Get color based on data type and value
     Color textColor = Colors.black87;
     FontWeight fontWeight = FontWeight.w400;
-    
+
     final lowerDataType = dataType.toLowerCase();
     if (lowerDataType == 'error_status' && displayValue.isNotEmpty) {
       final intValue = int.tryParse(currentValue) ?? 0;
@@ -1342,9 +1338,8 @@ class _BaseCrudDialogState extends State<BaseCrudDialog> {
                   color: displayValue.isNotEmpty
                       ? textColor
                       : Colors.grey.shade500,
-                  fontWeight: displayValue.isNotEmpty
-                      ? fontWeight
-                      : FontWeight.w300,
+                  fontWeight:
+                      displayValue.isNotEmpty ? fontWeight : FontWeight.w300,
                 ),
                 textAlign: TextAlign.end,
               ),
@@ -1361,7 +1356,8 @@ class _BaseCrudDialogState extends State<BaseCrudDialog> {
       return '';
     }
 
-    print('🔍 _formatDisplayValue: value=$value, dataType=$dataType, extraMobileInfo=$extraMobileInfo');
+    print(
+        '🔍 _formatDisplayValue: value=$value, dataType=$dataType, extraMobileInfo=$extraMobileInfo');
 
     // Handle extra_mobile_info: time_to_now_seconds
     if (extraMobileInfo == 'time_to_now_seconds') {
