@@ -821,6 +821,10 @@ abstract class BaseCrudScreenState<T extends BaseCrudScreen> extends State<T> {
               dataType.toLowerCase().contains('boolean_status');
           final boolValue = (value == '1' || value == 'true' || value == '1');
 
+          // Check if this is an error_status field
+          final isErrorStatus = dataType.toLowerCase() == 'error_status';
+          final intValue = int.tryParse(value) ?? 0;
+
           return Padding(
             padding: const EdgeInsets.only(bottom: 4),
             child: Row(
@@ -861,14 +865,36 @@ abstract class BaseCrudScreenState<T extends BaseCrudScreen> extends State<T> {
                           ),
                         ),
                       )
-                    : Text(
-                        formattedValue,
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: getFieldColor(value, dataType),
-                          fontWeight: FontWeight.w400,
-                        ),
-                      ),
+                    : isErrorStatus
+                        ? Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 6,
+                              vertical: 2,
+                            ),
+                            decoration: BoxDecoration(
+                              color: intValue < 0
+                                  ? Colors.red
+                                  : intValue > 0
+                                      ? Colors.green
+                                      : Colors.grey,
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: Text(
+                              formattedValue,
+                              style: const TextStyle(
+                                fontSize: 10,
+                                color: Colors.white,
+                              ),
+                            ),
+                          )
+                        : Text(
+                            formattedValue,
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: getFieldColor(value, dataType),
+                              fontWeight: FontWeight.w400,
+                            ),
+                          ),
               ],
             ),
           );
@@ -1270,28 +1296,25 @@ class _BaseCrudDialogState extends State<BaseCrudDialog> {
     final displayValue =
         _formatDisplayValue(currentValue, dataType, extraMobileInfo);
 
-    // Get color based on data type and value
-    Color textColor = Colors.black87;
-    FontWeight fontWeight = FontWeight.w400;
-
+    // Check if this is a badge field (error_status or boolean_status)
     final lowerDataType = dataType.toLowerCase();
-    if (lowerDataType == 'error_status' && displayValue.isNotEmpty) {
-      final intValue = int.tryParse(currentValue) ?? 0;
-      if (intValue < 0) {
-        textColor = Colors.red;
-        fontWeight = FontWeight.bold;
-      } else if (intValue > 0) {
-        textColor = Colors.green;
-        fontWeight = FontWeight.bold;
-      } else {
-        textColor = Colors.grey;
-      }
-    } else if (lowerDataType.contains('boolean_status')) {
-      if (currentValue == '1' || currentValue.toLowerCase() == 'true') {
-        textColor = Colors.green;
-        fontWeight = FontWeight.bold;
-      } else {
-        textColor = Colors.grey;
+    final isErrorStatus = lowerDataType == 'error_status';
+    final isBooleanStatus = lowerDataType.contains('boolean_status');
+    final showAsBadge = (isErrorStatus || isBooleanStatus) && displayValue.isNotEmpty;
+
+    // Get badge color
+    Color badgeColor = Colors.grey;
+    if (showAsBadge) {
+      if (isErrorStatus) {
+        final intValue = int.tryParse(currentValue) ?? 0;
+        badgeColor = intValue < 0
+            ? Colors.red
+            : intValue > 0
+                ? Colors.green
+                : Colors.grey;
+      } else if (isBooleanStatus) {
+        final boolValue = currentValue == '1' || currentValue.toLowerCase() == 'true';
+        badgeColor = boolValue ? Colors.green : Colors.grey;
       }
     }
 
@@ -1331,18 +1354,41 @@ class _BaseCrudDialogState extends State<BaseCrudDialog> {
           Expanded(
             flex: 3,
             child: Padding(
-              padding: const EdgeInsets.only(top: 2),
-              child: Text(
-                displayValue.isNotEmpty ? displayValue : l10n.crudNoData,
-                style: TextStyle(
-                  fontSize: 14,
-                  color: displayValue.isNotEmpty
-                      ? textColor
-                      : Colors.grey.shade500,
-                  fontWeight:
-                      displayValue.isNotEmpty ? fontWeight : FontWeight.w300,
-                ),
-                textAlign: TextAlign.end,
+              padding: const EdgeInsets.only(top: 0),
+              child: Align(
+                alignment: Alignment.centerRight,
+                child: showAsBadge
+                    ? Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 4,
+                        ),
+                        decoration: BoxDecoration(
+                          color: badgeColor,
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Text(
+                          displayValue,
+                          style: const TextStyle(
+                            fontSize: 12,
+                            color: Colors.white,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      )
+                    : Text(
+                        displayValue.isNotEmpty ? displayValue : l10n.crudNoData,
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: displayValue.isNotEmpty
+                              ? Colors.black87
+                              : Colors.grey.shade500,
+                          fontWeight: displayValue.isNotEmpty
+                              ? FontWeight.w400
+                              : FontWeight.w300,
+                        ),
+                        textAlign: TextAlign.end,
+                      ),
               ),
             ),
           ),
