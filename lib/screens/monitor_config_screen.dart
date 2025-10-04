@@ -77,7 +77,7 @@ class _MonitorConfigScreenState
   }
 
   @override
-  Color r(Map<String, dynamic> item) {
+  Color getNameColor(Map<String, dynamic> item) {
     final errorStatus = item['error_status'];
     if (errorStatus != null) {
       final intValue = int.tryParse(errorStatus.toString()) ?? 0;
