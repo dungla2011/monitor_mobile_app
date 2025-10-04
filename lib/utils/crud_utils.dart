@@ -50,7 +50,7 @@ class CrudUtils {
     }
 
     // Handle boolean
-    if (dataType.toLowerCase().contains('boolean')) {
+    if (dataType.toLowerCase().contains('boolean_status')) {
       if (stringValue == '1' || stringValue.toLowerCase() == 'true') {
         return 'Có';
       } else if (stringValue == '0' || stringValue.toLowerCase() == 'false') {
@@ -80,7 +80,7 @@ class CrudUtils {
       return 'text_fields';
     } else if (type.contains('int') || type.contains('number')) {
       return 'numbers';
-    } else if (type.contains('boolean')) {
+    } else if (type.contains('boolean_status')) {
       return 'check_box';
     } else if (type.contains('datetime') || type.contains('timestamp')) {
       return 'schedule';

@@ -467,7 +467,7 @@ abstract class BaseCrudScreenState<T extends BaseCrudScreen> extends State<T> {
       return 'N/A';
     }
 
-    if (lowerDataType.contains('boolean') ||
+    if (lowerDataType.contains('boolean_status') ||
         lowerDataType.contains('tinyint')) {
       if (value == '1' || value.toLowerCase() == 'true') {
         return l10n.appYes;
@@ -498,7 +498,7 @@ abstract class BaseCrudScreenState<T extends BaseCrudScreen> extends State<T> {
     final lowerDataType = dataType.toLowerCase();
 
     if (lowerDataType == 'error_status') return Icons.info_outline;
-    if (lowerDataType.contains('boolean')) return Icons.toggle_on;
+    if (lowerDataType.contains('boolean_status')) return Icons.toggle_on;
     if (lowerDataType.contains('datetime')) return Icons.access_time;
     if (lowerDataType.contains('url') || lowerDataType.contains('link')) {
       return Icons.link;
@@ -509,11 +509,23 @@ abstract class BaseCrudScreenState<T extends BaseCrudScreen> extends State<T> {
 
   // Get color for mobile field value
   Color getFieldColor(String value, String dataType) {
-    if (dataType.toLowerCase() == 'error_status') {
+    final lowerDataType = dataType.toLowerCase();
+    
+    if (lowerDataType == 'error_status') {
       final intValue = int.tryParse(value) ?? 0;
       if (intValue < 0) return Colors.red;
       if (intValue > 0) return Colors.green;
       return Colors.grey;
+    }
+
+    // Add color for boolean_status
+    if (lowerDataType.contains('boolean_status') ||
+        lowerDataType.contains('tinyint')) {
+      if (value == '1' || value.toLowerCase() == 'true') {
+        return Colors.green.shade700; // Yes = green
+      } else if (value == '0' || value.toLowerCase() == 'false') {
+        return Colors.grey.shade600; // No = grey
+      }
     }
 
     return Colors.black87;
@@ -751,14 +763,20 @@ abstract class BaseCrudScreenState<T extends BaseCrudScreen> extends State<T> {
             selectOptions,
           );
 
+          // Check if this is a boolean_status field
+          final isBooleanStatus = dataType.toLowerCase().contains('boolean_status');
+          final boolValue = (value == '1' || value == 'true' || value == '1');
+
           return Padding(
             padding: const EdgeInsets.only(bottom: 4),
             child: Row(
               children: [
                 Icon(
                   getFieldIcon(dataType),
-                  size: 16,
-                  color: Colors.grey.shade600,
+                  size: 24,
+                  color: isBooleanStatus 
+                      ? (boolValue ? Colors.green : Colors.grey)
+                      : getFieldColor(value, dataType),
                 ),
                 const SizedBox(width: 6),
                 Expanded(
@@ -771,14 +789,32 @@ abstract class BaseCrudScreenState<T extends BaseCrudScreen> extends State<T> {
                     ),
                   ),
                 ),
-                Text(
-                  formattedValue,
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: getFieldColor(value, dataType),
-                    fontWeight: FontWeight.w400,
-                  ),
-                ),
+                isBooleanStatus
+                    ? Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 6,
+                          vertical: 2,
+                        ),
+                        decoration: BoxDecoration(
+                          color: boolValue ? Colors.green : Colors.grey,
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Text(
+                          formattedValue,
+                          style: const TextStyle(
+                            fontSize: 10,
+                            color: Colors.white,
+                          ),
+                        ),
+                      )
+                    : Text(
+                        formattedValue,
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: getFieldColor(value, dataType),
+                          fontWeight: FontWeight.w400,
+                        ),
+                      ),
               ],
             ),
           );
@@ -843,7 +879,7 @@ class _BaseCrudDialogState extends State<BaseCrudDialog> {
       _currentItemData[fieldName] = currentValue;
 
       final dataType = field['data_type']?.toString().toLowerCase() ?? '';
-      final isBooleanField = dataType.contains('boolean') ||
+      final isBooleanField = dataType.contains('boolean_status') ||
           dataType.contains('tinyint') ||
           (fieldName == 'enable'); // Special case for enable field
       final isDateTimeField =
@@ -1105,7 +1141,7 @@ class _BaseCrudDialogState extends State<BaseCrudDialog> {
         'action_cmd': 'open_config',
       };
     }
-    final isBooleanField = dataType.contains('boolean') ||
+    final isBooleanField = dataType.contains('boolean_status') ||
         dataType.contains('tinyint') ||
         (fieldName == 'enable'); // Special case for enable field
     final isDateTimeField =
@@ -1210,7 +1246,7 @@ class _BaseCrudDialogState extends State<BaseCrudDialog> {
     }
 
     // Format boolean/tinyint
-    if (lowerDataType.contains('boolean') ||
+    if (lowerDataType.contains('boolean_status') ||
         lowerDataType.contains('tinyint')) {
       if (value == '1' || value.toLowerCase() == 'true') {
         return l10n.appYes;
