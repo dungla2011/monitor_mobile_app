@@ -27,6 +27,7 @@ abstract class BaseCrudService {
           'success': true,
           'data': jsonResponse['payload'],
           'message': jsonResponse['message'] ?? successMessage ?? 'Success',
+          'statusCode': response.statusCode,
         };
       }
 
@@ -37,12 +38,14 @@ abstract class BaseCrudService {
             jsonResponse['payload'] ??
             errorMessage ??
             'HTTP error ${response.statusCode}',
+        'statusCode': response.statusCode,
       };
     } catch (e) {
       // Handle JSON parsing errors
       return {
         'success': false,
         'message': 'HTTP error ${response.statusCode}: ${response.body}',
+        'statusCode': response.statusCode,
       };
     }
   }
@@ -174,6 +177,20 @@ abstract class BaseCrudService {
       if (response.statusCode == 200) {
         final jsonResponse = jsonDecode(response.body);
 
+        // Check for Laravel/PHP exception format first
+        if (jsonResponse is Map && jsonResponse.containsKey('exception')) {
+          return {
+            'success': false,
+            'message': jsonResponse['message'] ?? 'Server error occurred',
+            'statusCode': response.statusCode,
+            'responseBody': response.body,
+            'isException': true,
+            'exceptionType': jsonResponse['exception'],
+            'file': jsonResponse['file'],
+            'line': jsonResponse['line'],
+          };
+        }
+
         // Handle different response formats
         if (configType == 'field_details') {
           // field_details can return either array directly or wrapped in object
@@ -212,6 +229,8 @@ abstract class BaseCrudService {
                     'success': false,
                     'message':
                         'Unexpected field_details format: unable to parse structure',
+                    'statusCode': response.statusCode,
+                    'responseBody': response.body,
                   };
                 }
               }
@@ -221,6 +240,8 @@ abstract class BaseCrudService {
               'success': false,
               'message':
                   'Unexpected field_details format: expected List or Map but got ${jsonResponse.runtimeType}',
+              'statusCode': response.statusCode,
+              'responseBody': response.body,
             };
           }
         } else {
@@ -232,6 +253,8 @@ abstract class BaseCrudService {
               'success': false,
               'message':
                   jsonResponse['message'] ?? 'Failed to fetch $configType',
+              'statusCode': response.statusCode,
+              'responseBody': response.body,
             };
           }
         }
@@ -239,6 +262,8 @@ abstract class BaseCrudService {
         return {
           'success': false,
           'message': 'HTTP Error ${response.statusCode} for $configType',
+          'statusCode': response.statusCode,
+          'responseBody': response.body,
         };
       }
     } catch (e) {

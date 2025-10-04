@@ -239,10 +239,58 @@ abstract class BaseCrudScreenState<T extends BaseCrudScreen> extends State<T> {
 
         if (!configResult['success']) {
           if (mounted) {
-            await ErrorDialogUtils.showErrorDialog(
-              context,
-              '${l10n.crudCannotLoadConfig}: ${configResult['message']}',
-            );
+            final statusCode = configResult['statusCode'] as int?;
+            final responseBody = configResult['responseBody'] as String?;
+            final isException = configResult['isException'] as bool?;
+
+            if (statusCode != null && statusCode >= 400) {
+              // HTTP error (4xx, 5xx)
+              await ErrorDialogUtils.showHttpErrorDialog(
+                context,
+                statusCode,
+                configResult['message'],
+                technicalDetails: responseBody,
+              );
+            } else if (isException == true) {
+              // Server-side exception (HTTP 200 but exception thrown)
+              final exceptionType = configResult['exceptionType'] ?? 'Unknown';
+              final file = configResult['file'] ?? '';
+              final line = configResult['line'] ?? '';
+              final message = configResult['message'] ?? 'Server error';
+
+              await ErrorDialogUtils.showErrorDialog(
+                context,
+                '${l10n.crudCannotLoadConfig}: $message',
+                customHints: [
+                  '⚠️ Server Exception: $exceptionType',
+                  '📁 File: ${file.split('/').last}:$line',
+                  '🔧 This is a server-side error - contact administrator',
+                  '📞 Show this information to technical support',
+                ],
+              );
+              print('❌ Server Exception: $exceptionType');
+              print('❌ File: $file:$line');
+              print('❌ Response: $responseBody');
+            } else if (responseBody != null) {
+              // Parse error or data format error (HTTP 200 but invalid data)
+              await ErrorDialogUtils.showErrorDialog(
+                context,
+                '${l10n.crudCannotLoadConfig}: ${configResult['message']}',
+                customHints: [
+                  '📋 Check server API response format',
+                  '🔧 Verify get-api-info.php returns correct JSON structure',
+                  '📞 Contact technical support if problem persists',
+                ],
+              );
+              // Also print technical details to console for debugging
+              print('❌ Response body: $responseBody');
+            } else {
+              // Generic error (network, timeout, etc.)
+              await ErrorDialogUtils.showErrorDialog(
+                context,
+                '${l10n.crudCannotLoadConfig}: ${configResult['message']}',
+              );
+            }
           }
           return;
         }
@@ -298,10 +346,57 @@ abstract class BaseCrudScreenState<T extends BaseCrudScreen> extends State<T> {
         } else {
           // Show error and return
           if (mounted) {
-            await ErrorDialogUtils.showErrorDialog(
-              context,
-              result['message'] ?? l10n.crudCannotLoadData,
-            );
+            final statusCode = result['statusCode'] as int?;
+            final responseBody = result['responseBody'] as String?;
+            final isException = result['isException'] as bool?;
+
+            if (statusCode != null && statusCode >= 400) {
+              // HTTP error (4xx, 5xx)
+              await ErrorDialogUtils.showHttpErrorDialog(
+                context,
+                statusCode,
+                result['message'],
+                technicalDetails: responseBody,
+              );
+            } else if (isException == true) {
+              // Server-side exception (HTTP 200 but exception thrown)
+              final exceptionType = result['exceptionType'] ?? 'Unknown';
+              final file = result['file'] ?? '';
+              final line = result['line'] ?? '';
+              final message = result['message'] ?? 'Server error';
+
+              await ErrorDialogUtils.showErrorDialog(
+                context,
+                '${l10n.crudCannotLoadData}: $message',
+                customHints: [
+                  '⚠️ Server Exception: $exceptionType',
+                  '📁 File: ${file.split('/').last}:$line',
+                  '🔧 This is a server-side error - contact administrator',
+                  '📞 Show this information to technical support',
+                ],
+              );
+              print('❌ Server Exception: $exceptionType');
+              print('❌ File: $file:$line');
+              print('❌ Response: $responseBody');
+            } else if (responseBody != null) {
+              // Parse error or data format error (HTTP 200 but invalid data)
+              await ErrorDialogUtils.showErrorDialog(
+                context,
+                result['message'] ?? l10n.crudCannotLoadData,
+                customHints: [
+                  '📋 Check server API response format',
+                  '🔧 Verify API returns correct JSON structure',
+                  '📞 Contact technical support if problem persists',
+                ],
+              );
+              print('❌ Response body: $responseBody');
+            } else {
+              // Generic error (network, timeout, etc.)
+              await ErrorDialogUtils.showErrorDialog(
+                context,
+                result['message'] ?? l10n.crudCannotLoadData,
+              );
+            }
           }
           return;
         }
@@ -872,11 +967,20 @@ class _BaseCrudDialogState extends State<BaseCrudDialog> {
         );
         widget.onSaved();
       } else {
-        // Show detailed error dialog instead of snackbar
-        await ErrorDialogUtils.showErrorDialog(
-          context,
-          result['message'] ?? l10n.crudSaveError,
-        );
+        // Show detailed error dialog with HTTP status code if available
+        final statusCode = result['statusCode'] as int?;
+        if (statusCode != null && statusCode >= 400) {
+          await ErrorDialogUtils.showHttpErrorDialog(
+            context,
+            statusCode,
+            result['message'],
+          );
+        } else {
+          await ErrorDialogUtils.showErrorDialog(
+            context,
+            result['message'] ?? l10n.crudSaveError,
+          );
+        }
       }
     } catch (e) {
       await ErrorDialogUtils.showErrorDialog(

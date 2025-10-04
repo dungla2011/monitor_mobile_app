@@ -95,48 +95,74 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   const SizedBox(height: 16),
                   Consumer<LanguageManager>(
                     builder: (context, languageManager, child) {
-                      return Column(
-                        children:
-                            LanguageManager.supportedLocales.map((locale) {
-                          final languageName = LanguageManager
-                                  .languageNames[locale.languageCode] ??
-                              locale.languageCode;
+                      final currentLanguageCode =
+                          languageManager.currentLocale.languageCode;
 
-                          final countryCode =
-                              _getCountryCode(locale.languageCode);
+                      return Container(
+                        decoration: BoxDecoration(
+                          border: Border.all(color: Colors.grey.shade300),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        padding: const EdgeInsets.symmetric(horizontal: 12),
+                        child: DropdownButtonHideUnderline(
+                          child: DropdownButton<String>(
+                            isExpanded: true,
+                            value: currentLanguageCode,
+                            icon: const Icon(Icons.arrow_drop_down),
+                            items:
+                                LanguageManager.supportedLocales.map((locale) {
+                              final languageName = LanguageManager
+                                      .languageNames[locale.languageCode] ??
+                                  locale.languageCode;
+                              final countryCode =
+                                  _getCountryCode(locale.languageCode);
+                              final description = _getLanguageDescription(
+                                  locale.languageCode, l10n);
 
-                          return ListTile(
-                            leading: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                CountryFlag.fromCountryCode(
-                                  countryCode,
-                                  height: 24,
-                                  width: 36,
+                              return DropdownMenuItem<String>(
+                                value: locale.languageCode,
+                                child: Row(
+                                  children: [
+                                    CountryFlag.fromCountryCode(
+                                      countryCode,
+                                      height: 20,
+                                      width: 30,
+                                    ),
+                                    const SizedBox(width: 12),
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          Text(
+                                            languageName,
+                                            style: const TextStyle(
+                                              fontWeight: FontWeight.w500,
+                                            ),
+                                          ),
+                                          Text(
+                                            description,
+                                            style: TextStyle(
+                                              fontSize: 12,
+                                              color: Colors.grey.shade600,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
                                 ),
-                                const SizedBox(width: 12),
-                                Radio<String>(
-                                  value: locale.languageCode,
-                                  groupValue: languageManager
-                                      .currentLocale.languageCode,
-                                  onChanged: (value) async {
-                                    if (value != null) {
-                                      await _changeLanguage(context,
-                                          languageManager, Locale(value, ''));
-                                    }
-                                  },
-                                ),
-                              ],
-                            ),
-                            title: Text(languageName),
-                            subtitle: Text(_getLanguageDescription(
-                                locale.languageCode, l10n)),
-                            onTap: () async {
-                              await _changeLanguage(
-                                  context, languageManager, locale);
+                              );
+                            }).toList(),
+                            onChanged: (value) async {
+                              if (value != null) {
+                                await _changeLanguage(context, languageManager,
+                                    Locale(value, ''));
+                              }
                             },
-                          );
-                        }).toList(),
+                          ),
+                        ),
                       );
                     },
                   ),

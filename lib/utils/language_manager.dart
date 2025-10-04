@@ -91,12 +91,24 @@ class LanguageManager extends ChangeNotifier {
           'messageKey': 'languageUpdateSuccess',
         };
       } else {
-        // API failed but local change succeeded
-        return {
-          'success': true,
-          'messageKey': 'languageChangedNotSynced',
-          'warning': apiResult['message'],
-        };
+        // Check if it's an HTTP error (statusCode >= 400)
+        final statusCode = apiResult['statusCode'] as int?;
+        if (statusCode != null && statusCode >= 400) {
+          // Return HTTP error for UI to show error dialog
+          return {
+            'success': false,
+            'messageKey': apiResult['messageKey'] ?? 'languageHttpError',
+            'statusCode': statusCode,
+            'responseBody': apiResult['responseBody'],
+          };
+        } else {
+          // Non-HTTP error (network, timeout, etc.) - local change succeeded
+          return {
+            'success': true,
+            'messageKey': 'languageChangedNotSynced',
+            'warning': apiResult['message'] ?? apiResult['messageKey'],
+          };
+        }
       }
     } catch (e) {
       print('Error changing language: $e');
