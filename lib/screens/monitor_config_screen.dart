@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../services/monitor_config_crud_service.dart';
 import 'base_crud_screen.dart';
 
@@ -18,10 +19,10 @@ class _MonitorConfigScreenState
   String get itemName => 'Monitor Alert';
 
   @override
-  String get addButtonText => 'Thêm Monitor Alert';
+  String get addButtonText => AppLocalizations.of(context)!.monitorAddConfig;
 
   @override
-  String get editButtonText => 'Sửa Monitor Alert';
+  String get editButtonText => AppLocalizations.of(context)!.monitorEditConfig;
 
   @override
   Future<Map<String, dynamic>> initializeConfig() async {

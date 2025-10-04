@@ -22,6 +22,9 @@ abstract class BaseCrudScreenState<T extends BaseCrudScreen> extends State<T> {
   Set<int> selectedItems = <int>{};
   bool isSelectionMode = false;
 
+  // Localization getter
+  AppLocalizations get l10n => AppLocalizations.of(context)!;
+
   // Abstract methods that must be implemented by subclasses
   String get screenTitle;
   String get itemName; // e.g., "Monitor Item", "Monitor Config"
@@ -321,7 +324,7 @@ abstract class BaseCrudScreenState<T extends BaseCrudScreen> extends State<T> {
       showDialog(
         context: context,
         builder: (context) => BaseCrudDialog(
-          title: isEditMode ? 'Sửa $itemName' : 'Thêm $itemName',
+          title: isEditMode ? '${l10n.appEdit} $itemName' : '${l10n.appAdd} $itemName',
           item: fullItemData,
           fields: dialogFields,
           onSave: (data) => saveItem(fullItemData?['id'], data),
@@ -598,18 +601,18 @@ abstract class BaseCrudScreenState<T extends BaseCrudScreen> extends State<T> {
                   }
                 },
                 itemBuilder: (context) => [
-                  const PopupMenuItem(
+                  PopupMenuItem(
                     value: 'edit',
                     child: ListTile(
                       leading: Icon(Icons.edit),
-                      title: Text('Sửa'),
+                      title: Text(l10n.appEdit),
                     ),
                   ),
-                  const PopupMenuItem(
+                  PopupMenuItem(
                     value: 'delete',
                     child: ListTile(
                       leading: Icon(Icons.delete),
-                      title: Text('Xóa'),
+                      title: Text(l10n.appDelete),
                     ),
                   ),
                 ],
@@ -721,6 +724,9 @@ class _BaseCrudDialogState extends State<BaseCrudDialog> {
 
   // Track current item data for dependency checking
   final Map<String, dynamic> _currentItemData = {};
+
+  // Localization getter
+  AppLocalizations get l10n => AppLocalizations.of(context)!;
 
   @override
   void initState() {
@@ -957,7 +963,7 @@ class _BaseCrudDialogState extends State<BaseCrudDialog> {
                       height: 20,
                       child: CircularProgressIndicator(strokeWidth: 2),
                     )
-                  : Text(widget.item != null ? 'Cập nhật' : 'Thêm'),
+                  : Text(widget.item != null ? l10n.appUpdate : l10n.appAdd),
             ),
           ],
         ),

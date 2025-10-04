@@ -20,6 +20,8 @@
   "appConfirm": "Confirm",
   "appYes": "Yes",
   "appNo": "No",
+  "appLoadingData": "Loading data...",
+  "appRetry": "Retry",
   
   "authLogin": "Login",
   "authLogout": "Logout",

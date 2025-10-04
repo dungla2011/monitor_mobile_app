@@ -16,6 +16,8 @@
   "appConfirm": "確認",
   "appYes": "はい",
   "appNo": "いいえ",
+  "appLoadingData": "データ読み込み中...",
+  "appRetry": "再試行",
   
   "authLogin": "ログイン",
   "authLogout": "ログアウト",

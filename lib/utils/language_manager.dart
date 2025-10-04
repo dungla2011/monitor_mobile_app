@@ -149,11 +149,14 @@ class LanguageManager extends ChangeNotifier {
         return {
           'success': false,
           'message': 'Phiên đăng nhập hết hạn',
+          'statusCode': 401,
         };
       } else {
         return {
           'success': false,
           'message': 'Lỗi HTTP ${response.statusCode}',
+          'statusCode': response.statusCode,
+          'responseBody': response.body,
         };
       }
     } catch (e) {

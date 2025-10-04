@@ -16,6 +16,8 @@
   "appConfirm": "확인",
   "appYes": "예",
   "appNo": "아니오",
+  "appLoadingData": "데이터 로딩 중...",
+  "appRetry": "재시도",
   
   "authLogin": "로그인",
   "authLogout": "로그아웃",

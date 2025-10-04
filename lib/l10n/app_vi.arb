@@ -16,6 +16,8 @@
   "appConfirm": "Xác nhận",
   "appYes": "Có",
   "appNo": "Không",
+  "appLoadingData": "Đang tải dữ liệu...",
+  "appRetry": "Sửa lại",
   
   "authLogin": "Đăng nhập",
   "authLogout": "Đăng xuất",

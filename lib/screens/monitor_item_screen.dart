@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../services/monitor_item_crud_service.dart';
 import 'base_crud_screen.dart';
 
@@ -17,10 +18,10 @@ class _MonitorItemScreenState extends BaseCrudScreenState<MonitorItemScreen> {
   String get itemName => 'Monitor Item';
 
   @override
-  String get addButtonText => 'Thêm Monitor Item';
+  String get addButtonText => AppLocalizations.of(context)!.monitorAddItem;
 
   @override
-  String get editButtonText => 'Sửa Monitor Item';
+  String get editButtonText => AppLocalizations.of(context)!.monitorEditItem;
 
   @override
   Future<Map<String, dynamic>> initializeConfig() async {

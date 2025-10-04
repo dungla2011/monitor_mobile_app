@@ -5,6 +5,7 @@ import 'package:country_flags/country_flags.dart';
 import '../utils/language_manager.dart';
 import '../models/notification_settings.dart';
 import '../services/notification_sound_service.dart';
+import '../utils/error_dialog_utils.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -341,43 +342,40 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
       // Show result message
       if (context.mounted) {
-        final scaffoldMessenger = ScaffoldMessenger.of(context);
-
         if (result['success'] == true) {
-          scaffoldMessenger.showSnackBar(
-            SnackBar(
-              content: Text(
-                result['message'] ?? 'Đã thay đổi ngôn ngữ thành công',
-              ),
-              backgroundColor: Colors.green,
-              duration: const Duration(seconds: 2),
-            ),
+          ErrorDialogUtils.showSuccessSnackBar(
+            context,
+            result['message'] ?? 'Đã thay đổi ngôn ngữ thành công',
           );
 
           // Show warning if API failed but local change succeeded
           if (result['warning'] != null) {
             Future.delayed(const Duration(seconds: 2), () {
               if (context.mounted) {
-                scaffoldMessenger.showSnackBar(
-                  SnackBar(
-                    content: Text('⚠️ ${result['warning']}'),
-                    backgroundColor: Colors.orange,
-                    duration: const Duration(seconds: 3),
-                  ),
+                ErrorDialogUtils.showWarningSnackBar(
+                  context,
+                  '⚠️ ${result['warning']}',
                 );
               }
             });
           }
         } else {
-          scaffoldMessenger.showSnackBar(
-            SnackBar(
-              content: Text(
-                result['message'] ?? 'Lỗi khi thay đổi ngôn ngữ',
-              ),
-              backgroundColor: Colors.red,
-              duration: const Duration(seconds: 3),
-            ),
-          );
+          // Check if there's a status code (HTTP error)
+          if (result['statusCode'] != null) {
+            await ErrorDialogUtils.showHttpErrorDialog(
+              context,
+              result['statusCode'] as int,
+              result['message'] as String?,
+              technicalDetails: result['responseBody'] as String?,
+            );
+          } else {
+            // Generic error without status code
+            await ErrorDialogUtils.showErrorDialog(
+              context,
+              result['message'] ?? 'Lỗi khi thay đổi ngôn ngữ',
+              title: 'Lỗi thay đổi ngôn ngữ',
+            );
+          }
         }
       }
     } catch (e) {
@@ -388,12 +386,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
       // Show error message
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Lỗi: $e'),
-            backgroundColor: Colors.red,
-            duration: const Duration(seconds: 3),
-          ),
+        await ErrorDialogUtils.showErrorDialog(
+          context,
+          'Lỗi: $e',
+          title: 'Lỗi không xác định',
+          customHints: [
+            'Kiểm tra kết nối mạng',
+            'Thử lại sau vài giây',
+            'Liên hệ hỗ trợ nếu vấn đề vẫn tiếp diễn',
+          ],
         );
       }
     }
