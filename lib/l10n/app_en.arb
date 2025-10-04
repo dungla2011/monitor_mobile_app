@@ -238,6 +238,13 @@
   "timeSelectTime": "Select time",
   "timeClearTime": "Clear time",
   "timeNotSelected": "Time not selected",
+  "timeSecond": "second",
+  "timeMinute": "minute",
+  "timeHour": "hour",
+  "timeDay": "day",
+  "timeMin": "min",
+  "timeMins": "mins",
+  "timeAgo": "ago",
   
   "optionsSelect": "-Select-",
   "optionsSelectAlertType": "-Select Alert Type-",

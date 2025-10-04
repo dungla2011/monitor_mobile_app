@@ -370,6 +370,7 @@ abstract class BaseCrudService {
             'editable': fieldMap['editable'],
             'select_options': fieldMap['select_option_value'],
             'select_options_multi': fieldMap['select_option_multi_value'],
+            'extra_mobile_info': fieldMap['extra_mobile_info'],
           });
         }
       }
@@ -390,6 +391,7 @@ abstract class BaseCrudService {
               'editable': fieldMap['editable'],
               'select_options': fieldMap['select_option_value'],
               'select_options_multi': fieldMap['select_option_multi_value'],
+              'extra_mobile_info': fieldMap['extra_mobile_info'],
             });
           }
         }

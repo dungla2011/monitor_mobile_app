@@ -166,6 +166,13 @@
   "timeSelectTime": "時間を選択",
   "timeClearTime": "時間をクリア",
   "timeNotSelected": "時間が選択されていません",
+  "timeSecond": "秒",
+  "timeMinute": "分",
+  "timeHour": "時間",
+  "timeDay": "日",
+  "timeMin": "分",
+  "timeMins": "分",
+  "timeAgo": "前",
   
   "optionsSelect": "-選択-",
   "optionsSelectAlertType": "-アラートタイプを選択-",

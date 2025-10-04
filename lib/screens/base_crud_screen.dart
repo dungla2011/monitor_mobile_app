@@ -436,14 +436,66 @@ abstract class BaseCrudScreenState<T extends BaseCrudScreen> extends State<T> {
     }
   }
 
+  // Format seconds into human-readable "time ago" string
+  String _formatTimeAgo(int seconds) {
+    if (seconds < 0) return 'N/A';
+
+    if (seconds < 60) {
+      // Less than 1 minute: show seconds
+      final unit =
+          seconds == 1 ? l10n.timeSecond : l10n.timeSeconds.toLowerCase();
+      return '$seconds $unit ${l10n.timeAgo}';
+    } else if (seconds < 3600) {
+      // Less than 1 hour: show minutes
+      final minutes = (seconds / 60).floor();
+      final unit =
+          minutes == 1 ? l10n.timeMinute : l10n.timeMinutes.toLowerCase();
+      return '$minutes $unit ${l10n.timeAgo}';
+    } else if (seconds < 86400) {
+      // Less than 1 day: show hours and minutes
+      final hours = (seconds / 3600).floor();
+      final remainingMinutes = ((seconds % 3600) / 60).floor();
+      final hourUnit =
+          hours == 1 ? l10n.timeHour : l10n.timeHours.toLowerCase();
+      if (remainingMinutes > 0) {
+        final minsUnit = l10n.timeMins;
+        final ago = l10n.timeAgo;
+        return '$hours $hourUnit $remainingMinutes $minsUnit $ago';
+      }
+      return '$hours $hourUnit ${l10n.timeAgo}';
+    } else {
+      // 1 day or more: show days and hours
+      final days = (seconds / 86400).floor();
+      final remainingHours = ((seconds % 86400) / 3600).floor();
+      final dayUnit =
+          days == 1 ? l10n.timeDay : l10n.timeDays.toLowerCase();
+      if (remainingHours > 0) {
+        final hourUnit = remainingHours == 1
+            ? l10n.timeHour
+            : l10n.timeHours.toLowerCase();
+        final ago = l10n.timeAgo;
+        return '$days $dayUnit $remainingHours $hourUnit $ago';
+      }
+      final ago = l10n.timeAgo;
+      return '$days $dayUnit $ago';
+    }
+  }
+
   // Format value for mobile field display
   String formatMobileValue(
     String value,
     String dataType,
-    Map<String, dynamic>? selectOptions,
-  ) {
+    Map<String, dynamic>? selectOptions, {
+    String? extraMobileInfo,
+  }) {
     if (value.isEmpty || value == 'null') {
       return 'N/A';
+    }
+
+    // Handle extra_mobile_info: time_to_now_seconds
+    if (extraMobileInfo == 'time_to_now_seconds') {
+      final seconds = int.tryParse(value) ?? 0;
+      return _formatTimeAgo(seconds);
     }
 
     // Handle select options first
@@ -510,7 +562,7 @@ abstract class BaseCrudScreenState<T extends BaseCrudScreen> extends State<T> {
   // Get color for mobile field value
   Color getFieldColor(String value, String dataType) {
     final lowerDataType = dataType.toLowerCase();
-    
+
     if (lowerDataType == 'error_status') {
       final intValue = int.tryParse(value) ?? 0;
       if (intValue < 0) return Colors.red;
@@ -756,15 +808,18 @@ abstract class BaseCrudScreenState<T extends BaseCrudScreen> extends State<T> {
           final dataType = field['data_type'] as String? ?? '';
           final selectOptions =
               field['select_options'] as Map<String, dynamic>?;
+          final extraMobileInfo = field['extra_mobile_info'] as String?;
           final value = item[fieldName]?.toString() ?? '';
           final formattedValue = formatMobileValue(
             value,
             dataType,
             selectOptions,
+            extraMobileInfo: extraMobileInfo,
           );
 
           // Check if this is a boolean_status field
-          final isBooleanStatus = dataType.toLowerCase().contains('boolean_status');
+          final isBooleanStatus =
+              dataType.toLowerCase().contains('boolean_status');
           final boolValue = (value == '1' || value == 'true' || value == '1');
 
           return Padding(
@@ -774,7 +829,7 @@ abstract class BaseCrudScreenState<T extends BaseCrudScreen> extends State<T> {
                 Icon(
                   getFieldIcon(dataType),
                   size: 24,
-                  color: isBooleanStatus 
+                  color: isBooleanStatus
                       ? (boolValue ? Colors.green : Colors.grey)
                       : getFieldColor(value, dataType),
                 ),

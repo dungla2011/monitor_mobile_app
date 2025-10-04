@@ -166,6 +166,13 @@
   "timeSelectTime": "시간 선택",
   "timeClearTime": "시간 지우기",
   "timeNotSelected": "시간이 선택되지 않음",
+  "timeSecond": "초",
+  "timeMinute": "분",
+  "timeHour": "시간",
+  "timeDay": "일",
+  "timeMin": "분",
+  "timeMins": "분",
+  "timeAgo": "전",
   
   "optionsSelect": "-선택-",
   "optionsSelectAlertType": "-알림 유형 선택-",

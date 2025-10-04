@@ -164,6 +164,13 @@
   "timeSelectTime": "Zeit auswählen",
   "timeClearTime": "Zeit löschen",
   "timeNotSelected": "Zeit nicht ausgewählt",
+  "timeSecond": "Sekunde",
+  "timeMinute": "Minute",
+  "timeHour": "Stunde",
+  "timeDay": "Tag",
+  "timeMin": "Min",
+  "timeMins": "Mins",
+  "timeAgo": "vor",
   
   "optionsSelect": "-Auswählen-",
   "optionsSelectAlertType": "-Warnungstyp auswählen-",

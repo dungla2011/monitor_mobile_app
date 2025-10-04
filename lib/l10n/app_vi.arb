@@ -164,6 +164,13 @@
   "timeSelectTime": "Chọn thời gian",
   "timeClearTime": "Xóa thời gian",
   "timeNotSelected": "Chưa chọn thời gian",
+  "timeSecond": "giây",
+  "timeMinute": "phút",
+  "timeHour": "giờ",
+  "timeDay": "ngày",
+  "timeMin": "phút",
+  "timeMins": "phút",
+  "timeAgo": "trước",
   
   "optionsSelect": "-Chọn-",
   "optionsSelectAlertType": "-Chọn Kiểu Alert-",
