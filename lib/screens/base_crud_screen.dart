@@ -583,7 +583,18 @@ abstract class BaseCrudScreenState<T extends BaseCrudScreen> extends State<T> {
 
   // Get name color based on error_status field
   Color getNameColor(Map<String, dynamic> item) {
-    final errorStatus = item['error_status'];
+    // If item is disabled, always return grey
+    final enable = item['enable'];
+    if (enable != null) {
+      final enableValue = enable.toString();
+      final isEnabled =
+          enableValue == '1' || enableValue.toLowerCase() == 'true';
+      if (!isEnabled) {
+        return Colors.grey;
+      }
+    }
+
+    final errorStatus = item['error_status'] ?? item['last_check_status'];
     if (errorStatus != null) {
       final intValue = int.tryParse(errorStatus.toString()) ?? 0;
       if (intValue < 0) return Colors.red.shade700;
@@ -825,6 +836,12 @@ abstract class BaseCrudScreenState<T extends BaseCrudScreen> extends State<T> {
           final isErrorStatus = dataType.toLowerCase() == 'error_status';
           final intValue = int.tryParse(value) ?? 0;
 
+          // Check if item is disabled
+          final enable = item['enable'];
+          final isEnabled = enable == null ||
+              enable.toString() == '1' ||
+              enable.toString().toLowerCase() == 'true';
+
           return Padding(
             padding: const EdgeInsets.only(bottom: 4),
             child: Row(
@@ -872,11 +889,13 @@ abstract class BaseCrudScreenState<T extends BaseCrudScreen> extends State<T> {
                               vertical: 2,
                             ),
                             decoration: BoxDecoration(
-                              color: intValue < 0
-                                  ? Colors.red
-                                  : intValue > 0
-                                      ? Colors.green
-                                      : Colors.grey,
+                              color: !isEnabled
+                                  ? Colors.grey
+                                  : intValue < 0
+                                      ? Colors.red
+                                      : intValue > 0
+                                          ? Colors.green
+                                          : Colors.grey,
                               borderRadius: BorderRadius.circular(12),
                             ),
                             child: Text(
@@ -1300,7 +1319,8 @@ class _BaseCrudDialogState extends State<BaseCrudDialog> {
     final lowerDataType = dataType.toLowerCase();
     final isErrorStatus = lowerDataType == 'error_status';
     final isBooleanStatus = lowerDataType.contains('boolean_status');
-    final showAsBadge = (isErrorStatus || isBooleanStatus) && displayValue.isNotEmpty;
+    final showAsBadge =
+        (isErrorStatus || isBooleanStatus) && displayValue.isNotEmpty;
 
     // Get badge color
     Color badgeColor = Colors.grey;
@@ -1313,7 +1333,8 @@ class _BaseCrudDialogState extends State<BaseCrudDialog> {
                 ? Colors.green
                 : Colors.grey;
       } else if (isBooleanStatus) {
-        final boolValue = currentValue == '1' || currentValue.toLowerCase() == 'true';
+        final boolValue =
+            currentValue == '1' || currentValue.toLowerCase() == 'true';
         badgeColor = boolValue ? Colors.green : Colors.grey;
       }
     }
@@ -1377,7 +1398,9 @@ class _BaseCrudDialogState extends State<BaseCrudDialog> {
                         ),
                       )
                     : Text(
-                        displayValue.isNotEmpty ? displayValue : l10n.crudNoData,
+                        displayValue.isNotEmpty
+                            ? displayValue
+                            : l10n.crudNoData,
                         style: TextStyle(
                           fontSize: 14,
                           color: displayValue.isNotEmpty

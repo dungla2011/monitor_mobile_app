@@ -77,6 +77,17 @@ class _MonitorItemScreenState extends BaseCrudScreenState<MonitorItemScreen> {
 
   @override
   Color getNameColor(Map<String, dynamic> item) {
+    // CHECK ENABLE FIRST - If item is disabled, always return grey
+    final enable = item['enable'];
+    if (enable != null) {
+      final enableValue = enable.toString();
+      final isEnabled =
+          enableValue == '1' || enableValue.toLowerCase() == 'true';
+      if (!isEnabled) {
+        return Colors.grey; // Disabled items show grey
+      }
+    }
+
     // Get all field definitions to find error_status field
     final allFields = MonitorItemCrudService.getMobileFields();
 
