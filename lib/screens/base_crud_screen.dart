@@ -1002,6 +1002,50 @@ class _BaseCrudDialogState extends State<BaseCrudDialog> {
         '${dateTime.second.toString().padLeft(2, '0')}';
   }
 
+  String _formatTimeAgo(int seconds) {
+    if (seconds < 0) return 'N/A';
+
+    if (seconds < 60) {
+      // Less than 1 minute: show seconds
+      final unit =
+          seconds == 1 ? l10n.timeSecond : l10n.timeSeconds.toLowerCase();
+      return '$seconds $unit ${l10n.timeAgo}';
+    } else if (seconds < 3600) {
+      // Less than 1 hour: show minutes
+      final minutes = (seconds / 60).floor();
+      final unit =
+          minutes == 1 ? l10n.timeMinute : l10n.timeMinutes.toLowerCase();
+      return '$minutes $unit ${l10n.timeAgo}';
+    } else if (seconds < 86400) {
+      // Less than 1 day: show hours and minutes
+      final hours = (seconds / 3600).floor();
+      final remainingMinutes = ((seconds % 3600) / 60).floor();
+      final hourUnit =
+          hours == 1 ? l10n.timeHour : l10n.timeHours.toLowerCase();
+      if (remainingMinutes > 0) {
+        final minsUnit = l10n.timeMins;
+        final ago = l10n.timeAgo;
+        return '$hours $hourUnit $remainingMinutes $minsUnit $ago';
+      }
+      return '$hours $hourUnit ${l10n.timeAgo}';
+    } else {
+      // 1 day or more: show days and hours
+      final days = (seconds / 86400).floor();
+      final remainingHours = ((seconds % 86400) / 3600).floor();
+      final dayUnit =
+          days == 1 ? l10n.timeDay : l10n.timeDays.toLowerCase();
+      if (remainingHours > 0) {
+        final hourUnit = remainingHours == 1
+            ? l10n.timeHour
+            : l10n.timeHours.toLowerCase();
+        final ago = l10n.timeAgo;
+        return '$days $dayUnit $remainingHours $hourUnit $ago';
+      }
+      final ago = l10n.timeAgo;
+      return '$days $dayUnit $ago';
+    }
+  }
+
   Future<void> _save() async {
     if (!_formKey.currentState!.validate()) return;
 
@@ -1202,11 +1246,12 @@ class _BaseCrudDialogState extends State<BaseCrudDialog> {
     final isDateTimeField =
         dataType.contains('datetime') && field['editable'] == 'yes';
     final isReadOnly = field['editable'] == 'no';
+    final extraMobileInfo = field['extra_mobile_info']?.toString();
 
     return Padding(
       padding: const EdgeInsets.only(bottom: 16),
       child: isReadOnly
-          ? _buildReadOnlyField(fieldName, label, dataType)
+          ? _buildReadOnlyField(fieldName, label, dataType, extraMobileInfo)
           : isBooleanField
               ? _buildToggleSwitch(fieldName, label, required)
               : isDateTimeField
@@ -1222,9 +1267,11 @@ class _BaseCrudDialogState extends State<BaseCrudDialog> {
     );
   }
 
-  Widget _buildReadOnlyField(String fieldName, String label, String dataType) {
+  Widget _buildReadOnlyField(
+      String fieldName, String label, String dataType, String? extraMobileInfo) {
     final currentValue = widget.item?[fieldName]?.toString() ?? '';
-    final displayValue = _formatDisplayValue(currentValue, dataType);
+    final displayValue =
+        _formatDisplayValue(currentValue, dataType, extraMobileInfo);
     
     // Get color based on data type and value
     Color textColor = Colors.black87;
@@ -1308,9 +1355,19 @@ class _BaseCrudDialogState extends State<BaseCrudDialog> {
     );
   }
 
-  String _formatDisplayValue(String value, String dataType) {
+  String _formatDisplayValue(
+      String value, String dataType, String? extraMobileInfo) {
     if (value.isEmpty || value == 'null') {
       return '';
+    }
+
+    print('🔍 _formatDisplayValue: value=$value, dataType=$dataType, extraMobileInfo=$extraMobileInfo');
+
+    // Handle extra_mobile_info: time_to_now_seconds
+    if (extraMobileInfo == 'time_to_now_seconds') {
+      final seconds = int.tryParse(value) ?? 0;
+      print('✅ Formatting time ago for $seconds seconds');
+      return _formatTimeAgo(seconds);
     }
 
     final lowerDataType = dataType.toLowerCase();

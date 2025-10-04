@@ -335,6 +335,7 @@ abstract class BaseCrudService {
             'select_options_multi': fieldMap['select_option_multi_value'],
             'show_dependency': fieldMap['show_dependency'],
             'mobile_action': fieldMap['mobile_action'],
+            'extra_mobile_info': fieldMap['extra_mobile_info'],
           });
         }
       }
