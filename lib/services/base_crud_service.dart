@@ -26,7 +26,7 @@ abstract class BaseCrudService {
         return {
           'success': true,
           'data': jsonResponse['payload'],
-          'message': jsonResponse['message'] ?? successMessage ?? 'Thành công',
+          'message': jsonResponse['message'] ?? successMessage ?? 'Success',
         };
       }
 
@@ -36,13 +36,13 @@ abstract class BaseCrudService {
         'message': jsonResponse['message'] ??
             jsonResponse['payload'] ??
             errorMessage ??
-            'Lỗi HTTP ${response.statusCode}',
+            'HTTP error ${response.statusCode}',
       };
     } catch (e) {
       // Handle JSON parsing errors
       return {
         'success': false,
-        'message': 'Lỗi HTTP ${response.statusCode}: ${response.body}',
+        'message': 'HTTP error ${response.statusCode}: ${response.body}',
       };
     }
   }
@@ -58,7 +58,7 @@ abstract class BaseCrudService {
       if (!WebAuthService.hasValidToken()) {
         return {
           'success': false,
-          'message': 'Chưa đăng nhập hoặc token không hợp lệ',
+          'message': 'Not logged in or invalid token',
         };
       }
 
@@ -75,7 +75,7 @@ abstract class BaseCrudService {
         errorMessage: errorMessage,
       );
     } catch (e) {
-      return {'success': false, 'message': 'Lỗi kết nối: $e'};
+      return {'success': false, 'message': 'Connection error: $e'};
     }
   }
 
@@ -91,7 +91,7 @@ abstract class BaseCrudService {
       if (!WebAuthService.hasValidToken()) {
         return {
           'success': false,
-          'message': 'Chưa đăng nhập hoặc token không hợp lệ',
+          'message': 'Not logged in or invalid token',
         };
       }
 
@@ -111,7 +111,7 @@ abstract class BaseCrudService {
         errorMessage: errorMessage,
       );
     } catch (e) {
-      return {'success': false, 'message': 'Lỗi kết nối: $e'};
+      return {'success': false, 'message': 'Connection error: $e'};
     }
   }
 
@@ -127,7 +127,7 @@ abstract class BaseCrudService {
       if (!WebAuthService.hasValidToken()) {
         return {
           'success': false,
-          'message': 'Chưa đăng nhập hoặc token không hợp lệ',
+          'message': 'Not logged in or invalid token',
         };
       }
 
@@ -143,11 +143,11 @@ abstract class BaseCrudService {
       return parseApiResponse(
         response,
         operation,
-        successMessage: successMessage ?? 'Xóa thành công',
-        errorMessage: errorMessage ?? 'Lỗi khi xóa',
+        successMessage: successMessage ?? 'Delete successful',
+        errorMessage: errorMessage ?? 'Delete error',
       );
     } catch (e) {
-      return {'success': false, 'message': 'Lỗi kết nối: $e'};
+      return {'success': false, 'message': 'Connection error: $e'};
     }
   }
 

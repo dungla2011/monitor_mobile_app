@@ -81,24 +81,24 @@ class WebAuthService {
 
           return {
             'success': true,
-            'message': jsonResponse['message'] ?? 'Đăng nhập thành công',
+            'message': jsonResponse['message'] ?? 'Login successful',
             'user': _currentUser,
             'token': _bearerToken,
           };
         } else {
           return {
             'success': false,
-            'message': jsonResponse['message'] ?? 'Đăng nhập không thành công',
+            'message': jsonResponse['message'] ?? 'Login failed',
           };
         }
       } else {
         return {
           'success': false,
-          'message': 'Lỗi kết nối server (${response.statusCode})',
+          'message': 'Server connection error (${response.statusCode})',
         };
       }
     } catch (e) {
-      return {'success': false, 'message': 'Lỗi kết nối: $e'};
+      return {'success': false, 'message': 'Connection error: $e'};
     }
   }
 
@@ -137,17 +137,17 @@ class WebAuthService {
         } else {
           return {
             'success': false,
-            'message': jsonResponse['message'] ?? 'Đăng ký không thành công',
+            'message': jsonResponse['message'] ?? 'Registration failed',
           };
         }
       } else {
         return {
           'success': false,
-          'message': 'Lỗi kết nối server (${response.statusCode})',
+          'message': 'Server connection error (${response.statusCode})',
         };
       }
     } catch (e) {
-      return {'success': false, 'message': 'Lỗi kết nối: $e'};
+      return {'success': false, 'message': 'Connection error: $e'};
     }
   }
 
@@ -321,7 +321,7 @@ class WebAuthService {
           headers['Cookie'] = 'firebase_token_cookie=$fcmToken';
         }
       } catch (e) {
-        print('⚠️ Không lấy được FCM token: $e');
+        print('⚠️ Cannot get FCM token: $e');
       }
     }
 
@@ -397,7 +397,7 @@ class WebAuthService {
       if (!hasValidToken()) {
         return {
           'success': false,
-          'message': 'Người dùng chưa đăng nhập',
+          'message': 'User not logged in',
         };
       }
 
@@ -434,13 +434,12 @@ class WebAuthService {
           return {
             'success': true,
             'user': _currentUser,
-            'message': 'Tải thông tin người dùng thành công',
+            'message': 'User info loaded successfully',
           };
         } else {
           return {
             'success': false,
-            'message':
-                jsonResponse['message'] ?? 'API trả về dữ liệu không hợp lệ',
+            'message': jsonResponse['message'] ?? 'Invalid data from API',
           };
         }
       } else if (response.statusCode == 401) {
@@ -448,20 +447,20 @@ class WebAuthService {
         await signOut();
         return {
           'success': false,
-          'message': 'Phiên đăng nhập hết hạn',
+          'message': 'Session expired',
           'needReauth': true,
         };
       } else {
         return {
           'success': false,
-          'message': 'Lỗi HTTP ${response.statusCode}',
+          'message': 'HTTP error ${response.statusCode}',
         };
       }
     } catch (e) {
       print('❌ Error loading user info: $e');
       return {
         'success': false,
-        'message': 'Lỗi kết nối: $e',
+        'message': 'Connection error: $e',
       };
     }
   }

@@ -92,7 +92,6 @@ class MonitorItemCrudService extends BaseCrudService {
     return BaseCrudService.getRequest(
       _getApiUrl(id),
       'Get Monitor Item',
-      errorMessage: 'Không tìm thấy monitor item',
     );
   }
 
@@ -104,8 +103,6 @@ class MonitorItemCrudService extends BaseCrudService {
       _addApiUrl,
       data,
       'Add Monitor Item',
-      successMessage: 'Thêm thành công',
-      errorMessage: 'Lỗi khi thêm',
     );
   }
 
@@ -118,8 +115,6 @@ class MonitorItemCrudService extends BaseCrudService {
       _updateApiUrl(id),
       data,
       'Update Monitor Item',
-      successMessage: 'Cập nhật thành công',
-      errorMessage: 'Lỗi khi cập nhật',
     );
   }
 

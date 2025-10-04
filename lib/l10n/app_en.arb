@@ -23,6 +23,40 @@
   "appLoadingData": "Loading data...",
   "appRetry": "Retry",
   
+  "crudInitError": "Initialization error",
+  "crudLoadDataError": "Data loading error",
+  "crudSessionExpired": "Session expired",
+  "crudPleaseLoginAgain": "Please login again to continue",
+  "crudDeleteConfirmTitle": "Confirm deletion",
+  "crudDeleteConfirmMessage": "Are you sure you want to delete {count} item(s)?",
+  "@crudDeleteConfirmMessage": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "crudDeleteSuccess": "Deleted successfully",
+  "crudDeleteError": "Error deleting",
+  "crudLoadingConfig": "Loading configuration...",
+  "crudCannotLoadConfig": "Cannot load configuration",
+  "crudLoadConfigError": "Error loading configuration",
+  "crudCannotLoadData": "Cannot load item data",
+  "crudLoading": "Loading...",
+  "crudNoData": "No data",
+  "crudAddFirstItem": "Press + button to add new item",
+  "crudAddFirstButton": "Add first {item}",
+  "@crudAddFirstButton": {
+    "placeholders": {
+      "item": {
+        "type": "String"
+      }
+    }
+  },
+  "crudSaveSuccess": "Saved successfully",
+  "crudSaveError": "Error saving",
+  "crudConnectionError": "Connection error",
+  
   "authLogin": "Login",
   "authLogout": "Logout",
   "authUsername": "Username",
@@ -168,6 +202,16 @@
   "settingsJapaneseDesc": "日本語 (Japanese)",
   "settingsKoreanDesc": "한국어 (Korean)",
   
+  "languageAlreadySelected": "Language already selected",
+  "languageUpdateSuccess": "Language updated successfully",
+  "languageChangedNotSynced": "Language changed (not synced to server)",
+  "languageChangeError": "Error changing language",
+  "languageUserNotLoggedIn": "User not logged in",
+  "languageSessionExpired": "Session expired",
+  "languageConnectionError": "Connection error",
+  "languageApiError": "API error",
+  "languageHttpError": "HTTP Error",
+  
   "notificationSoundDefault": "Default (System)",
   "notificationSoundNone": "None (Silent)",
   "notificationSoundAlert": "Alert",
@@ -244,5 +288,91 @@
   "aboutAppVersion": "Monitor App v1.0.0",
   "aboutCopyright": "GalaxyCloud \u00a9 2025",
   "aboutDescription": "Application for monitoring and managing your services.",
-  "aboutDeveloper": "Developed by GalaxyCloud.vn"
+  "aboutDeveloper": "Developed by GalaxyCloud.vn",
+  
+  "errorDialogTitle": "Error",
+  "errorDialogDetails": "Error details:",
+  "errorDialogHints": "Hints:",
+  "errorDialogHintsEmail": "Email hints:",
+  "errorDialogHintEmailValid": "Email must be in valid format (e.g.: user@domain.com)",
+  "errorDialogHintEmailMultiple": "Multiple emails separated by commas",
+  "errorDialogHintEmailNoSpace": "Should not contain extra spaces",
+  "errorDialogHintsUrl": "URL hints:",
+  "errorDialogHintUrlValid": "URL must be in valid format (e.g.: https://example.com)",
+  "errorDialogHintUrlProtocol": "Must start with http:// or https://",
+  "errorDialogHintUrlNoSpecial": "Should not contain invalid special characters",
+  "errorDialogHintsPassword": "Password hints:",
+  "errorDialogHintPasswordLength": "Password must be at least 8 characters",
+  "errorDialogHintPasswordMix": "Should contain uppercase, lowercase, and numbers",
+  "errorDialogHintPasswordNoSpace": "Should not contain spaces",
+  "errorDialogHintRequired1": "Please fill in all required fields",
+  "errorDialogHintRequired2": "Fields with (*) are required",
+  "errorDialogHintRequired3": "Check form before submitting",
+  "errorDialogHintDuplicate1": "This value already exists in the system",
+  "errorDialogHintDuplicate2": "Please choose a different value",
+  "errorDialogHintDuplicate3": "Check existing list before adding new",
+  
+  "httpErrorTechnical": "Technical details",
+  "httpErrorSuggestions": "Suggestions:",
+  "httpErrorClose": "Close",
+  "httpErrorRetry": "Retry",
+  
+  "httpError400Title": "Bad Request",
+  "httpError400Desc": "The data sent to the server is not in the correct format or missing required information.",
+  "httpError400Hint1": "Check all information fields",
+  "httpError400Hint2": "Ensure email, URL, phone number are in correct format",
+  "httpError400Hint3": "Do not leave required fields empty",
+  
+  "httpError401Title": "Not Logged In",
+  "httpError401Desc": "Session has expired or you are not logged in to the system.",
+  "httpError401Hint1": "Please log in again",
+  "httpError401Hint2": "Check network connection",
+  "httpError401Hint3": "Contact administrator if the problem persists",
+  
+  "httpError403Title": "Access Denied",
+  "httpError403Desc": "You do not have permission to perform this operation. Please contact administrator.",
+  "httpError403Hint1": "Contact administrator for permission",
+  "httpError403Hint2": "Log in with an account that has appropriate permissions",
+  
+  "httpError404Title": "Not Found",
+  "httpError404Desc": "The requested resource does not exist or has been deleted.",
+  "httpError404Hint1": "Check URL or ID again",
+  "httpError404Hint2": "Refresh list and try again",
+  "httpError404Hint3": "Data may have been deleted earlier",
+  
+  "httpError408Title": "Timeout",
+  "httpError408Desc": "Request took too long. Please try again.",
+  "httpError408Hint1": "Check internet connection",
+  "httpError408Hint2": "Try again after a few seconds",
+  "httpError408Hint3": "Contact support if error repeats",
+  
+  "httpError429Title": "Too Many Requests",
+  "httpError429Desc": "You have sent too many requests in a short time. Please wait and try again.",
+  "httpError429Hint1": "Wait a few minutes before trying again",
+  "httpError429Hint2": "Avoid sending requests continuously",
+  
+  "httpError500Title": "Server Error",
+  "httpError500Desc": "Server encountered an error while processing the request. Please try again later.",
+  "httpError500Hint1": "Wait a few minutes then try again",
+  "httpError500Hint2": "Contact technical support if error persists",
+  "httpError500Hint3": "Save important data before retrying",
+  
+  "httpError503Title": "Service Temporarily Unavailable",
+  "httpError503Desc": "Server is under maintenance or overloaded. Please try again later.",
+  "httpError503Hint1": "Try again after 5-10 minutes",
+  "httpError503Hint2": "Check maintenance notifications from administrator",
+  "httpError503Hint3": "Contact technical support if urgent",
+  
+  "httpErrorDefaultTitle": "Unknown Error",
+  "httpErrorDefaultDesc": "An unexpected error occurred. Please try again or contact support.",
+  "httpErrorDefaultHint1": "Try again after a few minutes",
+  "httpErrorDefaultHint2": "Check internet connection",
+  "httpErrorDefaultHint3": "Contact support with error code {code}",
+  "@httpErrorDefaultHint3": {
+    "placeholders": {
+      "code": {
+        "type": "Object"
+      }
+    }
+  }
 }

@@ -24,6 +24,7 @@ class ErrorDialogUtils {
     String? title,
     List<String>? customHints,
   }) async {
+    final l10n = AppLocalizations.of(context)!;
     return showDialog<void>(
       context: context,
       builder: (BuildContext context) {
@@ -32,7 +33,7 @@ class ErrorDialogUtils {
             children: [
               Icon(Icons.error_outline, color: Colors.red.shade600),
               const SizedBox(width: 8),
-              Text(title ?? 'Lỗi'),
+              Text(title ?? l10n.errorDialogTitle),
             ],
           ),
           content: SingleChildScrollView(
@@ -40,9 +41,9 @@ class ErrorDialogUtils {
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Text(
-                  'Chi tiết lỗi:',
-                  style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
+                Text(
+                  l10n.errorDialogDetails,
+                  style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
                 ),
                 const SizedBox(height: 12),
                 Container(
@@ -121,22 +122,26 @@ class ErrorDialogUtils {
     String errorMessage,
     List<String>? customHints,
   ) {
+    // We need BuildContext for l10n, but this is a static method
+    // So we'll return a builder function that can access context
+    // For now, we'll keep the Vietnamese text as placeholders
+    // and fix this properly with a context parameter
     final hints = <Widget>[];
     final lowerErrorMessage = errorMessage.toLowerCase();
 
     // Custom hints take precedence
     if (customHints != null && customHints.isNotEmpty) {
-      hints.add(_buildHintContainer('Gợi ý:', customHints, Colors.blue));
+      hints.add(_buildHintContainer('Hints:', customHints, Colors.blue));
     } else {
       // Auto-detect hints based on error message content
       if (lowerErrorMessage.contains('email')) {
         hints.add(
           _buildHintContainer(
-              'Gợi ý về Email:',
+              'Email hints:',
               [
-                'Email phải có định dạng hợp lệ (ví dụ: user@domain.com)',
-                'Nhiều email cách nhau bằng dấu phẩy',
-                'Không được chứa khoảng trắng thừa',
+                'Email must be in valid format (e.g.: user@domain.com)',
+                'Multiple emails separated by commas',
+                'Should not contain extra spaces',
               ],
               Colors.blue),
         );
@@ -145,53 +150,50 @@ class ErrorDialogUtils {
       if (lowerErrorMessage.contains('url')) {
         hints.add(
           _buildHintContainer(
-              'Gợi ý về URL:',
+              'URL hints:',
               [
-                'URL phải có định dạng hợp lệ (ví dụ: https://example.com)',
-                'Phải bắt đầu bằng http:// hoặc https://',
-                'Không được chứa ký tự đặc biệt không hợp lệ',
+                'URL must be in valid format (e.g.: https://example.com)',
+                'Must start with http:// or https://',
+                'Should not contain invalid special characters',
               ],
               Colors.blue),
         );
       }
 
-      if (lowerErrorMessage.contains('password') ||
-          lowerErrorMessage.contains('mật khẩu')) {
+      if (lowerErrorMessage.contains('password')) {
         hints.add(
           _buildHintContainer(
-              'Gợi ý về Mật khẩu:',
+              'Password hints:',
               [
-                'Mật khẩu phải có ít nhất 8 ký tự',
-                'Nên chứa cả chữ hoa, chữ thường và số',
-                'Không được chứa khoảng trắng',
+                'Password must be at least 8 characters',
+                'Should contain uppercase, lowercase, and numbers',
+                'Should not contain spaces',
               ],
               Colors.orange),
         );
       }
 
-      if (lowerErrorMessage.contains('required') ||
-          lowerErrorMessage.contains('bắt buộc')) {
+      if (lowerErrorMessage.contains('required')) {
         hints.add(
           _buildHintContainer(
-              'Gợi ý:',
+              'Hints:',
               [
-                'Vui lòng điền đầy đủ các trường bắt buộc',
-                'Các trường có dấu (*) là bắt buộc',
-                'Kiểm tra lại form trước khi submit',
+                'Please fill in all required fields',
+                'Fields with (*) are required',
+                'Check form before submitting',
               ],
               Colors.red),
         );
       }
 
-      if (lowerErrorMessage.contains('duplicate') ||
-          lowerErrorMessage.contains('trùng lặp')) {
+      if (lowerErrorMessage.contains('duplicate')) {
         hints.add(
           _buildHintContainer(
-              'Gợi ý:',
+              'Hints:',
               [
-                'Giá trị này đã tồn tại trong hệ thống',
-                'Vui lòng chọn giá trị khác',
-                'Kiểm tra danh sách hiện có trước khi thêm mới',
+                'This value already exists in the system',
+                'Please choose a different value',
+                'Check existing list before adding new',
               ],
               Colors.orange),
         );
@@ -401,7 +403,7 @@ class ErrorDialogUtils {
                             ),
                             const SizedBox(width: 6),
                             Text(
-                              'Chi tiết lỗi:',
+                              'Error details:',
                               style: TextStyle(
                                 fontSize: 13,
                                 fontWeight: FontWeight.w600,
@@ -430,7 +432,7 @@ class ErrorDialogUtils {
                   ExpansionTile(
                     tilePadding: EdgeInsets.zero,
                     title: Text(
-                      'Chi tiết kỹ thuật',
+                      'Technical details',
                       style: TextStyle(
                         fontSize: 13,
                         fontWeight: FontWeight.w600,
@@ -482,7 +484,7 @@ class ErrorDialogUtils {
                             ),
                             const SizedBox(width: 6),
                             Text(
-                              'Gợi ý khắc phục:',
+                              'Suggestions:',
                               style: TextStyle(
                                 fontSize: 13,
                                 fontWeight: FontWeight.w600,
@@ -527,7 +529,7 @@ class ErrorDialogUtils {
             TextButton.icon(
               onPressed: () => Navigator.of(context).pop(),
               icon: const Icon(Icons.close),
-              label: const Text('Đóng'),
+              label: const Text('Close'),
               style: TextButton.styleFrom(
                 foregroundColor: Colors.grey.shade700,
               ),
@@ -535,7 +537,7 @@ class ErrorDialogUtils {
             ElevatedButton.icon(
               onPressed: () => Navigator.of(context).pop(),
               icon: const Icon(Icons.refresh),
-              label: const Text('Thử lại'),
+              label: const Text('Retry'),
               style: ElevatedButton.styleFrom(
                 backgroundColor: errorInfo.color,
                 foregroundColor: Colors.white,
@@ -555,87 +557,87 @@ class ErrorDialogUtils {
     switch (statusCode) {
       case 400:
         return _HttpErrorInfo(
-          title: 'Yêu cầu không hợp lệ',
+          title: 'Bad Request',
           description:
-              'Dữ liệu gửi lên server không đúng định dạng hoặc thiếu thông tin bắt buộc.',
+              'The data sent to server is not in correct format or missing required information.',
           hints: [
-            'Kiểm tra lại tất cả các trường thông tin',
-            'Đảm bảo email, URL, số điện thoại có định dạng đúng',
-            'Không để trống các trường bắt buộc',
+            'Check all information fields again',
+            'Ensure email, URL, phone number are in correct format',
+            'Do not leave required fields empty',
           ],
           icon: Icons.error_outline,
           color: Colors.orange,
         );
       case 401:
         return _HttpErrorInfo(
-          title: 'Chưa đăng nhập',
+          title: 'Not Logged In',
           description:
-              'Phiên đăng nhập đã hết hạn hoặc bạn chưa đăng nhập vào hệ thống.',
+              'Session has expired or you are not logged in to the system.',
           hints: [
-            'Vui lòng đăng nhập lại',
-            'Kiểm tra kết nối mạng',
-            'Liên hệ quản trị viên nếu vấn đề vẫn tiếp diễn',
+            'Please log in again',
+            'Check network connection',
+            'Contact administrator if problem persists',
           ],
           icon: Icons.lock_outline,
           color: Colors.amber,
         );
       case 403:
         return _HttpErrorInfo(
-          title: 'Không có quyền truy cập',
+          title: 'Access Denied',
           description:
-              'Bạn không có quyền thực hiện thao tác này. Vui lòng liên hệ quản trị viên.',
+              'You do not have permission to perform this operation. Please contact administrator.',
           hints: [
-            'Liên hệ quản trị viên để được cấp quyền',
-            'Đăng nhập với tài khoản có quyền phù hợp',
+            'Contact administrator for permission',
+            'Log in with an account that has appropriate permissions',
           ],
           icon: Icons.block,
           color: Colors.red,
         );
       case 404:
         return _HttpErrorInfo(
-          title: 'Không tìm thấy',
-          description: 'Tài nguyên yêu cầu không tồn tại hoặc đã bị xóa.',
+          title: 'Not Found',
+          description: 'The requested resource does not exist or has been deleted.',
           hints: [
-            'Kiểm tra lại URL hoặc ID',
-            'Làm mới danh sách và thử lại',
-            'Dữ liệu có thể đã bị xóa trước đó',
+            'Check URL or ID again',
+            'Refresh list and try again',
+            'Data may have been deleted earlier',
           ],
           icon: Icons.search_off,
           color: Colors.grey,
         );
       case 408:
         return _HttpErrorInfo(
-          title: 'Hết thời gian chờ',
-          description: 'Yêu cầu mất quá nhiều thời gian. Vui lòng thử lại.',
+          title: 'Timeout',
+          description: 'Request took too long. Please try again.',
           hints: [
-            'Kiểm tra kết nối internet',
-            'Thử lại sau vài giây',
-            'Liên hệ hỗ trợ nếu lỗi lặp lại',
+            'Check internet connection',
+            'Try again after a few seconds',
+            'Contact support if error repeats',
           ],
           icon: Icons.hourglass_empty,
           color: Colors.orange,
         );
       case 429:
         return _HttpErrorInfo(
-          title: 'Quá nhiều yêu cầu',
+          title: 'Too Many Requests',
           description:
-              'Bạn đã gửi quá nhiều yêu cầu trong thời gian ngắn. Vui lòng đợi và thử lại.',
+              'You have sent too many requests in a short time. Please wait and try again.',
           hints: [
-            'Đợi một vài phút trước khi thử lại',
-            'Tránh gửi yêu cầu liên tục',
+            'Wait a few minutes before trying again',
+            'Avoid sending requests continuously',
           ],
           icon: Icons.speed,
           color: Colors.orange,
         );
       case 500:
         return _HttpErrorInfo(
-          title: 'Lỗi máy chủ',
+          title: 'Server Error',
           description:
-              'Server gặp lỗi khi xử lý yêu cầu. Vui lòng thử lại sau.',
+              'Server encountered an error while processing the request. Please try again later.',
           hints: [
-            'Đợi vài phút rồi thử lại',
-            'Liên hệ bộ phận kỹ thuật nếu lỗi vẫn tiếp diễn',
-            'Lưu dữ liệu quan trọng trước khi thử lại',
+            'Wait a few minutes then try again',
+            'Contact technical support if error persists',
+            'Save important data before retrying',
           ],
           icon: Icons.dns_outlined,
           color: Colors.red,
@@ -644,26 +646,26 @@ class ErrorDialogUtils {
       case 503:
       case 504:
         return _HttpErrorInfo(
-          title: 'Dịch vụ tạm thời không khả dụng',
+          title: 'Service Temporarily Unavailable',
           description:
-              'Server đang bảo trì hoặc quá tải. Vui lòng thử lại sau.',
+              'Server is under maintenance or overloaded. Please try again later.',
           hints: [
-            'Thử lại sau 5-10 phút',
-            'Kiểm tra thông báo bảo trì từ quản trị viên',
-            'Liên hệ hỗ trợ kỹ thuật nếu cần gấp',
+            'Try again after 5-10 minutes',
+            'Check maintenance notifications from administrator',
+            'Contact technical support if urgent',
           ],
           icon: Icons.cloud_off,
           color: Colors.grey,
         );
       default:
         return _HttpErrorInfo(
-          title: 'Lỗi không xác định',
+          title: 'Unknown Error',
           description:
-              'Đã xảy ra lỗi không mong muốn. Vui lòng thử lại hoặc liên hệ hỗ trợ.',
+              'An unexpected error occurred. Please try again or contact support.',
           hints: [
-            'Thử lại sau vài phút',
-            'Kiểm tra kết nối internet',
-            'Liên hệ bộ phận hỗ trợ với mã lỗi $statusCode',
+            'Try again after a few minutes',
+            'Check internet connection',
+            'Contact support with error code $statusCode',
           ],
           icon: Icons.help_outline,
           color: Colors.red,

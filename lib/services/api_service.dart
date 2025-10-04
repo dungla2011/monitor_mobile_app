@@ -12,7 +12,7 @@ class ApiService {
       if (!WebAuthService.hasValidToken()) {
         return {
           'success': false,
-          'message': 'Chưa đăng nhập hoặc token không hợp lệ',
+          'message': 'Not logged in or invalid token',
         };
       }
 
@@ -26,17 +26,17 @@ class ApiService {
         await WebAuthService.signOut();
         return {
           'success': false,
-          'message': 'Token hết hạn, vui lòng đăng nhập lại',
+          'message': 'Token expired, please login again',
           'needReauth': true,
         };
       } else {
         return {
           'success': false,
-          'message': 'Lỗi server (${response.statusCode})',
+          'message': 'Server error (${response.statusCode})',
         };
       }
     } catch (e) {
-      return {'success': false, 'message': 'Lỗi kết nối: $e'};
+      return {'success': false, 'message': 'Connection error: $e'};
     }
   }
 
@@ -49,7 +49,7 @@ class ApiService {
       if (!WebAuthService.hasValidToken()) {
         return {
           'success': false,
-          'message': 'Chưa đăng nhập hoặc token không hợp lệ',
+          'message': 'Not logged in or invalid token',
         };
       }
 
@@ -64,13 +64,13 @@ class ApiService {
         if (jsonResponse['code'] == 1) {
           return {
             'success': true,
-            'message': jsonResponse['message'] ?? 'Tạo bài viết thành công',
+            'message': jsonResponse['message'] ?? 'Post created successfully',
             'data': jsonResponse['payload'],
           };
         } else {
           return {
             'success': false,
-            'message': jsonResponse['message'] ?? 'Tạo bài viết thất bại',
+            'message': jsonResponse['message'] ?? 'Post creation failed',
           };
         }
       } else if (response.statusCode == 401) {
@@ -78,17 +78,17 @@ class ApiService {
         await WebAuthService.signOut();
         return {
           'success': false,
-          'message': 'Token hết hạn, vui lòng đăng nhập lại',
+          'message': 'Token expired, please login again',
           'needReauth': true,
         };
       } else {
         return {
           'success': false,
-          'message': 'Lỗi server (${response.statusCode})',
+          'message': 'Server error (${response.statusCode})',
         };
       }
     } catch (e) {
-      return {'success': false, 'message': 'Lỗi kết nối: $e'};
+      return {'success': false, 'message': 'Connection error: $e'};
     }
   }
 
@@ -101,7 +101,7 @@ class ApiService {
       if (!WebAuthService.hasValidToken()) {
         return {
           'success': false,
-          'message': 'Chưa đăng nhập hoặc token không hợp lệ',
+          'message': 'Not logged in or invalid token',
         };
       }
 
@@ -120,30 +120,31 @@ class ApiService {
         if (jsonResponse['code'] == 1) {
           return {
             'success': true,
-            'message': jsonResponse['message'] ?? 'Cập nhật profile thành công',
+            'message':
+                jsonResponse['message'] ?? 'Profile updated successfully',
             'data': jsonResponse['payload'],
           };
         } else {
           return {
             'success': false,
-            'message': jsonResponse['message'] ?? 'Cập nhật profile thất bại',
+            'message': jsonResponse['message'] ?? 'Profile update failed',
           };
         }
       } else if (response.statusCode == 401) {
         await WebAuthService.signOut();
         return {
           'success': false,
-          'message': 'Token hết hạn, vui lòng đăng nhập lại',
+          'message': 'Token expired, please login again',
           'needReauth': true,
         };
       } else {
         return {
           'success': false,
-          'message': 'Lỗi server (${response.statusCode})',
+          'message': 'Server error (${response.statusCode})',
         };
       }
     } catch (e) {
-      return {'success': false, 'message': 'Lỗi kết nối: $e'};
+      return {'success': false, 'message': 'Connection error: $e'};
     }
   }
 
@@ -157,7 +158,7 @@ class ApiService {
       if (!WebAuthService.hasValidToken()) {
         return {
           'success': false,
-          'message': 'Chưa đăng nhập hoặc token không hợp lệ',
+          'message': 'Not logged in or invalid token',
         };
       }
 
@@ -188,7 +189,7 @@ class ApiService {
         default:
           return {
             'success': false,
-            'message': 'HTTP method không được hỗ trợ: $method',
+            'message': 'Unsupported HTTP method: $method',
           };
       }
 
@@ -196,7 +197,7 @@ class ApiService {
         await WebAuthService.signOut();
         return {
           'success': false,
-          'message': 'Token hết hạn, vui lòng đăng nhập lại',
+          'message': 'Token expired, please login again',
           'needReauth': true,
         };
       }
@@ -208,7 +209,7 @@ class ApiService {
         'data': jsonResponse,
       };
     } catch (e) {
-      return {'success': false, 'message': 'Lỗi kết nối: $e'};
+      return {'success': false, 'message': 'Connection error: $e'};
     }
   }
 }

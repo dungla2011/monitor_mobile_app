@@ -355,10 +355,17 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
       // Show result message
       if (context.mounted) {
+        final l10n =
+            AppLocalizations.of(context)!; // Refresh after language change
+
         if (result['success'] == true) {
+          // Translate message key
+          String message =
+              _translateMessageKey(l10n, result['messageKey'] ?? '');
+
           ErrorDialogUtils.showSuccessSnackBar(
             context,
-            result['message'] ?? 'Đã thay đổi ngôn ngữ thành công',
+            message,
           );
 
           // Show warning if API failed but local change succeeded
@@ -375,18 +382,24 @@ class _SettingsScreenState extends State<SettingsScreen> {
         } else {
           // Check if there's a status code (HTTP error)
           if (result['statusCode'] != null) {
+            String errorMessage =
+                _translateMessageKey(l10n, result['messageKey'] ?? '');
+
             await ErrorDialogUtils.showHttpErrorDialog(
               context,
               result['statusCode'] as int,
-              result['message'] as String?,
+              errorMessage,
               technicalDetails: result['responseBody'] as String?,
             );
           } else {
             // Generic error without status code
+            String errorMessage =
+                _translateMessageKey(l10n, result['messageKey'] ?? '');
+
             await ErrorDialogUtils.showErrorDialog(
               context,
-              result['message'] ?? 'Lỗi khi thay đổi ngôn ngữ',
-              title: 'Lỗi thay đổi ngôn ngữ',
+              errorMessage,
+              title: l10n.languageChangeError,
             );
           }
         }
@@ -399,17 +412,39 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
       // Show error message
       if (context.mounted) {
+        final l10n = AppLocalizations.of(context)!;
         await ErrorDialogUtils.showErrorDialog(
           context,
-          'Lỗi: $e',
-          title: 'Lỗi không xác định',
-          customHints: [
-            'Kiểm tra kết nối mạng',
-            'Thử lại sau vài giây',
-            'Liên hệ hỗ trợ nếu vấn đề vẫn tiếp diễn',
-          ],
+          '${l10n.appError}: $e',
+          title: l10n.languageChangeError,
         );
       }
+    }
+  }
+
+  // Helper method to translate message keys
+  String _translateMessageKey(AppLocalizations l10n, String key) {
+    switch (key) {
+      case 'languageAlreadySelected':
+        return l10n.languageAlreadySelected;
+      case 'languageUpdateSuccess':
+        return l10n.languageUpdateSuccess;
+      case 'languageChangedNotSynced':
+        return l10n.languageChangedNotSynced;
+      case 'languageChangeError':
+        return l10n.languageChangeError;
+      case 'languageUserNotLoggedIn':
+        return l10n.languageUserNotLoggedIn;
+      case 'languageSessionExpired':
+        return l10n.languageSessionExpired;
+      case 'languageConnectionError':
+        return l10n.languageConnectionError;
+      case 'languageApiError':
+        return l10n.languageApiError;
+      case 'languageHttpError':
+        return l10n.languageHttpError;
+      default:
+        return key; // Return key as fallback
     }
   }
 
@@ -496,8 +531,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
         });
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Đã lưu âm thanh thông báo'),
+            SnackBar(
+              content: Text('✅ Notification sound updated'),
               backgroundColor: Colors.green,
               duration: Duration(seconds: 2),
             ),

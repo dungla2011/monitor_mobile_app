@@ -19,6 +19,26 @@
   "appLoadingData": "Đang tải dữ liệu...",
   "appRetry": "Sửa lại",
   
+  "crudInitError": "Lỗi khởi tạo",
+  "crudLoadDataError": "Lỗi tải dữ liệu",
+  "crudSessionExpired": "Phiên đăng nhập hết hạn",
+  "crudPleaseLoginAgain": "Vui lòng đăng nhập lại để tiếp tục",
+  "crudDeleteConfirmTitle": "Xác nhận xóa",
+  "crudDeleteConfirmMessage": "Bạn có chắc chắn muốn xóa {count} item(s)?",
+  "crudDeleteSuccess": "Xóa thành công",
+  "crudDeleteError": "Lỗi khi xóa",
+  "crudLoadingConfig": "Đang tải cấu hình...",
+  "crudCannotLoadConfig": "Không thể tải cấu hình",
+  "crudLoadConfigError": "Lỗi khi tải cấu hình",
+  "crudCannotLoadData": "Không thể tải dữ liệu item",
+  "crudLoading": "Đang tải...",
+  "crudNoData": "Chưa có dữ liệu",
+  "crudAddFirstItem": "Nhấn nút + để thêm item mới",
+  "crudAddFirstButton": "Thêm {item} đầu tiên",
+  "crudSaveSuccess": "Lưu thành công",
+  "crudSaveError": "Lỗi khi lưu",
+  "crudConnectionError": "Lỗi kết nối",
+
   "authLogin": "Đăng nhập",
   "authLogout": "Đăng xuất",
   "authUsername": "Tên đăng nhập",
@@ -114,7 +134,17 @@
   "settingsSpanishDesc": "Tiếng Tây Ban Nha",
   "settingsJapaneseDesc": "Tiếng Nhật",
   "settingsKoreanDesc": "Tiếng Hàn",
-  
+
+  "languageAlreadySelected": "Ngôn ngữ đã được chọn",
+  "languageUpdateSuccess": "Đã cập nhật ngôn ngữ thành công",
+  "languageChangedNotSynced": "Đã thay đổi ngôn ngữ (chưa đồng bộ lên server)",
+  "languageChangeError": "Lỗi khi thay đổi ngôn ngữ",
+  "languageUserNotLoggedIn": "Người dùng chưa đăng nhập",
+  "languageSessionExpired": "Phiên đăng nhập hết hạn",
+  "languageConnectionError": "Lỗi kết nối",
+  "languageApiError": "API trả về lỗi",
+  "languageHttpError": "Lỗi HTTP",
+
   "notificationSoundDefault": "Mặc định (Hệ thống)",
   "notificationSoundNone": "Không (Im lặng)",
   "notificationSoundAlert": "Cảnh báo",
@@ -170,5 +200,91 @@
   "aboutAppVersion": "Monitor App v1.0.0",
   "aboutCopyright": "GalaxyCloud \u00a9 2025",
   "aboutDescription": "Ứng dụng giám sát và quản lý dịch vụ của bạn.",
-  "aboutDeveloper": "Phát triển bởi GalaxyCloud.vn"
+  "aboutDeveloper": "Phát triển bởi GalaxyCloud.vn",
+  
+  "errorDialogTitle": "Lỗi",
+  "errorDialogDetails": "Chi tiết lỗi:",
+  "errorDialogHints": "Gợi ý:",
+  "errorDialogHintsEmail": "Gợi ý về Email:",
+  "errorDialogHintEmailValid": "Email phải có định dạng hợp lệ (ví dụ: user@domain.com)",
+  "errorDialogHintEmailMultiple": "Nhiều email cách nhau bằng dấu phẩy",
+  "errorDialogHintEmailNoSpace": "Không được chứa khoảng trắng thừa",
+  "errorDialogHintsUrl": "Gợi ý về URL:",
+  "errorDialogHintUrlValid": "URL phải có định dạng hợp lệ (ví dụ: https://example.com)",
+  "errorDialogHintUrlProtocol": "Phải bắt đầu bằng http:// hoặc https://",
+  "errorDialogHintUrlNoSpecial": "Không được chứa ký tự đặc biệt không hợp lệ",
+  "errorDialogHintsPassword": "Gợi ý về Mật khẩu:",
+  "errorDialogHintPasswordLength": "Mật khẩu phải có ít nhất 8 ký tự",
+  "errorDialogHintPasswordMix": "Nên chứa cả chữ hoa, chữ thường và số",
+  "errorDialogHintPasswordNoSpace": "Không được chứa khoảng trắng",
+  "errorDialogHintRequired1": "Vui lòng điền đầy đủ các trường bắt buộc",
+  "errorDialogHintRequired2": "Các trường có dấu (*) là bắt buộc",
+  "errorDialogHintRequired3": "Kiểm tra lại form trước khi submit",
+  "errorDialogHintDuplicate1": "Giá trị này đã tồn tại trong hệ thống",
+  "errorDialogHintDuplicate2": "Vui lòng chọn giá trị khác",
+  "errorDialogHintDuplicate3": "Kiểm tra danh sách hiện có trước khi thêm mới",
+  
+  "httpErrorTechnical": "Chi tiết kỹ thuật",
+  "httpErrorSuggestions": "Gợi ý khắc phục:",
+  "httpErrorClose": "Đóng",
+  "httpErrorRetry": "Thử lại",
+  
+  "httpError400Title": "Yêu cầu không hợp lệ",
+  "httpError400Desc": "Dữ liệu gửi lên server không đúng định dạng hoặc thiếu thông tin bắt buộc.",
+  "httpError400Hint1": "Kiểm tra lại tất cả các trường thông tin",
+  "httpError400Hint2": "Đảm bảo email, URL, số điện thoại có định dạng đúng",
+  "httpError400Hint3": "Không để trống các trường bắt buộc",
+  
+  "httpError401Title": "Chưa đăng nhập",
+  "httpError401Desc": "Phiên đăng nhập đã hết hạn hoặc bạn chưa đăng nhập vào hệ thống.",
+  "httpError401Hint1": "Vui lòng đăng nhập lại",
+  "httpError401Hint2": "Kiểm tra kết nối mạng",
+  "httpError401Hint3": "Liên hệ quản trị viên nếu vấn đề vẫn tiếp diễn",
+  
+  "httpError403Title": "Không có quyền truy cập",
+  "httpError403Desc": "Bạn không có quyền thực hiện thao tác này. Vui lòng liên hệ quản trị viên.",
+  "httpError403Hint1": "Liên hệ quản trị viên để được cấp quyền",
+  "httpError403Hint2": "Đăng nhập với tài khoản có quyền phù hợp",
+  
+  "httpError404Title": "Không tìm thấy",
+  "httpError404Desc": "Tài nguyên yêu cầu không tồn tại hoặc đã bị xóa.",
+  "httpError404Hint1": "Kiểm tra lại URL hoặc ID",
+  "httpError404Hint2": "Làm mới danh sách và thử lại",
+  "httpError404Hint3": "Dữ liệu có thể đã bị xóa trước đó",
+  
+  "httpError408Title": "Hết thời gian chờ",
+  "httpError408Desc": "Yêu cầu mất quá nhiều thời gian. Vui lòng thử lại.",
+  "httpError408Hint1": "Kiểm tra kết nối internet",
+  "httpError408Hint2": "Thử lại sau vài giây",
+  "httpError408Hint3": "Liên hệ hỗ trợ nếu lỗi lặp lại",
+  
+  "httpError429Title": "Quá nhiều yêu cầu",
+  "httpError429Desc": "Bạn đã gửi quá nhiều yêu cầu trong thời gian ngắn. Vui lòng đợi và thử lại.",
+  "httpError429Hint1": "Đợi một vài phút trước khi thử lại",
+  "httpError429Hint2": "Tránh gửi yêu cầu liên tục",
+  
+  "httpError500Title": "Lỗi máy chủ",
+  "httpError500Desc": "Server gặp lỗi khi xử lý yêu cầu. Vui lòng thử lại sau.",
+  "httpError500Hint1": "Đợi vài phút rồi thử lại",
+  "httpError500Hint2": "Liên hệ bộ phận kỹ thuật nếu lỗi vẫn tiếp diễn",
+  "httpError500Hint3": "Lưu dữ liệu quan trọng trước khi thử lại",
+  
+  "httpError503Title": "Dịch vụ tạm thời không khả dụng",
+  "httpError503Desc": "Server đang bảo trì hoặc quá tải. Vui lòng thử lại sau.",
+  "httpError503Hint1": "Thử lại sau 5-10 phút",
+  "httpError503Hint2": "Kiểm tra thông báo bảo trì từ quản trị viên",
+  "httpError503Hint3": "Liên hệ hỗ trợ kỹ thuật nếu cần gấp",
+  
+  "httpErrorDefaultTitle": "Lỗi không xác định",
+  "httpErrorDefaultDesc": "Đã xảy ra lỗi không mong muốn. Vui lòng thử lại hoặc liên hệ hỗ trợ.",
+  "httpErrorDefaultHint1": "Thử lại sau vài phút",
+  "httpErrorDefaultHint2": "Kiểm tra kết nối internet",
+  "httpErrorDefaultHint3": "Liên hệ bộ phận hỗ trợ với mã lỗi {code}",
+  "@httpErrorDefaultHint3": {
+    "placeholders": {
+      "code": {
+        "type": "Object"
+      }
+    }
+  }
 }

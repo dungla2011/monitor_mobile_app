@@ -24,8 +24,8 @@ class LanguageManager extends ChangeNotifier {
   ];
 
   static const Map<String, String> languageNames = {
-    'vi': 'Tiếng Việt',
     'en': 'English',
+    'vi': 'Tiếng Việt',
     'fr': 'Français',
     'de': 'Deutsch',
     'es': 'Español',
@@ -70,7 +70,7 @@ class LanguageManager extends ChangeNotifier {
   // Change language and save to SharedPreferences + update API
   Future<Map<String, dynamic>> changeLanguage(Locale locale) async {
     if (_currentLocale == locale) {
-      return {'success': true, 'message': 'Ngôn ngữ đã được chọn'};
+      return {'success': true, 'messageKey': 'languageAlreadySelected'};
     }
 
     try {
@@ -88,13 +88,13 @@ class LanguageManager extends ChangeNotifier {
       if (apiResult['success']) {
         return {
           'success': true,
-          'message': 'Đã cập nhật ngôn ngữ thành công',
+          'messageKey': 'languageUpdateSuccess',
         };
       } else {
         // API failed but local change succeeded
         return {
           'success': true,
-          'message': 'Đã thay đổi ngôn ngữ (chưa đồng bộ lên server)',
+          'messageKey': 'languageChangedNotSynced',
           'warning': apiResult['message'],
         };
       }
@@ -102,7 +102,8 @@ class LanguageManager extends ChangeNotifier {
       print('Error changing language: $e');
       return {
         'success': false,
-        'message': 'Lỗi khi thay đổi ngôn ngữ: $e',
+        'messageKey': 'languageChangeError',
+        'error': e.toString(),
       };
     }
   }
@@ -114,7 +115,7 @@ class LanguageManager extends ChangeNotifier {
       if (!WebAuthService.hasValidToken()) {
         return {
           'success': false,
-          'message': 'Người dùng chưa đăng nhập',
+          'messageKey': 'languageUserNotLoggedIn',
         };
       }
 
@@ -141,26 +142,27 @@ class LanguageManager extends ChangeNotifier {
         if (jsonResponse['code'] == 1) {
           return {
             'success': true,
-            'message':
-                jsonResponse['message'] ?? 'Cập nhật ngôn ngữ thành công',
+            'messageKey': 'languageUpdateSuccess',
+            'apiMessage': jsonResponse['message'],
           };
         } else {
           return {
             'success': false,
-            'message': jsonResponse['message'] ?? 'API trả về lỗi',
+            'messageKey': 'languageApiError',
+            'apiMessage': jsonResponse['message'],
           };
         }
       } else if (response.statusCode == 401) {
         // Token expired
         return {
           'success': false,
-          'message': 'Phiên đăng nhập hết hạn',
+          'messageKey': 'languageSessionExpired',
           'statusCode': 401,
         };
       } else {
         return {
           'success': false,
-          'message': 'Lỗi HTTP ${response.statusCode}',
+          'messageKey': 'languageHttpError',
           'statusCode': response.statusCode,
           'responseBody': response.body,
         };
@@ -169,7 +171,8 @@ class LanguageManager extends ChangeNotifier {
       print('❌ Error updating language to API: $e');
       return {
         'success': false,
-        'message': 'Lỗi kết nối: $e',
+        'messageKey': 'languageConnectionError',
+        'error': e.toString(),
       };
     }
   }
@@ -186,7 +189,7 @@ class LanguageManager extends ChangeNotifier {
       if (!WebAuthService.hasValidToken()) {
         return {
           'success': false,
-          'message': 'Người dùng chưa đăng nhập',
+          'message': 'You need to log in first',
         };
       }
 
@@ -235,27 +238,26 @@ class LanguageManager extends ChangeNotifier {
         } else {
           return {
             'success': false,
-            'message':
-                jsonResponse['message'] ?? 'API trả về dữ liệu không hợp lệ',
+            'message': jsonResponse['message'] ?? 'API returned invalid data',
           };
         }
       } else if (response.statusCode == 401) {
         // Token expired
         return {
           'success': false,
-          'message': 'Phiên đăng nhập hết hạn',
+          'message': 'Your session has expired, please log in again',
         };
       } else {
         return {
           'success': false,
-          'message': 'Lỗi HTTP ${response.statusCode}',
+          'message': 'Error HTTPx ${response.statusCode}',
         };
       }
     } catch (e) {
-      print('❌ Error loading language from API: $e');
+      print('❌ Error loading language from API1: $e');
       return {
         'success': false,
-        'message': 'Lỗi kết nối: $e',
+        'message': 'Error connecting1: $e',
       };
     }
   }
@@ -282,11 +284,11 @@ class LanguageManager extends ChangeNotifier {
           _currentLocale = newLocale;
           notifyListeners();
 
-          print('🌍 Language synced from user info: $apiLanguage');
+          print('🌍 Language synced from user info1: $apiLanguage');
         }
       }
     } catch (e) {
-      print('❌ Error syncing language from user info: $e');
+      print('❌ Error syncing language from user info1: $e');
     }
   }
 

@@ -92,7 +92,6 @@ class MonitorConfigCrudService extends BaseCrudService {
     return BaseCrudService.getRequest(
       _getApiUrl(id),
       'Get Monitor Config',
-      errorMessage: 'Không tìm thấy config',
     );
   }
 
@@ -104,8 +103,6 @@ class MonitorConfigCrudService extends BaseCrudService {
       _addApiUrl,
       data,
       'Add Monitor Config',
-      successMessage: 'Thêm thành công',
-      errorMessage: 'Lỗi khi thêm',
     );
   }
 
@@ -118,8 +115,6 @@ class MonitorConfigCrudService extends BaseCrudService {
       _updateApiUrl(id),
       data,
       'Update Monitor Config',
-      successMessage: 'Cập nhật thành công',
-      errorMessage: 'Lỗi khi cập nhật',
     );
   }
 

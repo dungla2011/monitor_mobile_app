@@ -26,7 +26,7 @@ class GoogleAuthService {
       final googleUser = await _googleSignIn.signIn();
 
       if (googleUser == null) {
-        return {'success': false, 'message': 'Đăng nhập bị hủy'};
+        return {'success': false, 'message': 'Sign-In cancelled by user'};
       }
 
       print('[GOOGLE] Sign-In successful: ${googleUser.email}');
@@ -40,7 +40,10 @@ class GoogleAuthService {
 
       // Nếu không có idToken (web), dùng email thay vì verify token
       if (idToken == null && accessToken == null) {
-        return {'success': false, 'message': 'Không lấy được token từ Google'};
+        return {
+          'success': false,
+          'message': 'Cannot obtain tokens from Google'
+        };
       }
 
       print('[GOOGLE] Sending to backend...');
@@ -69,7 +72,7 @@ class GoogleAuthService {
         if (data['code'] == 1) {
           return {
             'success': true,
-            'message': 'Đăng nhập thành công',
+            'message': 'Login successful',
             'token': data['payload'],
             'email': googleUser.email,
             'username': data['username'] ?? googleUser.displayName,
@@ -77,18 +80,18 @@ class GoogleAuthService {
         } else {
           return {
             'success': false,
-            'message': data['message'] ?? 'Đăng nhập thất bại',
+            'message': data['message'] ?? 'Login failed',
           };
         }
       } else {
         return {
           'success': false,
-          'message': 'Lỗi server: ${response.statusCode}',
+          'message': 'Server error: ${response.statusCode}',
         };
       }
     } catch (e) {
       print('[GOOGLE] Error: $e');
-      return {'success': false, 'message': 'Lỗi: $e'};
+      return {'success': false, 'message': 'Login error: $e'};
     }
   }
 

@@ -194,8 +194,8 @@ class FirebaseMessagingService {
 
     await _localNotificationsPlugin.show(
       message.hashCode,
-      message.notification?.title ?? 'Thông báo',
-      message.notification?.body ?? 'Bạn có tin nhắn mới',
+      message.notification?.title ?? 'Notification',
+      message.notification?.body ?? 'You have a new message',
       platformChannelSpecifics,
       payload: message.data.toString(),
     );

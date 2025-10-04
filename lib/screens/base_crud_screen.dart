@@ -78,7 +78,7 @@ abstract class BaseCrudScreenState<T extends BaseCrudScreen> extends State<T> {
       await loadItemsData();
     } catch (e) {
       setState(() {
-        errorMessage = 'Lỗi khởi tạo: $e';
+        errorMessage = '${l10n.crudInitError}: $e';
         isLoading = false;
       });
     }
@@ -111,7 +111,7 @@ abstract class BaseCrudScreenState<T extends BaseCrudScreen> extends State<T> {
       }
     } catch (e) {
       setState(() {
-        errorMessage = 'Lỗi tải dữ liệu: $e';
+        errorMessage = '${l10n.crudLoadDataError}: $e';
         isLoading = false;
       });
     }
@@ -121,15 +121,15 @@ abstract class BaseCrudScreenState<T extends BaseCrudScreen> extends State<T> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Phiên đăng nhập hết hạn'),
-        content: const Text('Vui lòng đăng nhập lại để tiếp tục.'),
+        title: Text(l10n.crudSessionExpired),
+        content: Text(l10n.crudPleaseLoginAgain),
         actions: [
           TextButton(
             onPressed: () {
               Navigator.of(context).pop();
               // Navigate to login screen
             },
-            child: const Text('Đăng nhập'),
+            child: Text(l10n.authLogin),
           ),
         ],
       ),
@@ -161,18 +161,18 @@ abstract class BaseCrudScreenState<T extends BaseCrudScreen> extends State<T> {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Xác nhận xóa'),
+        title: Text(l10n.crudDeleteConfirmTitle),
         content: Text(
-          'Bạn có chắc chắn muốn xóa ${selectedItems.length} item(s)?',
+          l10n.crudDeleteConfirmMessage(selectedItems.length),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
-            child: const Text('Hủy'),
+            child: Text(l10n.appCancel),
           ),
           TextButton(
             onPressed: () => Navigator.of(context).pop(true),
-            child: const Text('Xóa'),
+            child: Text(l10n.appDelete),
           ),
         ],
       ),
@@ -184,7 +184,8 @@ abstract class BaseCrudScreenState<T extends BaseCrudScreen> extends State<T> {
 
         if (result['success']) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(result['message'] ?? 'Xóa thành công')),
+            SnackBar(
+                content: Text(result['message'] ?? l10n.crudDeleteSuccess)),
           );
 
           setState(() {
@@ -195,13 +196,13 @@ abstract class BaseCrudScreenState<T extends BaseCrudScreen> extends State<T> {
           await loadItemsData();
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(result['message'] ?? 'Lỗi khi xóa')),
+            SnackBar(content: Text(result['message'] ?? l10n.crudDeleteError)),
           );
         }
       } catch (e) {
         ScaffoldMessenger.of(
           context,
-        ).showSnackBar(SnackBar(content: Text('Lỗi: $e')));
+        ).showSnackBar(SnackBar(content: Text('${l10n.appError}: $e')));
       }
     }
   }
@@ -217,13 +218,13 @@ abstract class BaseCrudScreenState<T extends BaseCrudScreen> extends State<T> {
       showDialog(
         context: context,
         barrierDismissible: false,
-        builder: (context) => const AlertDialog(
+        builder: (context) => AlertDialog(
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              CircularProgressIndicator(),
-              SizedBox(height: 16),
-              Text('Đang tải cấu hình...'),
+              const CircularProgressIndicator(),
+              const SizedBox(height: 16),
+              Text(l10n.crudLoadingConfig),
             ],
           ),
         ),
@@ -240,7 +241,7 @@ abstract class BaseCrudScreenState<T extends BaseCrudScreen> extends State<T> {
           if (mounted) {
             await ErrorDialogUtils.showErrorDialog(
               context,
-              'Không thể tải cấu hình: ${configResult['message']}',
+              '${l10n.crudCannotLoadConfig}: ${configResult['message']}',
             );
           }
           return;
@@ -254,7 +255,7 @@ abstract class BaseCrudScreenState<T extends BaseCrudScreen> extends State<T> {
         if (mounted) {
           await ErrorDialogUtils.showErrorDialog(
             context,
-            'Lỗi khi tải cấu hình: $e',
+            '${l10n.crudLoadConfigError}: $e',
           );
         }
         return;
@@ -273,13 +274,13 @@ abstract class BaseCrudScreenState<T extends BaseCrudScreen> extends State<T> {
       showDialog(
         context: context,
         barrierDismissible: false,
-        builder: (context) => const AlertDialog(
+        builder: (context) => AlertDialog(
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              CircularProgressIndicator(),
-              SizedBox(height: 16),
-              Text('Đang tải dữ liệu...'),
+              const CircularProgressIndicator(),
+              const SizedBox(height: 16),
+              Text(l10n.appLoadingData),
             ],
           ),
         ),
@@ -299,7 +300,7 @@ abstract class BaseCrudScreenState<T extends BaseCrudScreen> extends State<T> {
           if (mounted) {
             await ErrorDialogUtils.showErrorDialog(
               context,
-              result['message'] ?? 'Không thể tải dữ liệu item',
+              result['message'] ?? l10n.crudCannotLoadData,
             );
           }
           return;
@@ -312,7 +313,7 @@ abstract class BaseCrudScreenState<T extends BaseCrudScreen> extends State<T> {
         if (mounted) {
           await ErrorDialogUtils.showErrorDialog(
             context,
-            'Lỗi khi tải dữ liệu: $e',
+            '${l10n.crudLoadDataError}: $e',
           );
         }
         return;
@@ -353,7 +354,7 @@ abstract class BaseCrudScreenState<T extends BaseCrudScreen> extends State<T> {
     // Handle select options first
     if (selectOptions != null && selectOptions.isNotEmpty) {
       final displayText = selectOptions[value]?.toString();
-      if (displayText != null && displayText != '-Chọn-') {
+      if (displayText != null && displayText != l10n.optionsSelect) {
         // Truncate long select option text
         if (displayText.length > 50) {
           return '${displayText.substring(0, 47)}...';
@@ -366,7 +367,7 @@ abstract class BaseCrudScreenState<T extends BaseCrudScreen> extends State<T> {
 
     if (lowerDataType == 'error_status') {
       final intValue = int.tryParse(value) ?? 0;
-      if (intValue < 0) return 'Lỗi';
+      if (intValue < 0) return l10n.appError;
       if (intValue > 0) return 'OK';
       return 'N/A';
     }
@@ -374,9 +375,9 @@ abstract class BaseCrudScreenState<T extends BaseCrudScreen> extends State<T> {
     if (lowerDataType.contains('boolean') ||
         lowerDataType.contains('tinyint')) {
       if (value == '1' || value.toLowerCase() == 'true') {
-        return 'Có';
+        return l10n.appYes;
       } else if (value == '0' || value.toLowerCase() == 'false') {
-        return 'Không';
+        return l10n.appNo;
       }
     }
 
@@ -476,13 +477,13 @@ abstract class BaseCrudScreenState<T extends BaseCrudScreen> extends State<T> {
 
   Widget buildBody() {
     if (isLoading) {
-      return const Center(
+      return Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            CircularProgressIndicator(),
-            SizedBox(height: 16),
-            Text('Đang tải...'),
+            const CircularProgressIndicator(),
+            const SizedBox(height: 16),
+            Text(l10n.crudLoading),
           ],
         ),
       );
@@ -495,7 +496,8 @@ abstract class BaseCrudScreenState<T extends BaseCrudScreen> extends State<T> {
           children: [
             const Icon(Icons.error_outline, size: 64, color: Colors.red),
             const SizedBox(height: 16),
-            Text('Lỗi', style: Theme.of(context).textTheme.headlineSmall),
+            Text(l10n.appError,
+                style: Theme.of(context).textTheme.headlineSmall),
             const SizedBox(height: 8),
             Text(
               errorMessage!,
@@ -505,7 +507,7 @@ abstract class BaseCrudScreenState<T extends BaseCrudScreen> extends State<T> {
             const SizedBox(height: 16),
             ElevatedButton(
               onPressed: initializeScreen,
-              child: const Text('Thử lại'),
+              child: Text(l10n.appRetry),
             ),
           ],
         ),
@@ -519,16 +521,16 @@ abstract class BaseCrudScreenState<T extends BaseCrudScreen> extends State<T> {
           children: [
             const Icon(Icons.inbox, size: 64, color: Colors.grey),
             const SizedBox(height: 16),
-            const Text(
-              'Chưa có dữ liệu',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            Text(
+              l10n.crudNoData,
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 8),
-            const Text('Nhấn nút + để thêm item mới'),
+            Text(l10n.crudAddFirstItem),
             const SizedBox(height: 16),
             ElevatedButton(
               onPressed: () => showAddEditDialog(),
-              child: Text('Thêm ${itemName.toLowerCase()} đầu tiên'),
+              child: Text(l10n.crudAddFirstButton(itemName.toLowerCase())),
             ),
           ],
         ),
@@ -866,18 +868,19 @@ class _BaseCrudDialogState extends State<BaseCrudDialog> {
 
       if (result['success']) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(result['message'] ?? 'Lưu thành công')),
+          SnackBar(content: Text(result['message'] ?? l10n.crudSaveSuccess)),
         );
         widget.onSaved();
       } else {
         // Show detailed error dialog instead of snackbar
         await ErrorDialogUtils.showErrorDialog(
           context,
-          result['message'] ?? 'Lỗi khi lưu',
+          result['message'] ?? l10n.crudSaveError,
         );
       }
     } catch (e) {
-      await ErrorDialogUtils.showErrorDialog(context, 'Lỗi kết nối: $e');
+      await ErrorDialogUtils.showErrorDialog(
+          context, '${l10n.crudConnectionError}: $e');
     } finally {
       if (mounted) {
         setState(() => _isLoading = false);

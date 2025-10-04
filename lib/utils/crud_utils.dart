@@ -108,7 +108,7 @@ class CrudUtils {
       if (required == 'yes') {
         final value = data[fieldName];
         if (value == null || value.toString().trim().isEmpty) {
-          errors.add('$description là bắt buộc');
+          errors.add('$description is required');
         }
       }
     }
