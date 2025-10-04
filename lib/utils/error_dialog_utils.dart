@@ -43,7 +43,8 @@ class ErrorDialogUtils {
               children: [
                 Text(
                   l10n.errorDialogDetails,
-                  style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
+                  style: const TextStyle(
+                      fontWeight: FontWeight.w600, fontSize: 16),
                 ),
                 const SizedBox(height: 12),
                 Container(
@@ -596,7 +597,8 @@ class ErrorDialogUtils {
       case 404:
         return _HttpErrorInfo(
           title: 'Not Found',
-          description: 'The requested resource does not exist or has been deleted.',
+          description:
+              'The requested resource does not exist or has been deleted.',
           hints: [
             'Check URL or ID again',
             'Refresh list and try again',

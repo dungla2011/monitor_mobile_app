@@ -957,7 +957,7 @@ class _BaseCrudDialogState extends State<BaseCrudDialog> {
           children: [
             TextButton(
               onPressed: _isLoading ? null : () => Navigator.of(context).pop(),
-              child: const Text('Hủy'),
+              child: Text(l10n.appCancel),
             ),
             const SizedBox(width: 16),
             ElevatedButton(
@@ -1069,7 +1069,7 @@ class _BaseCrudDialogState extends State<BaseCrudDialog> {
             child: Padding(
               padding: const EdgeInsets.only(top: 2),
               child: Text(
-                displayValue.isNotEmpty ? displayValue : 'Chưa có dữ liệu',
+                displayValue.isNotEmpty ? displayValue : l10n.crudNoData,
                 style: TextStyle(
                   fontSize: 14,
                   color: displayValue.isNotEmpty
@@ -1109,9 +1109,9 @@ class _BaseCrudDialogState extends State<BaseCrudDialog> {
     if (lowerDataType.contains('boolean') ||
         lowerDataType.contains('tinyint')) {
       if (value == '1' || value.toLowerCase() == 'true') {
-        return 'Có';
+        return l10n.appYes;
       } else if (value == '0' || value.toLowerCase() == 'false') {
-        return 'Không';
+        return l10n.appNo;
       }
     }
 
@@ -1142,7 +1142,7 @@ class _BaseCrudDialogState extends State<BaseCrudDialog> {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  isEnabled ? 'Đã bật' : 'Đã tắt',
+                  isEnabled ? 'Enabled' : 'Disabled',
                   style: TextStyle(
                     fontSize: 14,
                     color: isEnabled ? Colors.green : Colors.grey,
@@ -1190,7 +1190,7 @@ class _BaseCrudDialogState extends State<BaseCrudDialog> {
                 child: Text(
                   selectedDateTime != null
                       ? _formatDateTime(selectedDateTime)
-                      : 'Chưa chọn thời gian',
+                      : 'Not selected time',
                   style: TextStyle(
                     fontSize: 14,
                     color:
@@ -1205,13 +1205,13 @@ class _BaseCrudDialogState extends State<BaseCrudDialog> {
                   IconButton(
                     onPressed: () => _pickDateTime(fieldName),
                     icon: const Icon(Icons.calendar_today),
-                    tooltip: 'Chọn ngày giờ',
+                    tooltip: 'Select date/time',
                   ),
                   if (selectedDateTime != null)
                     IconButton(
                       onPressed: () => _clearDateTime(fieldName),
                       icon: const Icon(Icons.clear),
-                      tooltip: 'Xóa',
+                      tooltip: 'Clear',
                     ),
                 ],
               ),
@@ -1294,7 +1294,7 @@ class _BaseCrudDialogState extends State<BaseCrudDialog> {
       validator: required
           ? (value) {
               if (value == null || value.trim().isEmpty || value == '0') {
-                return 'Vui lòng chọn $label';
+                return 'Please select $label';
               }
               return null;
             }
@@ -1321,7 +1321,7 @@ class _BaseCrudDialogState extends State<BaseCrudDialog> {
       validator: required
           ? (value) {
               if (value == null || value.trim().isEmpty) {
-                return 'Vui lòng nhập $label';
+                return 'Please enter $label';
               }
               return null;
             }
@@ -1422,8 +1422,10 @@ class _BaseCrudDialogState extends State<BaseCrudDialog> {
               final optionValue = entry.value.toString();
               final isSelected = selectedValues.contains(optionKey);
 
-              // Skip the default "-Chọn-" option
-              if (optionKey == '0' && optionValue.contains('-Chọn')) {
+              // Skip the default placeholder option
+              if (optionKey == '0' &&
+                  (optionValue.contains('Select') ||
+                      optionValue.startsWith('-'))) {
                 return const SizedBox.shrink();
               }
 
@@ -1454,7 +1456,7 @@ class _BaseCrudDialogState extends State<BaseCrudDialog> {
           Padding(
             padding: const EdgeInsets.only(top: 8),
             child: Text(
-              'Vui lòng chọn ít nhất một $label',
+              'Please select at least one $label',
               style: const TextStyle(
                 color: Colors.red,
                 fontSize: 12,
