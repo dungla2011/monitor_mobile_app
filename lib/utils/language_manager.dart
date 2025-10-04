@@ -16,11 +16,15 @@ class LanguageManager extends ChangeNotifier {
   static const List<Locale> supportedLocales = [
     Locale('vi', ''), // Vietnamese
     Locale('en', ''), // English
+    Locale('ja', ''), // Japanese
+    Locale('ko', ''), // Korean
   ];
 
   static const Map<String, String> languageNames = {
     'vi': 'Tiếng Việt',
     'en': 'English',
+    'ja': '日本語',
+    'ko': '한국어',
   };
 
   LanguageManager() {

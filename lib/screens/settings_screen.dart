@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:country_flags/country_flags.dart';
 import '../utils/language_manager.dart';
 import '../models/notification_settings.dart';
 import '../services/notification_sound_service.dart';
@@ -99,18 +100,31 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           final languageName = LanguageManager
                                   .languageNames[locale.languageCode] ??
                               locale.languageCode;
+                          
+                          final countryCode = _getCountryCode(locale.languageCode);
 
                           return ListTile(
-                            leading: Radio<String>(
-                              value: locale.languageCode,
-                              groupValue:
-                                  languageManager.currentLocale.languageCode,
-                              onChanged: (value) async {
-                                if (value != null) {
-                                  await _changeLanguage(context,
-                                      languageManager, Locale(value, ''));
-                                }
-                              },
+                            leading: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                CountryFlag.fromCountryCode(
+                                  countryCode,
+                                  height: 24,
+                                  width: 36,
+                                ),
+                                const SizedBox(width: 12),
+                                Radio<String>(
+                                  value: locale.languageCode,
+                                  groupValue:
+                                      languageManager.currentLocale.languageCode,
+                                  onChanged: (value) async {
+                                    if (value != null) {
+                                      await _changeLanguage(context,
+                                          languageManager, Locale(value, ''));
+                                    }
+                                  },
+                                ),
+                              ],
                             ),
                             title: Text(languageName),
                             subtitle: Text(_getLanguageDescription(
@@ -277,8 +291,28 @@ class _SettingsScreenState extends State<SettingsScreen> {
         return l10n.settingsVietnameseDesc;
       case 'en':
         return l10n.settingsEnglishDesc;
+      case 'ja':
+        return l10n.settingsJapaneseDesc;
+      case 'ko':
+        return l10n.settingsKoreanDesc;
       default:
         return '';
+    }
+  }
+
+  // Map language code to country code for flag display
+  String _getCountryCode(String languageCode) {
+    switch (languageCode) {
+      case 'vi':
+        return 'vn'; // Vietnam
+      case 'en':
+        return 'gb'; // United Kingdom (or 'us' for USA)
+      case 'ja':
+        return 'jp'; // Japan
+      case 'ko':
+        return 'kr'; // South Korea
+      default:
+        return 'gb';
     }
   }
 

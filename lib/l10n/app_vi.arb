@@ -107,6 +107,8 @@
   "settingsAppName": "Tên ứng dụng",
   "settingsVietnameseDesc": "Tiếng Việt (mặc định)",
   "settingsEnglishDesc": "English",
+  "settingsJapaneseDesc": "Tiếng Nhật",
+  "settingsKoreanDesc": "Tiếng Hàn",
   
   "notificationSoundDefault": "Mặc định (Hệ thống)",
   "notificationSoundNone": "Không (Im lặng)",

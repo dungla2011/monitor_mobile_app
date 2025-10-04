@@ -160,6 +160,8 @@
   "settingsAppName": "App Name",
   "settingsVietnameseDesc": "Tiếng Việt (Vietnamese)",
   "settingsEnglishDesc": "English (default)",
+  "settingsJapaneseDesc": "日本語 (Japanese)",
+  "settingsKoreanDesc": "한국어 (Korean)",
   
   "notificationSoundDefault": "Default (System)",
   "notificationSoundNone": "None (Silent)",
