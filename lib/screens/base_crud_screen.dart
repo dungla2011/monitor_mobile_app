@@ -697,6 +697,7 @@ abstract class BaseCrudScreenState<T extends BaseCrudScreen> extends State<T> {
     return RefreshIndicator(
       onRefresh: loadItemsData,
       child: ListView.builder(
+        padding: const EdgeInsets.only(bottom: 150),
         itemCount: items.length,
         itemBuilder: (context, index) {
           final item = items[index];
