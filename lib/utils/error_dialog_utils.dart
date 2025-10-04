@@ -289,7 +289,7 @@ class ErrorDialogUtils {
     String? technicalDetails,
   }) async {
     final errorInfo = _getHttpErrorInfo(statusCode);
-    
+
     return showDialog<void>(
       context: context,
       barrierDismissible: false,
@@ -424,7 +424,8 @@ class ErrorDialogUtils {
                 ],
 
                 // Technical details (collapsible)
-                if (technicalDetails != null && technicalDetails.isNotEmpty) ...[
+                if (technicalDetails != null &&
+                    technicalDetails.isNotEmpty) ...[
                   const SizedBox(height: 12),
                   ExpansionTile(
                     tilePadding: EdgeInsets.zero,
@@ -593,8 +594,7 @@ class ErrorDialogUtils {
       case 404:
         return _HttpErrorInfo(
           title: 'Không tìm thấy',
-          description:
-              'Tài nguyên yêu cầu không tồn tại hoặc đã bị xóa.',
+          description: 'Tài nguyên yêu cầu không tồn tại hoặc đã bị xóa.',
           hints: [
             'Kiểm tra lại URL hoặc ID',
             'Làm mới danh sách và thử lại',
@@ -606,8 +606,7 @@ class ErrorDialogUtils {
       case 408:
         return _HttpErrorInfo(
           title: 'Hết thời gian chờ',
-          description:
-              'Yêu cầu mất quá nhiều thời gian. Vui lòng thử lại.',
+          description: 'Yêu cầu mất quá nhiều thời gian. Vui lòng thử lại.',
           hints: [
             'Kiểm tra kết nối internet',
             'Thử lại sau vài giây',

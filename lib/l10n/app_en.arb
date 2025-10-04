@@ -162,6 +162,9 @@
   "settingsAppName": "App Name",
   "settingsVietnameseDesc": "Tiếng Việt (Vietnamese)",
   "settingsEnglishDesc": "English (default)",
+  "settingsFrenchDesc": "Français (French)",
+  "settingsGermanDesc": "Deutsch (German)",
+  "settingsSpanishDesc": "Español (Spanish)",
   "settingsJapaneseDesc": "日本語 (Japanese)",
   "settingsKoreanDesc": "한국어 (Korean)",
   

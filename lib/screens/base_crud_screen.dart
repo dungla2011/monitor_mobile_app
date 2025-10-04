@@ -324,7 +324,9 @@ abstract class BaseCrudScreenState<T extends BaseCrudScreen> extends State<T> {
       showDialog(
         context: context,
         builder: (context) => BaseCrudDialog(
-          title: isEditMode ? '${l10n.appEdit} $itemName' : '${l10n.appAdd} $itemName',
+          title: isEditMode
+              ? '${l10n.appEdit} $itemName'
+              : '${l10n.appAdd} $itemName',
           item: fullItemData,
           fields: dialogFields,
           onSave: (data) => saveItem(fullItemData?['id'], data),

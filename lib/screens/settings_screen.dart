@@ -101,8 +101,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           final languageName = LanguageManager
                                   .languageNames[locale.languageCode] ??
                               locale.languageCode;
-                          
-                          final countryCode = _getCountryCode(locale.languageCode);
+
+                          final countryCode =
+                              _getCountryCode(locale.languageCode);
 
                           return ListTile(
                             leading: Row(
@@ -116,8 +117,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                 const SizedBox(width: 12),
                                 Radio<String>(
                                   value: locale.languageCode,
-                                  groupValue:
-                                      languageManager.currentLocale.languageCode,
+                                  groupValue: languageManager
+                                      .currentLocale.languageCode,
                                   onChanged: (value) async {
                                     if (value != null) {
                                       await _changeLanguage(context,
@@ -292,6 +293,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
         return l10n.settingsVietnameseDesc;
       case 'en':
         return l10n.settingsEnglishDesc;
+      case 'fr':
+        return l10n.settingsFrenchDesc;
+      case 'de':
+        return l10n.settingsGermanDesc;
+      case 'es':
+        return l10n.settingsSpanishDesc;
       case 'ja':
         return l10n.settingsJapaneseDesc;
       case 'ko':
@@ -307,7 +314,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
       case 'vi':
         return 'vn'; // Vietnam
       case 'en':
-        return 'gb'; // United Kingdom (or 'us' for USA)
+        return 'gb'; // United Kingdom
+      case 'fr':
+        return 'fr'; // France
+      case 'de':
+        return 'de'; // Germany
+      case 'es':
+        return 'es'; // Spain
       case 'ja':
         return 'jp'; // Japan
       case 'ko':
