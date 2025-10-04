@@ -1225,6 +1225,31 @@ class _BaseCrudDialogState extends State<BaseCrudDialog> {
   Widget _buildReadOnlyField(String fieldName, String label, String dataType) {
     final currentValue = widget.item?[fieldName]?.toString() ?? '';
     final displayValue = _formatDisplayValue(currentValue, dataType);
+    
+    // Get color based on data type and value
+    Color textColor = Colors.black87;
+    FontWeight fontWeight = FontWeight.w400;
+    
+    final lowerDataType = dataType.toLowerCase();
+    if (lowerDataType == 'error_status' && displayValue.isNotEmpty) {
+      final intValue = int.tryParse(currentValue) ?? 0;
+      if (intValue < 0) {
+        textColor = Colors.red;
+        fontWeight = FontWeight.bold;
+      } else if (intValue > 0) {
+        textColor = Colors.green;
+        fontWeight = FontWeight.bold;
+      } else {
+        textColor = Colors.grey;
+      }
+    } else if (lowerDataType.contains('boolean_status')) {
+      if (currentValue == '1' || currentValue.toLowerCase() == 'true') {
+        textColor = Colors.green;
+        fontWeight = FontWeight.bold;
+      } else {
+        textColor = Colors.grey;
+      }
+    }
 
     return Container(
       decoration: BoxDecoration(
@@ -1268,10 +1293,10 @@ class _BaseCrudDialogState extends State<BaseCrudDialog> {
                 style: TextStyle(
                   fontSize: 14,
                   color: displayValue.isNotEmpty
-                      ? Colors.black87
+                      ? textColor
                       : Colors.grey.shade500,
                   fontWeight: displayValue.isNotEmpty
-                      ? FontWeight.w400
+                      ? fontWeight
                       : FontWeight.w300,
                 ),
                 textAlign: TextAlign.end,
@@ -1289,6 +1314,14 @@ class _BaseCrudDialogState extends State<BaseCrudDialog> {
     }
 
     final lowerDataType = dataType.toLowerCase();
+
+    // Format error_status
+    if (lowerDataType == 'error_status') {
+      final intValue = int.tryParse(value) ?? 0;
+      if (intValue < 0) return l10n.appError;
+      if (intValue > 0) return 'OK';
+      return 'N/A';
+    }
 
     // Format datetime
     if (lowerDataType.contains('datetime')) {
