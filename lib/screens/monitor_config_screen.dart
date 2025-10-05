@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:monitor_app/l10n/app_localizations.dart';
 import '../services/monitor_config_crud_service.dart';
 import 'base_crud_screen.dart';
 

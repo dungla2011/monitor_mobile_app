@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:monitor_app/l10n/app_localizations.dart';
 import 'package:country_flags/country_flags.dart';
 import '../utils/language_manager.dart';
 import '../models/notification_settings.dart';
@@ -519,12 +519,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
                             )
                           : null,
                       value: entry.key,
-                      groupValue: selectedSound,
-                      onChanged: (value) {
-                        setState(() {
-                          selectedSound = value;
-                        });
-                      },
                     );
                   }).toList(),
                 ),

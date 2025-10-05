@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:monitor_app/l10n/app_localizations.dart';
 import '../services/base_crud_service.dart';
 import '../utils/error_dialog_utils.dart';
 import 'monitor_config_screen.dart';
@@ -1524,7 +1524,8 @@ class _BaseCrudDialogState extends State<BaseCrudDialog> {
                 _updateFieldValue(fieldName, value ? '1' : '0');
               });
             },
-            activeColor: Colors.blue,
+            activeTrackColor: Colors.blue.shade200,
+            activeThumbColor: Colors.blue,
           ),
         ],
       ),
@@ -1638,7 +1639,7 @@ class _BaseCrudDialogState extends State<BaseCrudDialog> {
     Map<String, dynamic> selectOptions,
   ) {
     return DropdownButtonFormField<String>(
-      value: _controllers[fieldName]?.text.isNotEmpty == true
+      initialValue: _controllers[fieldName]?.text.isNotEmpty == true
           ? _controllers[fieldName]!.text
           : null,
       decoration: InputDecoration(

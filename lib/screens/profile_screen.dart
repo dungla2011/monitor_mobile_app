@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:monitor_app/l10n/app_localizations.dart';
 import '../services/web_auth_service.dart';
 import '../widgets/web_auth_wrapper.dart';
 
