@@ -972,7 +972,20 @@ class _BaseCrudDialogState extends State<BaseCrudDialog> {
     for (final field in widget.fields) {
       final fieldName =
           field['field']?.toString() ?? field['field_name']?.toString() ?? '';
-      final currentValue = widget.item?[fieldName]?.toString() ?? '';
+
+      // Get current value from item, or use default_value for new items
+      String currentValue = widget.item?[fieldName]?.toString() ?? '';
+
+      // If creating new item (widget.item == null) and field has default_value, use it
+      if (widget.item == null) {
+        final defaultValue = field['default_value'];
+        if (defaultValue != null &&
+            defaultValue.toString().isNotEmpty &&
+            defaultValue.toString() != 'null') {
+          currentValue = defaultValue.toString();
+          print('🎯 Setting default value for $fieldName: $currentValue');
+        }
+      }
 
       // Update current item data
       _currentItemData[fieldName] = currentValue;
@@ -986,7 +999,7 @@ class _BaseCrudDialogState extends State<BaseCrudDialog> {
 
       if (isBooleanField) {
         // Initialize boolean value: 1, "1", true -> true; others -> false
-        final rawValue = widget.item?[fieldName];
+        final rawValue = widget.item?[fieldName] ?? currentValue;
         _booleanValues[fieldName] = rawValue == 1 ||
             rawValue == "1" ||
             rawValue == true ||

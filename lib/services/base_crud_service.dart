@@ -318,6 +318,7 @@ abstract class BaseCrudService {
             'select_options_multi': fieldMap['select_option_multi_value'],
             'show_dependency': fieldMap['show_dependency'],
             'mobile_action': fieldMap['mobile_action'],
+            'default_value': fieldMap['default_value'],
           });
         }
         // Include read-only fields if in edit mode and show_in_api_edit_one = yes
@@ -336,6 +337,7 @@ abstract class BaseCrudService {
             'show_dependency': fieldMap['show_dependency'],
             'mobile_action': fieldMap['mobile_action'],
             'extra_mobile_info': fieldMap['extra_mobile_info'],
+            'default_value': fieldMap['default_value'],
           });
         }
       }
