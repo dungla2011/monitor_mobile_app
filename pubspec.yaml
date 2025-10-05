@@ -38,7 +38,7 @@ dependencies:
   cupertino_icons: ^1.0.8
   
   # Internationalization
-  intl: ^0.20.2
+  intl: any
   
   # Country flags
   country_flags: ^3.0.0
