@@ -1643,6 +1643,8 @@ class _BaseCrudDialogState extends State<BaseCrudDialog> {
           : null,
       decoration: InputDecoration(
         labelText: required ? '$label *' : label,
+        hintText: 'Select $label',
+        hintStyle: TextStyle(color: Color(0xFFCCCCCC)),
         border: const OutlineInputBorder(),
       ),
       items: selectOptions.entries.map((entry) {
@@ -1676,6 +1678,8 @@ class _BaseCrudDialogState extends State<BaseCrudDialog> {
       controller: _controllers[fieldName],
       decoration: InputDecoration(
         labelText: required ? '$label *' : label,
+        hintText: 'Enter $label',
+        hintStyle: TextStyle(color: Color(0xFFCCCCCC)),
         border: const OutlineInputBorder(),
       ),
       maxLines: dataType.contains('text') ? 3 : 1,

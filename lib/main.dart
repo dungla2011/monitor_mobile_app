@@ -58,6 +58,11 @@ class MyApp extends StatelessWidget {
           theme: ThemeData(
             colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
             useMaterial3: true,
+            inputDecorationTheme: InputDecorationTheme(
+              hintStyle: TextStyle(color: Color(0xFFCCCCCC)),
+              labelStyle: TextStyle(color: Color(0xFFAAAAAA)),
+              floatingLabelStyle: TextStyle(color: Colors.blue),
+            ),
           ),
           // Internationalization support
           localizationsDelegates: const [
