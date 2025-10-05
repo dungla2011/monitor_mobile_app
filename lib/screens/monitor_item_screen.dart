@@ -14,6 +14,8 @@ class _MonitorItemScreenState extends BaseCrudScreenState<MonitorItemScreen> {
   // Filter states
   bool _showErrorItemsOnly = false;
   bool _showSuccessItemsOnly = false;
+  bool _showEnabledOnly = false;
+  bool _showDisabledOnly = false;
   String _nameFilterText = '';
   final TextEditingController _nameFilterController = TextEditingController();
   List<Map<String, dynamic>> _filteredItems = [];
@@ -141,34 +143,45 @@ class _MonitorItemScreenState extends BaseCrudScreenState<MonitorItemScreen> {
   }
 
   // Apply filters to items list
-  List<Map<String, dynamic>> _applyFilters(List<Map<String, dynamic>> sourceItems) {
+  List<Map<String, dynamic>> _applyFilters(
+      List<Map<String, dynamic>> sourceItems) {
     var filtered = sourceItems;
 
-    // Filter by error status (last_check_status = -1 AND enable = 1)
+    // Filter by error status (last_check_status = -1)
     if (_showErrorItemsOnly) {
       filtered = filtered.where((item) {
-        final enable = item['enable'];
-        final enableValue = enable?.toString() ?? '';
-        final isEnabled = enableValue == '1' || enableValue.toLowerCase() == 'true';
-        
         final lastCheckStatus = item['last_check_status'];
-        final statusValue = int.tryParse(lastCheckStatus?.toString() ?? '0') ?? 0;
-        
-        return statusValue == -1 && isEnabled;
+        final statusValue =
+            int.tryParse(lastCheckStatus?.toString() ?? '0') ?? 0;
+        return statusValue == -1;
       }).toList();
     }
 
-    // Filter by success status (last_check_status = 1 AND enable = 1)
+    // Filter by success status (last_check_status = 1)
     if (_showSuccessItemsOnly) {
+      filtered = filtered.where((item) {
+        final lastCheckStatus = item['last_check_status'];
+        final statusValue =
+            int.tryParse(lastCheckStatus?.toString() ?? '0') ?? 0;
+        return statusValue == 1;
+      }).toList();
+    }
+
+    // Filter by enabled status
+    if (_showEnabledOnly) {
       filtered = filtered.where((item) {
         final enable = item['enable'];
         final enableValue = enable?.toString() ?? '';
-        final isEnabled = enableValue == '1' || enableValue.toLowerCase() == 'true';
-        
-        final lastCheckStatus = item['last_check_status'];
-        final statusValue = int.tryParse(lastCheckStatus?.toString() ?? '0') ?? 0;
-        
-        return statusValue == 1 && isEnabled;
+        return enableValue == '1' || enableValue.toLowerCase() == 'true';
+      }).toList();
+    }
+
+    // Filter by disabled status
+    if (_showDisabledOnly) {
+      filtered = filtered.where((item) {
+        final enable = item['enable'];
+        final enableValue = enable?.toString() ?? '';
+        return !(enableValue == '1' || enableValue.toLowerCase() == 'true');
       }).toList();
     }
 
@@ -201,12 +214,13 @@ class _MonitorItemScreenState extends BaseCrudScreenState<MonitorItemScreen> {
   void _showFilterMenu() {
     // Initialize controller with current filter text
     _nameFilterController.text = _nameFilterText;
-    
+
     showDialog(
       context: context,
       builder: (context) => StatefulBuilder(
         builder: (context, setDialogState) {
           return AlertDialog(
+            insetPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 24),
             title: Row(
               children: [
                 Icon(Icons.filter_list, color: Colors.blue),
@@ -280,11 +294,11 @@ class _MonitorItemScreenState extends BaseCrudScreenState<MonitorItemScreen> {
                   // Error filter checkbox
                   CheckboxListTile(
                     title: Text(
-                      'Show error monitors only',
+                      'Show error monitors',
                       style: TextStyle(color: Colors.red.shade700),
                     ),
                     subtitle: Text(
-                      'Items with errors (status = -1) and enabled',
+                      'Items with errors (status = -1)',
                       style: TextStyle(fontSize: 12, color: Colors.grey),
                     ),
                     value: _showErrorItemsOnly,
@@ -292,7 +306,8 @@ class _MonitorItemScreenState extends BaseCrudScreenState<MonitorItemScreen> {
                       setDialogState(() {
                         _showErrorItemsOnly = value ?? false;
                         if (_showErrorItemsOnly) {
-                          _showSuccessItemsOnly = false; // Uncheck success when error is checked
+                          _showSuccessItemsOnly =
+                              false; // Uncheck success when error is checked
                         }
                       });
                       setState(() {
@@ -309,11 +324,11 @@ class _MonitorItemScreenState extends BaseCrudScreenState<MonitorItemScreen> {
                   // Success filter checkbox
                   CheckboxListTile(
                     title: Text(
-                      'Show success monitors only',
+                      'Show success monitors',
                       style: TextStyle(color: Colors.green.shade700),
                     ),
                     subtitle: Text(
-                      'Items with success (status = 1) and enabled',
+                      'Items with success (status = 1)',
                       style: TextStyle(fontSize: 12, color: Colors.grey),
                     ),
                     value: _showSuccessItemsOnly,
@@ -321,13 +336,81 @@ class _MonitorItemScreenState extends BaseCrudScreenState<MonitorItemScreen> {
                       setDialogState(() {
                         _showSuccessItemsOnly = value ?? false;
                         if (_showSuccessItemsOnly) {
-                          _showErrorItemsOnly = false; // Uncheck error when success is checked
+                          _showErrorItemsOnly =
+                              false; // Uncheck error when success is checked
                         }
                       });
                       setState(() {
                         _showSuccessItemsOnly = value ?? false;
                         if (_showSuccessItemsOnly) {
                           _showErrorItemsOnly = false;
+                        }
+                        _updateFilteredItems();
+                      });
+                    },
+                    controlAffinity: ListTileControlAffinity.leading,
+                    contentPadding: EdgeInsets.zero,
+                  ),
+                  SizedBox(height: 8),
+                  Divider(),
+                  SizedBox(height: 8),
+                  // Enable/Disable filters - Exclusive selection
+                  Text(
+                    'Filter by enable status',
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                      color: Colors.grey.shade700,
+                    ),
+                  ),
+                  SizedBox(height: 4),
+                  // Enabled filter checkbox
+                  CheckboxListTile(
+                    title: Text('Show enabled monitors'),
+                    subtitle: Text(
+                      'Items with enable = 1',
+                      style: TextStyle(fontSize: 12, color: Colors.grey),
+                    ),
+                    value: _showEnabledOnly,
+                    onChanged: (value) {
+                      setDialogState(() {
+                        _showEnabledOnly = value ?? false;
+                        if (_showEnabledOnly) {
+                          _showDisabledOnly =
+                              false; // Uncheck disabled when enabled is checked
+                        }
+                      });
+                      setState(() {
+                        _showEnabledOnly = value ?? false;
+                        if (_showEnabledOnly) {
+                          _showDisabledOnly = false;
+                        }
+                        _updateFilteredItems();
+                      });
+                    },
+                    controlAffinity: ListTileControlAffinity.leading,
+                    contentPadding: EdgeInsets.zero,
+                  ),
+                  // Disabled filter checkbox
+                  CheckboxListTile(
+                    title: Text('Show disabled monitors'),
+                    subtitle: Text(
+                      'Items with enable = 0',
+                      style: TextStyle(fontSize: 12, color: Colors.grey),
+                    ),
+                    value: _showDisabledOnly,
+                    onChanged: (value) {
+                      setDialogState(() {
+                        _showDisabledOnly = value ?? false;
+                        if (_showDisabledOnly) {
+                          _showEnabledOnly =
+                              false; // Uncheck enabled when disabled is checked
+                        }
+                      });
+                      setState(() {
+                        _showDisabledOnly = value ?? false;
+                        if (_showDisabledOnly) {
+                          _showEnabledOnly = false;
                         }
                         _updateFilteredItems();
                       });
@@ -346,11 +429,15 @@ class _MonitorItemScreenState extends BaseCrudScreenState<MonitorItemScreen> {
                   setDialogState(() {
                     _showErrorItemsOnly = false;
                     _showSuccessItemsOnly = false;
+                    _showEnabledOnly = false;
+                    _showDisabledOnly = false;
                     _nameFilterController.clear();
                   });
                   setState(() {
                     _showErrorItemsOnly = false;
                     _showSuccessItemsOnly = false;
+                    _showEnabledOnly = false;
+                    _showDisabledOnly = false;
                     _nameFilterText = '';
                     _nameFilterController.clear();
                     _updateFilteredItems();
@@ -388,7 +475,11 @@ class _MonitorItemScreenState extends BaseCrudScreenState<MonitorItemScreen> {
             icon: Stack(
               children: [
                 Icon(Icons.filter_list),
-                if (_showErrorItemsOnly || _showSuccessItemsOnly || _nameFilterText.isNotEmpty)
+                if (_showErrorItemsOnly ||
+                    _showSuccessItemsOnly ||
+                    _showEnabledOnly ||
+                    _showDisabledOnly ||
+                    _nameFilterText.isNotEmpty)
                   Positioned(
                     right: 0,
                     top: 0,
@@ -504,7 +595,11 @@ class _MonitorItemScreenState extends BaseCrudScreenState<MonitorItemScreen> {
 
     // Use filtered items
     final displayItems = _filteredItems;
-    final hasActiveFilters = _showErrorItemsOnly || _showSuccessItemsOnly || _nameFilterText.isNotEmpty;
+    final hasActiveFilters = _showErrorItemsOnly ||
+        _showSuccessItemsOnly ||
+        _showEnabledOnly ||
+        _showDisabledOnly ||
+        _nameFilterText.isNotEmpty;
 
     return Column(
       children: [
@@ -516,7 +611,8 @@ class _MonitorItemScreenState extends BaseCrudScreenState<MonitorItemScreen> {
             color: Colors.orange.shade50,
             child: Row(
               children: [
-                Icon(Icons.filter_list, size: 16, color: Colors.orange.shade700),
+                Icon(Icons.filter_list,
+                    size: 16, color: Colors.orange.shade700),
                 SizedBox(width: 8),
                 Expanded(
                   child: Column(
@@ -530,13 +626,19 @@ class _MonitorItemScreenState extends BaseCrudScreenState<MonitorItemScreen> {
                           fontWeight: FontWeight.w500,
                         ),
                       ),
-                      if (_nameFilterText.isNotEmpty || _showErrorItemsOnly || _showSuccessItemsOnly)
+                      if (_nameFilterText.isNotEmpty ||
+                          _showErrorItemsOnly ||
+                          _showSuccessItemsOnly ||
+                          _showEnabledOnly ||
+                          _showDisabledOnly)
                         Text(
                           [
                             if (_nameFilterText.isNotEmpty)
                               'Name: "$_nameFilterText"',
-                            if (_showErrorItemsOnly) 'Error items only',
-                            if (_showSuccessItemsOnly) 'Success items only',
+                            if (_showErrorItemsOnly) 'Error items',
+                            if (_showSuccessItemsOnly) 'Success items',
+                            if (_showEnabledOnly) 'Enabled items',
+                            if (_showDisabledOnly) 'Disabled items',
                           ].join(' • '),
                           style: TextStyle(
                             fontSize: 11,
@@ -551,6 +653,8 @@ class _MonitorItemScreenState extends BaseCrudScreenState<MonitorItemScreen> {
                     setState(() {
                       _showErrorItemsOnly = false;
                       _showSuccessItemsOnly = false;
+                      _showEnabledOnly = false;
+                      _showDisabledOnly = false;
                       _nameFilterText = '';
                       _nameFilterController.clear();
                       _updateFilteredItems();
@@ -580,6 +684,8 @@ class _MonitorItemScreenState extends BaseCrudScreenState<MonitorItemScreen> {
                           setState(() {
                             _showErrorItemsOnly = false;
                             _showSuccessItemsOnly = false;
+                            _showEnabledOnly = false;
+                            _showDisabledOnly = false;
                             _nameFilterText = '';
                             _nameFilterController.clear();
                             _updateFilteredItems();
