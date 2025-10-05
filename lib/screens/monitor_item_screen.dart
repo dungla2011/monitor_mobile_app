@@ -225,7 +225,7 @@ class _MonitorItemScreenState extends BaseCrudScreenState<MonitorItemScreen> {
               children: [
                 Icon(Icons.filter_list, color: Colors.blue),
                 SizedBox(width: 8),
-                Text('Filters'),
+                Text(l10n.filterTitle),
               ],
             ),
             content: SingleChildScrollView(
@@ -235,7 +235,7 @@ class _MonitorItemScreenState extends BaseCrudScreenState<MonitorItemScreen> {
                 children: [
                   // Name filter TextField
                   Text(
-                    'Filter by name',
+                    l10n.filterByName,
                     style: TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.w500,
@@ -246,7 +246,7 @@ class _MonitorItemScreenState extends BaseCrudScreenState<MonitorItemScreen> {
                   TextField(
                     controller: _nameFilterController,
                     decoration: InputDecoration(
-                      hintText: 'Enter name to search...',
+                      hintText: l10n.filterNameHint,
                       prefixIcon: Icon(Icons.search),
                       suffixIcon: _nameFilterController.text.isNotEmpty
                           ? IconButton(
@@ -283,7 +283,7 @@ class _MonitorItemScreenState extends BaseCrudScreenState<MonitorItemScreen> {
                   SizedBox(height: 8),
                   // Status filters - Exclusive selection
                   Text(
-                    'Filter by status',
+                    l10n.filterByStatus,
                     style: TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.w500,
@@ -294,11 +294,11 @@ class _MonitorItemScreenState extends BaseCrudScreenState<MonitorItemScreen> {
                   // Error filter checkbox
                   CheckboxListTile(
                     title: Text(
-                      'Show error monitors',
+                      l10n.filterShowError,
                       style: TextStyle(color: Colors.red.shade700),
                     ),
                     subtitle: Text(
-                      'Items with errors (status = -1)',
+                      l10n.filterShowErrorDesc,
                       style: TextStyle(fontSize: 12, color: Colors.grey),
                     ),
                     value: _showErrorItemsOnly,
@@ -324,11 +324,11 @@ class _MonitorItemScreenState extends BaseCrudScreenState<MonitorItemScreen> {
                   // Success filter checkbox
                   CheckboxListTile(
                     title: Text(
-                      'Show success monitors',
+                      l10n.filterShowSuccess,
                       style: TextStyle(color: Colors.green.shade700),
                     ),
                     subtitle: Text(
-                      'Items with success (status = 1)',
+                      l10n.filterShowSuccessDesc,
                       style: TextStyle(fontSize: 12, color: Colors.grey),
                     ),
                     value: _showSuccessItemsOnly,
@@ -356,7 +356,7 @@ class _MonitorItemScreenState extends BaseCrudScreenState<MonitorItemScreen> {
                   SizedBox(height: 8),
                   // Enable/Disable filters - Exclusive selection
                   Text(
-                    'Filter by enable status',
+                    l10n.filterByEnableStatus,
                     style: TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.w500,
@@ -366,9 +366,9 @@ class _MonitorItemScreenState extends BaseCrudScreenState<MonitorItemScreen> {
                   SizedBox(height: 4),
                   // Enabled filter checkbox
                   CheckboxListTile(
-                    title: Text('Show enabled monitors'),
+                    title: Text(l10n.filterShowEnabled),
                     subtitle: Text(
-                      'Items with enable = 1',
+                      l10n.filterShowEnabledDesc,
                       style: TextStyle(fontSize: 12, color: Colors.grey),
                     ),
                     value: _showEnabledOnly,
@@ -393,9 +393,9 @@ class _MonitorItemScreenState extends BaseCrudScreenState<MonitorItemScreen> {
                   ),
                   // Disabled filter checkbox
                   CheckboxListTile(
-                    title: Text('Show disabled monitors'),
+                    title: Text(l10n.filterShowDisabled),
                     subtitle: Text(
-                      'Items with enable = 0',
+                      l10n.filterShowDisabledDesc,
                       style: TextStyle(fontSize: 12, color: Colors.grey),
                     ),
                     value: _showDisabledOnly,
@@ -443,11 +443,11 @@ class _MonitorItemScreenState extends BaseCrudScreenState<MonitorItemScreen> {
                     _updateFilteredItems();
                   });
                 },
-                child: Text('Reset All'),
+                child: Text(l10n.filterResetAll),
               ),
               TextButton(
                 onPressed: () => Navigator.of(context).pop(),
-                child: Text('OK'),
+                child: Text(l10n.filterOk),
               ),
             ],
           );
@@ -619,7 +619,7 @@ class _MonitorItemScreenState extends BaseCrudScreenState<MonitorItemScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Showing ${displayItems.length} of ${items.length} items',
+                        '${l10n.filterShowing} ${displayItems.length} ${l10n.filterOf} ${items.length} ${l10n.filterItems}',
                         style: TextStyle(
                           fontSize: 12,
                           color: Colors.orange.shade700,
@@ -634,11 +634,11 @@ class _MonitorItemScreenState extends BaseCrudScreenState<MonitorItemScreen> {
                         Text(
                           [
                             if (_nameFilterText.isNotEmpty)
-                              'Name: "$_nameFilterText"',
-                            if (_showErrorItemsOnly) 'Error items',
-                            if (_showSuccessItemsOnly) 'Success items',
-                            if (_showEnabledOnly) 'Enabled items',
-                            if (_showDisabledOnly) 'Disabled items',
+                              '${l10n.filterName} "$_nameFilterText"',
+                            if (_showErrorItemsOnly) l10n.filterErrorItems,
+                            if (_showSuccessItemsOnly) l10n.filterSuccessItems,
+                            if (_showEnabledOnly) l10n.filterEnabledItems,
+                            if (_showDisabledOnly) l10n.filterDisabledItems,
                           ].join(' • '),
                           style: TextStyle(
                             fontSize: 11,
@@ -660,7 +660,7 @@ class _MonitorItemScreenState extends BaseCrudScreenState<MonitorItemScreen> {
                       _updateFilteredItems();
                     });
                   },
-                  child: Text('Clear', style: TextStyle(fontSize: 12)),
+                  child: Text(l10n.filterClear, style: TextStyle(fontSize: 12)),
                 ),
               ],
             ),
@@ -675,7 +675,7 @@ class _MonitorItemScreenState extends BaseCrudScreenState<MonitorItemScreen> {
                       Icon(Icons.filter_list_off, size: 64, color: Colors.grey),
                       SizedBox(height: 16),
                       Text(
-                        'No items match the filter',
+                        l10n.filterNoMatch,
                         style: TextStyle(fontSize: 16, color: Colors.grey),
                       ),
                       SizedBox(height: 8),
@@ -691,7 +691,7 @@ class _MonitorItemScreenState extends BaseCrudScreenState<MonitorItemScreen> {
                             _updateFilteredItems();
                           });
                         },
-                        child: Text('Clear filters'),
+                        child: Text(l10n.filterClearFilters),
                       ),
                     ],
                   ),

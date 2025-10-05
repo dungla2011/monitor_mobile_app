@@ -381,5 +381,32 @@
         "type": "Object"
       }
     }
-  }
+  },
+
+  "filterTitle": "Filters",
+  "filterByName": "Filter by name",
+  "filterNameHint": "Enter name to search...",
+  "filterByStatus": "Filter by status",
+  "filterShowError": "Show error monitors",
+  "filterShowErrorDesc": "Items with errors (status = -1)",
+  "filterShowSuccess": "Show success monitors",
+  "filterShowSuccessDesc": "Items with success (status = 1)",
+  "filterByEnableStatus": "Filter by enable status",
+  "filterShowEnabled": "Show enabled monitors",
+  "filterShowEnabledDesc": "Items with enable = 1",
+  "filterShowDisabled": "Show disabled monitors",
+  "filterShowDisabledDesc": "Items with enable = 0",
+  "filterResetAll": "Reset All",
+  "filterOk": "OK",
+  "filterClear": "Clear",
+  "filterShowing": "Showing",
+  "filterOf": "of",
+  "filterItems": "items",
+  "filterName": "Name:",
+  "filterErrorItems": "Error items",
+  "filterSuccessItems": "Success items",
+  "filterEnabledItems": "Enabled items",
+  "filterDisabledItems": "Disabled items",
+  "filterNoMatch": "No items match the filter",
+  "filterClearFilters": "Clear filters"
 }

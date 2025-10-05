@@ -293,5 +293,32 @@
         "type": "Object"
       }
     }
-  }
+  },
+
+  "filterTitle": "Bộ lọc",
+  "filterByName": "Lọc theo tên",
+  "filterNameHint": "Nhập tên để tìm kiếm...",
+  "filterByStatus": "Lọc theo trạng thái",
+  "filterShowError": "Hiển thị monitor lỗi",
+  "filterShowErrorDesc": "Các item có lỗi (status = -1)",
+  "filterShowSuccess": "Hiển thị monitor thành công",
+  "filterShowSuccessDesc": "Các item thành công (status = 1)",
+  "filterByEnableStatus": "Lọc theo trạng thái kích hoạt",
+  "filterShowEnabled": "Hiển thị monitor đã kích hoạt",
+  "filterShowEnabledDesc": "Các item có enable = 1",
+  "filterShowDisabled": "Hiển thị monitor đã vô hiệu hóa",
+  "filterShowDisabledDesc": "Các item có enable = 0",
+  "filterResetAll": "Đặt lại tất cả",
+  "filterOk": "OK",
+  "filterClear": "Xóa",
+  "filterShowing": "Hiển thị",
+  "filterOf": "của",
+  "filterItems": "items",
+  "filterName": "Tên:",
+  "filterErrorItems": "Items lỗi",
+  "filterSuccessItems": "Items thành công",
+  "filterEnabledItems": "Items đã kích hoạt",
+  "filterDisabledItems": "Items đã vô hiệu hóa",
+  "filterNoMatch": "Không có item nào khớp với bộ lọc",
+  "filterClearFilters": "Xóa bộ lọc"
 }
