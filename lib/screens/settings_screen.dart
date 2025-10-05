@@ -492,6 +492,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   children: _getAvailableSounds(l10n).entries.map((entry) {
                     return RadioListTile<String>(
                       title: Text(entry.value),
+                      value: entry.key,
+                      groupValue: selectedSound,
+                      onChanged: (value) {
+                        setState(() {
+                          selectedSound = value ?? NotificationSettings.soundDefault;
+                        });
+                      },
                       subtitle: entry.key !=
                                   NotificationSettings.soundDefault &&
                               entry.key != NotificationSettings.soundNone
@@ -518,7 +525,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
                               },
                             )
                           : null,
-                      value: entry.key,
                     );
                   }).toList(),
                 ),
