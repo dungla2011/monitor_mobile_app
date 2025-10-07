@@ -496,7 +496,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       groupValue: selectedSound,
                       onChanged: (value) {
                         setState(() {
-                          selectedSound = value ?? NotificationSettings.soundDefault;
+                          selectedSound =
+                              value ?? NotificationSettings.soundDefault;
                         });
                       },
                       subtitle: entry.key !=
