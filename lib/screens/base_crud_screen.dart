@@ -1524,7 +1524,7 @@ class _BaseCrudDialogState extends State<BaseCrudDialog> {
                 _updateFieldValue(fieldName, value ? '1' : '0');
               });
             },
-            activeColor: Colors.blue,
+            activeThumbColor: Colors.blue,
           ),
         ],
       ),
@@ -1638,7 +1638,7 @@ class _BaseCrudDialogState extends State<BaseCrudDialog> {
     Map<String, dynamic> selectOptions,
   ) {
     return DropdownButtonFormField<String>(
-      value: _controllers[fieldName]?.text.isNotEmpty == true
+      initialValue: _controllers[fieldName]?.text.isNotEmpty == true
           ? _controllers[fieldName]!.text
           : null,
       decoration: InputDecoration(
