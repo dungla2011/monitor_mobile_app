@@ -379,6 +379,20 @@ class AppLocalizationsJa extends AppLocalizations {
   String get settingsAppName => 'アプリ名';
 
   @override
+  String get settingsSyncLanguage => '言語を同期';
+
+  @override
+  String get settingsSyncLanguageProgress => 'サーバーから言語を同期中...';
+
+  @override
+  String get settingsSyncLanguageSuccess => '言語の同期が完了しました';
+
+  @override
+  String settingsSyncLanguageError(String error) {
+    return '言語同期エラー: $error';
+  }
+
+  @override
   String get settingsVietnameseDesc => 'Tiếng Việt (ベトナム語)';
 
   @override

@@ -385,6 +385,22 @@ class AppLocalizationsDe extends AppLocalizations {
   String get settingsAppName => 'App-Name';
 
   @override
+  String get settingsSyncLanguage => 'Sprache synchronisieren';
+
+  @override
+  String get settingsSyncLanguageProgress =>
+      'Sprachen vom Server synchronisieren...';
+
+  @override
+  String get settingsSyncLanguageSuccess =>
+      'Sprachensynchronisierung erfolgreich abgeschlossen';
+
+  @override
+  String settingsSyncLanguageError(String error) {
+    return 'Sprachensynchronisierungsfehler: $error';
+  }
+
+  @override
   String get settingsVietnameseDesc => 'Vietnamesisch';
 
   @override

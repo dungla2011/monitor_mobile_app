@@ -129,6 +129,17 @@
   "settingsSystem": "システム",
   "settingsAppInfo": "アプリ情報",
   "settingsAppName": "アプリ名",
+  "settingsSyncLanguage": "言語を同期",
+  "settingsSyncLanguageProgress": "サーバーから言語を同期中...",
+  "settingsSyncLanguageSuccess": "言語の同期が完了しました",
+  "settingsSyncLanguageError": "言語同期エラー: {error}",
+  "@settingsSyncLanguageError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
   "settingsVietnameseDesc": "Tiếng Việt (ベトナム語)",
   "settingsEnglishDesc": "English (英語)",
   "settingsFrenchDesc": "Français (フランス語)",

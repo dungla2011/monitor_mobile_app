@@ -380,6 +380,21 @@ class AppLocalizationsVi extends AppLocalizations {
   String get settingsAppName => 'Tên ứng dụng';
 
   @override
+  String get settingsSyncLanguage => 'Đồng bộ ngôn ngữ';
+
+  @override
+  String get settingsSyncLanguageProgress =>
+      'Đang đồng bộ ngôn ngữ từ server...';
+
+  @override
+  String get settingsSyncLanguageSuccess => 'Đồng bộ ngôn ngữ thành công';
+
+  @override
+  String settingsSyncLanguageError(String error) {
+    return 'Lỗi đồng bộ ngôn ngữ: $error';
+  }
+
+  @override
   String get settingsVietnameseDesc => 'Tiếng Việt (mặc định)';
 
   @override

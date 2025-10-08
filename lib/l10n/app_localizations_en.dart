@@ -382,6 +382,21 @@ class AppLocalizationsEn extends AppLocalizations {
   String get settingsAppName => 'App Name';
 
   @override
+  String get settingsSyncLanguage => 'Sync Language';
+
+  @override
+  String get settingsSyncLanguageProgress => 'Syncing languages from server...';
+
+  @override
+  String get settingsSyncLanguageSuccess =>
+      'Language sync completed successfully';
+
+  @override
+  String settingsSyncLanguageError(String error) {
+    return 'Language sync error: $error';
+  }
+
+  @override
   String get settingsVietnameseDesc => 'Tiếng Việt (Vietnamese)';
 
   @override

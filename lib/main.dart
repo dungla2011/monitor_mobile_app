@@ -5,6 +5,9 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
 import 'package:monitor_app/l10n/app_localizations.dart';
+import 'package:monitor_app/l10n/server_app_localizations_delegate.dart';
+import 'package:monitor_app/services/dynamic_localization_service.dart';
+import 'package:monitor_app/l10n/dynamic_app_localizations.dart';
 import 'firebase_options.dart';
 import 'services/firebase_messaging_service.dart';
 import 'services/web_auth_service.dart';
@@ -38,6 +41,10 @@ void main() async {
     FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
   }
 
+  // Background sync languages (không block app start)
+  // COMMENTED: Moved to manual trigger in Settings
+  // _syncLanguagesInBackground();
+
   runApp(
     ChangeNotifierProvider(
       create: (_) => LanguageManager(),
@@ -46,8 +53,45 @@ void main() async {
   );
 }
 
-class MyApp extends StatelessWidget {
+// Commented out - moved to manual trigger in Settings
+// /// Sync languages from server in background
+// Future<void> _syncLanguagesInBackground() async {
+//   try {
+//     print('🔄 Starting background language sync...');
+//     await DynamicLocalizationService.syncAllLanguages();
+//   } catch (e) {
+//     print('⚠️ Background language sync error (non-blocking): $e');
+//   }
+// }
+
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  @override
+  void initState() {
+    super.initState();
+    _loadInitialLanguage();
+  }
+
+  /// Load server translations for initial language
+  Future<void> _loadInitialLanguage() async {
+    final languageManager = context.read<LanguageManager>();
+    await DynamicAppLocalizations.loadServerTranslations(
+      languageManager.currentLocale,
+    );
+    // Trigger rebuild if server translations loaded
+    if (mounted &&
+        DynamicAppLocalizations.hasServerTranslations(
+          languageManager.currentLocale.languageCode,
+        )) {
+      setState(() {});
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -66,6 +110,7 @@ class MyApp extends StatelessWidget {
           ),
           // Internationalization support
           localizationsDelegates: const [
+            ServerAppLocalizationsDelegate(), // ⭐ Custom delegate for server translations
             AppLocalizations.delegate,
             GlobalMaterialLocalizations.delegate,
             GlobalWidgetsLocalizations.delegate,

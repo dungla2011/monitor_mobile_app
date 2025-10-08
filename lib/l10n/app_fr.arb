@@ -127,6 +127,17 @@
   "settingsSystem": "Système",
   "settingsAppInfo": "Informations sur l'application",
   "settingsAppName": "Nom de l'application",
+  "settingsSyncLanguage": "Synchroniser la langue",
+  "settingsSyncLanguageProgress": "Synchronisation des langues depuis le serveur...",
+  "settingsSyncLanguageSuccess": "Synchronisation de la langue terminée avec succès",
+  "settingsSyncLanguageError": "Erreur de synchronisation de la langue: {error}",
+  "@settingsSyncLanguageError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
   "settingsVietnameseDesc": "Vietnamien",
   "settingsEnglishDesc": "Anglais",
   "settingsJapaneseDesc": "Japonais",

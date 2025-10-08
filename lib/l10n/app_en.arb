@@ -194,6 +194,17 @@
   "settingsSystem": "System",
   "settingsAppInfo": "App Information",
   "settingsAppName": "App Name",
+  "settingsSyncLanguage": "Sync Language",
+  "settingsSyncLanguageProgress": "Syncing languages from server...",
+  "settingsSyncLanguageSuccess": "Language sync completed successfully",
+  "settingsSyncLanguageError": "Language sync error: {error}",
+  "@settingsSyncLanguageError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
   "settingsVietnameseDesc": "Tiếng Việt (Vietnamese)",
   "settingsEnglishDesc": "English (default)",
   "settingsFrenchDesc": "Français (French)",

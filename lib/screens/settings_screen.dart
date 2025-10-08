@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:monitor_app/l10n/app_localizations.dart';
+import 'package:monitor_app/l10n/dynamic_app_localizations.dart';
+import 'package:monitor_app/services/dynamic_localization_service.dart';
 import 'package:country_flags/country_flags.dart';
 import '../utils/language_manager.dart';
 import '../models/notification_settings.dart';
@@ -165,6 +167,17 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         ),
                       );
                     },
+                  ),
+                  const SizedBox(height: 12),
+                  // Sync Language Button
+                  OutlinedButton.icon(
+                    icon: const Icon(Icons.sync),
+                    label: Text(l10n.settingsSyncLanguage),
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: Colors.blue,
+                      minimumSize: const Size(double.infinity, 48),
+                    ),
+                    onPressed: () => _syncLanguagesFromServer(context),
                   ),
                 ],
               ),
@@ -565,6 +578,73 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ),
           );
         }
+      }
+    }
+  }
+
+  // Sync languages from server
+  Future<void> _syncLanguagesFromServer(BuildContext context) async {
+    final l10n = AppLocalizations.of(context)!;
+
+    // Show loading dialog
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => AlertDialog(
+        content: Row(
+          children: [
+            const CircularProgressIndicator(),
+            const SizedBox(width: 20),
+            Expanded(
+              child: Text(l10n.settingsSyncLanguageProgress),
+            ),
+          ],
+        ),
+      ),
+    );
+
+    try {
+      // Sync all languages from server (force sync to ignore cache)
+      final syncedLanguages = await DynamicLocalizationService.syncAllLanguages(forceSync: true);
+
+      // Reload ALL synced server translations into memory
+      // This ensures when user switches language, server translations are ready
+      for (final langCode in syncedLanguages) {
+        await DynamicAppLocalizations.loadServerTranslations(
+          Locale(langCode),
+        );
+      }
+
+      print('🔄 Loaded ${syncedLanguages.length} languages into memory: ${syncedLanguages.join(", ")}');
+
+      // Close loading dialog
+      if (context.mounted) {
+        Navigator.of(context).pop();
+      }
+
+      // Show success message
+      if (context.mounted) {
+        ErrorDialogUtils.showSuccessSnackBar(
+          context,
+          l10n.settingsSyncLanguageSuccess,
+        );
+
+        // Trigger rebuild to apply new translations
+        setState(() {});
+      }
+    } catch (e) {
+      // Close loading dialog
+      if (context.mounted) {
+        Navigator.of(context).pop();
+      }
+
+      // Show error
+      if (context.mounted) {
+        ErrorDialogUtils.showErrorDialog(
+          context,
+          l10n.settingsSyncLanguageError(e.toString()),
+          title: l10n.appError,
+        );
       }
     }
   }

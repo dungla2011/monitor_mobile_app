@@ -816,6 +816,30 @@ abstract class AppLocalizations {
   /// **'App Name'**
   String get settingsAppName;
 
+  /// No description provided for @settingsSyncLanguage.
+  ///
+  /// In en, this message translates to:
+  /// **'Sync Language'**
+  String get settingsSyncLanguage;
+
+  /// No description provided for @settingsSyncLanguageProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'Syncing languages from server...'**
+  String get settingsSyncLanguageProgress;
+
+  /// No description provided for @settingsSyncLanguageSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Language sync completed successfully'**
+  String get settingsSyncLanguageSuccess;
+
+  /// No description provided for @settingsSyncLanguageError.
+  ///
+  /// In en, this message translates to:
+  /// **'Language sync error: {error}'**
+  String settingsSyncLanguageError(String error);
+
   /// No description provided for @settingsVietnameseDesc.
   ///
   /// In en, this message translates to:

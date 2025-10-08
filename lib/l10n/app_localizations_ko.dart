@@ -379,6 +379,20 @@ class AppLocalizationsKo extends AppLocalizations {
   String get settingsAppName => '앱 이름';
 
   @override
+  String get settingsSyncLanguage => '언어 동기화';
+
+  @override
+  String get settingsSyncLanguageProgress => '서버에서 언어 동기화 중...';
+
+  @override
+  String get settingsSyncLanguageSuccess => '언어 동기화가 완료되었습니다';
+
+  @override
+  String settingsSyncLanguageError(String error) {
+    return '언어 동기화 오류: $error';
+  }
+
+  @override
   String get settingsVietnameseDesc => 'Tiếng Việt (베트남어)';
 
   @override

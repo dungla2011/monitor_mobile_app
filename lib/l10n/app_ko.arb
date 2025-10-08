@@ -129,6 +129,17 @@
   "settingsSystem": "시스템",
   "settingsAppInfo": "앱 정보",
   "settingsAppName": "앱 이름",
+  "settingsSyncLanguage": "언어 동기화",
+  "settingsSyncLanguageProgress": "서버에서 언어 동기화 중...",
+  "settingsSyncLanguageSuccess": "언어 동기화가 완료되었습니다",
+  "settingsSyncLanguageError": "언어 동기화 오류: {error}",
+  "@settingsSyncLanguageError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
   "settingsVietnameseDesc": "Tiếng Việt (베트남어)",
   "settingsEnglishDesc": "English (영어)",
   "settingsFrenchDesc": "Français (프랑스어)",

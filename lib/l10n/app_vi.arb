@@ -127,6 +127,17 @@
   "settingsSystem": "Theo hệ thống",
   "settingsAppInfo": "Thông tin ứng dụng",
   "settingsAppName": "Tên ứng dụng",
+  "settingsSyncLanguage": "Đồng bộ ngôn ngữ",
+  "settingsSyncLanguageProgress": "Đang đồng bộ ngôn ngữ từ server...",
+  "settingsSyncLanguageSuccess": "Đồng bộ ngôn ngữ thành công",
+  "settingsSyncLanguageError": "Lỗi đồng bộ ngôn ngữ: {error}",
+  "@settingsSyncLanguageError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
   "settingsVietnameseDesc": "Tiếng Việt (mặc định)",
   "settingsEnglishDesc": "English",
   "settingsFrenchDesc": "Tiếng Pháp",
