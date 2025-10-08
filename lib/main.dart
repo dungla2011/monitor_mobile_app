@@ -41,10 +41,6 @@ void main() async {
     FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
   }
 
-  // Background sync languages (không block app start)
-  // COMMENTED: Moved to manual trigger in Settings
-  // _syncLanguagesInBackground();
-
   runApp(
     ChangeNotifierProvider(
       create: (_) => LanguageManager(),
@@ -52,17 +48,6 @@ void main() async {
     ),
   );
 }
-
-// Commented out - moved to manual trigger in Settings
-// /// Sync languages from server in background
-// Future<void> _syncLanguagesInBackground() async {
-//   try {
-//     print('🔄 Starting background language sync...');
-//     await DynamicLocalizationService.syncAllLanguages();
-//   } catch (e) {
-//     print('⚠️ Background language sync error (non-blocking): $e');
-//   }
-// }
 
 class MyApp extends StatefulWidget {
   const MyApp({super.key});
@@ -76,6 +61,36 @@ class _MyAppState extends State<MyApp> {
   void initState() {
     super.initState();
     _loadInitialLanguage();
+    _autoSyncLanguagesAfterDelay();
+  }
+
+  /// Auto-sync languages from server after 10 seconds
+  Future<void> _autoSyncLanguagesAfterDelay() async {
+    await Future.delayed(const Duration(seconds: 10));
+    try {
+      print('🔄 Auto-syncing languages from server (10s delay)...');
+      
+      // Sync all languages from server
+      final syncedLanguages = await DynamicLocalizationService.syncAllLanguages(
+        forceSync: true, // Only sync if cache expired
+      );
+      
+      // Load synced languages into memory
+      for (final langCode in syncedLanguages) {
+        await DynamicAppLocalizations.loadServerTranslations(
+          Locale(langCode),
+        );
+      }
+      
+      print('✅ Auto-sync completed: ${syncedLanguages.length} languages');
+      
+      // Trigger rebuild to apply new translations if on current locale
+      if (mounted) {
+        setState(() {});
+      }
+    } catch (e) {
+      print('⚠️ Auto-sync error (non-blocking): $e');
+    }
   }
 
   /// Load server translations for initial language

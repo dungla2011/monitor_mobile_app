@@ -69,12 +69,22 @@ class DynamicLocalizationService {
     final prefs = await SharedPreferences.getInstance();
     final lastSync = prefs.getInt('$_lastSyncKey$languageCode');
 
-    if (lastSync == null) return true;
+    if (lastSync == null) {
+      print('📥 [$languageCode] No cache found - need to download');
+      return true;
+    }
 
     final now = DateTime.now().millisecondsSinceEpoch;
     final hoursSinceSync = (now - lastSync) / (1000 * 60 * 60);
+    final isExpired = hoursSinceSync >= _cacheDurationHours;
 
-    return hoursSinceSync >= _cacheDurationHours;
+    if (isExpired) {
+      print('🔄 [$languageCode] Cache expired (${hoursSinceSync.toStringAsFixed(1)}h ago) - need to re-download');
+    } else {
+      print('✅ [$languageCode] Cache valid (${hoursSinceSync.toStringAsFixed(1)}h ago, expires in ${(_cacheDurationHours - hoursSinceSync).toStringAsFixed(1)}h)');
+    }
+
+    return isExpired;
   }
 
   /// Get list of available languages from server
@@ -292,27 +302,33 @@ class DynamicLocalizationService {
     try {
       // Get available languages from server
       final languages = await getAvailableLanguages();
+      print('📋 Found ${languages.length} available languages: ${languages.map((l) => l.code).join(", ")}');
 
       // Download each language if needed
       for (final lang in languages) {
         final shouldSync = forceSync || await shouldSyncLanguage(lang.code);
 
         if (shouldSync) {
+          print('⬇️ Downloading ${lang.code} (${lang.nativeName})...');
           final translations = await downloadLanguage(lang.code);
           if (translations != null && translations.isNotEmpty) {
             syncedLanguages.add(lang.code);
+            print('✅ Downloaded ${lang.code}: ${translations.length} keys');
+          } else {
+            print('⚠️ Failed to download ${lang.code}');
           }
         } else {
-          print('⏭️ Skip ${lang.code} - cache still valid');
+          print('⏭️ Skipping ${lang.code} - cache still valid');
           // Still add to list if cache exists
           final cached = await loadCachedLanguage(lang.code);
           if (cached != null && cached.isNotEmpty) {
             syncedLanguages.add(lang.code);
+            print('💾 Using cached ${lang.code}: ${cached.length} keys');
           }
         }
       }
 
-      print('✅ Language sync completed: ${syncedLanguages.length} languages');
+      print('✅ Language sync completed: ${syncedLanguages.length}/${languages.length} languages available');
     } catch (e) {
       print('❌ Language sync error: $e');
     }

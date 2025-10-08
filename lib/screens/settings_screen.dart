@@ -503,7 +503,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     return RadioListTile<String>(
                       title: Text(entry.value),
                       value: entry.key,
+                      // ignore: deprecated_member_use
                       groupValue: selectedSound,
+                      // ignore: deprecated_member_use
                       onChanged: (value) {
                         setState(() {
                           selectedSound =

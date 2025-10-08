@@ -9,7 +9,7 @@ class AppLocalizationsVi extends AppLocalizations {
   AppLocalizationsVi([String locale = 'vi']) : super(locale);
 
   @override
-  String get appTitle => 'Monitor App';
+  String get appTitle => 'Ping2U - Theo dõi cảnh báo';
 
   @override
   String get appLoading => 'Đang tải...';

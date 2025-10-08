@@ -1637,6 +1637,7 @@ class _BaseCrudDialogState extends State<BaseCrudDialog> {
     Map<String, dynamic> selectOptions,
   ) {
     return DropdownButtonFormField<String>(
+      // ignore: deprecated_member_use
       value: _controllers[fieldName]?.text.isNotEmpty == true
           ? _controllers[fieldName]!.text
           : null,
