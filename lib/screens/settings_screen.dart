@@ -19,11 +19,45 @@ class SettingsScreen extends StatefulWidget {
 class _SettingsScreenState extends State<SettingsScreen> {
   NotificationSettings? _notificationSettings;
   bool _isLoadingSettings = true;
+  List<LanguageInfo> _availableLanguages = [];
+  bool _isLoadingLanguages = true;
 
   @override
   void initState() {
     super.initState();
     _loadNotificationSettings();
+    _loadAvailableLanguages();
+  }
+
+  Future<void> _loadAvailableLanguages() async {
+    try {
+      final languages =
+          await DynamicLocalizationService.getAvailableLanguages();
+      setState(() {
+        _availableLanguages = languages.where((lang) => lang.isActive).toList();
+        _isLoadingLanguages = false;
+      });
+    } catch (e) {
+      print('❌ Error loading available languages: $e');
+      // Fallback to local languages if API fails
+      setState(() {
+        _availableLanguages = [
+          LanguageInfo(
+            code: 'vi',
+            name: 'Vietnamese',
+            nativeName: 'Tiếng Việt',
+            flagCode: 'VN',
+          ),
+          LanguageInfo(
+            code: 'en',
+            name: 'English',
+            nativeName: 'English',
+            flagCode: 'US',
+          ),
+        ];
+        _isLoadingLanguages = false;
+      });
+    }
   }
 
   Future<void> _loadNotificationSettings() async {
@@ -100,6 +134,21 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       final currentLanguageCode =
                           languageManager.currentLocale.languageCode;
 
+                      // Show loading indicator if languages are still loading
+                      if (_isLoadingLanguages) {
+                        return Container(
+                          decoration: BoxDecoration(
+                            border: Border.all(color: Colors.grey.shade300),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          padding: const EdgeInsets.all(16),
+                          child: const Center(
+                            child: CircularProgressIndicator(),
+                          ),
+                        );
+                      }
+
+                      // Show dropdown with available languages from API
                       return Container(
                         decoration: BoxDecoration(
                           border: Border.all(color: Colors.grey.shade300),
@@ -111,22 +160,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
                             isExpanded: true,
                             value: currentLanguageCode,
                             icon: const Icon(Icons.arrow_drop_down),
-                            items:
-                                LanguageManager.supportedLocales.map((locale) {
-                              final languageName = LanguageManager
-                                      .languageNames[locale.languageCode] ??
-                                  locale.languageCode;
-                              final countryCode =
-                                  _getCountryCode(locale.languageCode);
-                              final description = _getLanguageDescription(
-                                  locale.languageCode, l10n);
-
+                            items: _availableLanguages.map((langInfo) {
                               return DropdownMenuItem<String>(
-                                value: locale.languageCode,
+                                value: langInfo.code,
                                 child: Row(
                                   children: [
                                     CountryFlag.fromCountryCode(
-                                      countryCode,
+                                      langInfo.flagCode?.toUpperCase() ?? 'US',
                                       height: 20,
                                       width: 30,
                                     ),
@@ -138,13 +178,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                         mainAxisSize: MainAxisSize.min,
                                         children: [
                                           Text(
-                                            languageName,
+                                            langInfo.nativeName,
                                             style: const TextStyle(
                                               fontWeight: FontWeight.w500,
                                             ),
                                           ),
                                           Text(
-                                            description,
+                                            langInfo.name,
                                             style: TextStyle(
                                               fontSize: 12,
                                               color: Colors.grey.shade600,
@@ -324,49 +364,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
         ],
       ),
     );
-  }
-
-  String _getLanguageDescription(String languageCode, AppLocalizations l10n) {
-    switch (languageCode) {
-      case 'vi':
-        return l10n.settingsVietnameseDesc;
-      case 'en':
-        return l10n.settingsEnglishDesc;
-      case 'fr':
-        return l10n.settingsFrenchDesc;
-      case 'de':
-        return l10n.settingsGermanDesc;
-      case 'es':
-        return l10n.settingsSpanishDesc;
-      case 'ja':
-        return l10n.settingsJapaneseDesc;
-      case 'ko':
-        return l10n.settingsKoreanDesc;
-      default:
-        return '';
-    }
-  }
-
-  // Map language code to country code for flag display
-  String _getCountryCode(String languageCode) {
-    switch (languageCode) {
-      case 'vi':
-        return 'vn'; // Vietnam
-      case 'en':
-        return 'gb'; // United Kingdom
-      case 'fr':
-        return 'fr'; // France
-      case 'de':
-        return 'de'; // Germany
-      case 'es':
-        return 'es'; // Spain
-      case 'ja':
-        return 'jp'; // Japan
-      case 'ko':
-        return 'kr'; // South Korea
-      default:
-        return 'gb';
-    }
   }
 
   Future<void> _changeLanguage(
@@ -605,7 +602,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
     try {
       // Sync all languages from server (force sync to ignore cache)
-      final syncedLanguages = await DynamicLocalizationService.syncAllLanguages(forceSync: true);
+      final syncedLanguages =
+          await DynamicLocalizationService.syncAllLanguages(forceSync: true);
 
       // Reload ALL synced server translations into memory
       // This ensures when user switches language, server translations are ready
@@ -615,7 +613,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
         );
       }
 
-      print('🔄 Loaded ${syncedLanguages.length} languages into memory: ${syncedLanguages.join(", ")}');
+      print(
+          '🔄 Loaded ${syncedLanguages.length} languages into memory: ${syncedLanguages.join(", ")}');
+
+      // Reload available languages list to show updated languages
+      await _loadAvailableLanguages();
 
       // Close loading dialog
       if (context.mounted) {

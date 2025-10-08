@@ -12,25 +12,27 @@ class LanguageManager extends ChangeNotifier {
 
   Locale get currentLocale => _currentLocale;
 
-  // Supported languages
+  // Supported languages - expanded to support all server languages
+  // These locales allow the app to switch to any language from server
+  // Even if ARB files don't exist, ServerAppLocalizationsDelegate handles translations
   static const List<Locale> supportedLocales = [
     Locale('vi', ''), // Vietnamese
     Locale('en', ''), // English
+    Locale('ja', ''), // Japanese
+    Locale('ko', ''), // Korean
     Locale('fr', ''), // French
     Locale('de', ''), // German
     Locale('es', ''), // Spanish
-    Locale('ja', ''), // Japanese
-    Locale('ko', ''), // Korean
   ];
 
   static const Map<String, String> languageNames = {
-    'en': 'English',
     'vi': 'Tiếng Việt',
+    'en': 'English',
+    'ja': '日本語',
+    'ko': '한국어',
     'fr': 'Français',
     'de': 'Deutsch',
     'es': 'Español',
-    'ja': '日本語',
-    'ko': '한국어',
   };
 
   LanguageManager() {

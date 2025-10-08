@@ -19,17 +19,38 @@ class ServerAppLocalizations extends AppLocalizations {
   @override
   dynamic noSuchMethod(Invocation invocation) {
     if (invocation.isGetter) {
-      final propertyName = invocation.memberName.toString().split('"')[1];
-      
-      // Check server translations first
+      final symbolName = invocation.memberName.toString();
+      // Extract property name from Symbol format: 'Symbol("propertyName")'
+      final propertyName = symbolName.substring(8, symbolName.length - 2);
+
+      // Priority 1: Check server translations first
       if (_serverTranslations.containsKey(propertyName)) {
         print('🔵 Using server translation for: $propertyName');
         return _serverTranslations[propertyName];
       }
+
+      // Priority 2: Try to get from built-in ARB by calling the same invocation
+      // Wrap in try-catch to handle missing properties gracefully
+      try {
+        // Call the actual property getter on built-in instance
+        // This uses reflection through noSuchMethod but catches the error
+        final result = _builtIn.noSuchMethod(invocation);
+        print('📦 Using built-in ARB for: $propertyName');
+        return result;
+      } on NoSuchMethodError {
+        // Property doesn't exist in built-in ARB either
+        print(
+            '⚠️ Translation missing for: $propertyName (returning key as fallback)');
+        return propertyName; // Return key name as fallback
+      } catch (e) {
+        // Other errors
+        print('❌ Error getting translation for: $propertyName - $e');
+        return propertyName;
+      }
     }
 
-    // Fallback to built-in by calling on the built-in instance
-    return _builtIn.noSuchMethod(invocation);
+    // For non-getter invocations, throw
+    return super.noSuchMethod(invocation);
   }
 }
 
@@ -46,8 +67,16 @@ class ServerAppLocalizationsDelegate
 
   @override
   Future<AppLocalizations> load(Locale locale) async {
-    // First load built-in
-    final builtIn = await AppLocalizations.delegate.load(locale);
+    // Try to load built-in for this locale, fallback to English if not available
+    AppLocalizations builtIn;
+    try {
+      builtIn = await AppLocalizations.delegate.load(locale);
+    } catch (e) {
+      // ARB file doesn't exist for this locale, fallback to English
+      print(
+          '⚠️ No ARB file for ${locale.languageCode}, using English as fallback');
+      builtIn = await AppLocalizations.delegate.load(const Locale('en', ''));
+    }
 
     // Then try to load server translations
     final serverTranslations =

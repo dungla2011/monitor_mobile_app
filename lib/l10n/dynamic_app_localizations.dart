@@ -4,7 +4,7 @@ import 'package:monitor_app/services/dynamic_localization_service.dart';
 
 /// Wrapper for AppLocalizations that adds server translations
 class DynamicAppLocalizations {
-  static Map<String, Map<String, String>> _serverTranslations = {};
+  static Map<String, Map<String, String>>  _serverTranslations = {};
 
   /// Load server translations for a locale
   static Future<void> loadServerTranslations(Locale locale) async {
@@ -57,4 +57,3 @@ extension DynamicAppLocalizationsExtension on AppLocalizations {
     return builtInGetter();
   }
 }
-

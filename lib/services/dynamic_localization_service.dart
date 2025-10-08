@@ -82,10 +82,12 @@ class DynamicLocalizationService {
     try {
       print('🌍 Fetching available languages from server...');
 
-      final response = await http.get(
-        Uri.parse('$_baseUrl/get-available-languages'),
-        headers: await _getHeaders(),
-      ).timeout(const Duration(seconds: 10));
+      final response = await http
+          .get(
+            Uri.parse('$_baseUrl/get-available-languages'),
+            headers: await _getHeaders(),
+          )
+          .timeout(const Duration(seconds: 10));
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
@@ -120,14 +122,16 @@ class DynamicLocalizationService {
     try {
       print('📥 Downloading language: $languageCode');
 
-      final response = await http.post(
-        Uri.parse('$_baseUrl/get-language'),
-        headers: await _getHeaders(),
-        body: jsonEncode({
-          'language_code': languageCode,
-          'format': 'arb', // Request ARB format
-        }),
-      ).timeout(const Duration(seconds: 15));
+      final response = await http
+          .post(
+            Uri.parse('$_baseUrl/get-language'),
+            headers: await _getHeaders(),
+            body: jsonEncode({
+              'language_code': languageCode,
+              'format': 'arb', // Request ARB format
+            }),
+          )
+          .timeout(const Duration(seconds: 15));
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
@@ -169,7 +173,8 @@ class DynamicLocalizationService {
 
       if (cached != null) {
         final Map<String, dynamic> decoded = jsonDecode(cached);
-        print('📦 Loaded ${decoded.length} cached translations for $languageCode');
+        print(
+            '📦 Loaded ${decoded.length} cached translations for $languageCode');
         return decoded.map((key, value) => MapEntry(key, value.toString()));
       }
     } catch (e) {
@@ -212,9 +217,8 @@ class DynamicLocalizationService {
 
       if (cached != null) {
         final List<dynamic> decoded = jsonDecode(cached);
-        final languages = decoded
-            .map((lang) => LanguageInfo.fromJson(lang))
-            .toList();
+        final languages =
+            decoded.map((lang) => LanguageInfo.fromJson(lang)).toList();
         print('📦 Loaded ${languages.length} cached languages');
         return languages;
       }
@@ -275,10 +279,10 @@ class DynamicLocalizationService {
   }
 
   /// Sync all languages in background
-  /// 
+  ///
   /// [forceSync] If true, ignore cache and download all languages.
   /// Useful for manual sync button in Settings.
-  /// 
+  ///
   /// Returns list of language codes that were successfully synced.
   static Future<List<String>> syncAllLanguages({bool forceSync = false}) async {
     print('🔄 Starting language sync... (force: $forceSync)');
@@ -292,7 +296,7 @@ class DynamicLocalizationService {
       // Download each language if needed
       for (final lang in languages) {
         final shouldSync = forceSync || await shouldSyncLanguage(lang.code);
-        
+
         if (shouldSync) {
           final translations = await downloadLanguage(lang.code);
           if (translations != null && translations.isNotEmpty) {
