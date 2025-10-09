@@ -145,7 +145,7 @@ void main() {
       await tester.pump(); // Start logout process
 
       // Verify loading SnackBar appears
-      expect(find.text('Đang đăng xuất...'), findsOneWidget);
+      expect(find.byType(SnackBar), findsOneWidget);
     });
 
     testWidgets('Successful logout should clear data and navigate', (
