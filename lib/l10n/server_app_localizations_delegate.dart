@@ -15,6 +15,46 @@ class ServerAppLocalizations extends AppLocalizations {
   @override
   String get localeName => _builtIn.localeName;
 
+  // Override methods with parameters to use built-in implementation
+  @override
+  String crudDeleteConfirmMessage(int count) => _builtIn.crudDeleteConfirmMessage(count);
+  
+  @override
+  String crudAddFirstButton(String item) => _builtIn.crudAddFirstButton(item);
+  
+  @override
+  String validationRequired(String field) => _builtIn.validationRequired(field);
+  
+  @override
+  String validationPleaseSelect(String field) => _builtIn.validationPleaseSelect(field);
+  
+  @override
+  String validationPleaseSelectAtLeastOne(String field) => _builtIn.validationPleaseSelectAtLeastOne(field);
+  
+  @override
+  String validationInvalidFormat(String field) => _builtIn.validationInvalidFormat(field);
+  
+  @override
+  String messagesDeleteConfirm(String item) => _builtIn.messagesDeleteConfirm(item);
+  
+  @override
+  String messagesLoadingSettingsError(String error) => _builtIn.messagesLoadingSettingsError(error);
+  
+  @override
+  String settingsSyncLanguageError(String error) => _builtIn.settingsSyncLanguageError(error);
+  
+  @override
+  String mobileActionCommandNotFound(String cmd) => _builtIn.mobileActionCommandNotFound(cmd);
+  
+  @override
+  String profileLogoutError(String error) => _builtIn.profileLogoutError(error);
+  
+  @override
+  String profileLoadError(String error) => _builtIn.profileLoadError(error);
+  
+  @override
+  String httpErrorDefaultHint3(Object code) => _builtIn.httpErrorDefaultHint3(code);
+
   /// Intercept all property access and check server translations first
   @override
   dynamic noSuchMethod(Invocation invocation) {
