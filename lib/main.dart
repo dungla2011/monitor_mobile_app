@@ -8,6 +8,7 @@ import 'package:monitor_app/l10n/app_localizations.dart';
 import 'package:monitor_app/l10n/server_app_localizations_delegate.dart';
 import 'package:monitor_app/services/dynamic_localization_service.dart';
 import 'package:monitor_app/l10n/dynamic_app_localizations.dart';
+import 'package:country_flags/country_flags.dart';
 import 'firebase_options.dart';
 import 'services/firebase_messaging_service.dart';
 import 'services/web_auth_service.dart';
@@ -69,21 +70,21 @@ class _MyAppState extends State<MyApp> {
     await Future.delayed(const Duration(seconds: 10));
     try {
       print('🔄 Auto-syncing languages from server (10s delay)...');
-      
+
       // Sync all languages from server
       final syncedLanguages = await DynamicLocalizationService.syncAllLanguages(
         forceSync: false, // Only sync if cache expired
       );
-      
+
       // Load synced languages into memory
       for (final langCode in syncedLanguages) {
         await DynamicAppLocalizations.loadServerTranslations(
           Locale(langCode),
         );
       }
-      
+
       print('✅ Auto-sync completed: ${syncedLanguages.length} languages');
-      
+
       // Trigger rebuild to apply new translations if on current locale
       if (mounted) {
         setState(() {});
@@ -152,200 +153,435 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen> {
   int _selectedIndex = 0;
+  List<LanguageInfo> _availableLanguages = [];
+  bool _isLoadingLanguages = true;
+  final GlobalKey<ScaffoldMessengerState> _scaffoldMessengerKey =
+      GlobalKey<ScaffoldMessengerState>();
 
-  final List<Widget> _screens = [
-    const MonitorItemScreen(), // Monitor Items Screen
-    const MonitorConfigScreen(), // Monitor Config Screen
-    const ProfileScreen(),
-    // const NotificationScreen(), // Hidden - auto-managed
-    const SettingsScreen(),
-    const AboutScreen(),
-  ];
+  // Use a key to force rebuild of screens when language changes
+  Key _screensKey = UniqueKey();
+
+  @override
+  void initState() {
+    super.initState();
+    _loadAvailableLanguages();
+  }
+
+  Future<void> _loadAvailableLanguages() async {
+    try {
+      final languages =
+          await DynamicLocalizationService.getAvailableLanguages();
+      setState(() {
+        _availableLanguages = languages.where((lang) => lang.isActive).toList();
+        _isLoadingLanguages = false;
+      });
+    } catch (e) {
+      print('❌ Error loading available languages: $e');
+      setState(() {
+        _availableLanguages = [
+          LanguageInfo(
+            code: 'vi',
+            name: 'Vietnamese',
+            nativeName: 'Tiếng Việt',
+            flagCode: 'VN',
+          ),
+          LanguageInfo(
+            code: 'en',
+            name: 'English',
+            nativeName: 'English',
+            flagCode: 'US',
+          ),
+        ];
+        _isLoadingLanguages = false;
+      });
+    }
+  }
+
+  // Create screens dynamically to allow rebuild
+  List<Widget> get _screens => [
+        MonitorItemScreen(key: ValueKey('monitor_$_screensKey')),
+        MonitorConfigScreen(key: ValueKey('config_$_screensKey')),
+        ProfileScreen(key: ValueKey('profile_$_screensKey')),
+        SettingsScreen(key: ValueKey('settings_$_screensKey')),
+        AboutScreen(key: ValueKey('about_$_screensKey')),
+      ];
 
   @override
   Widget build(BuildContext context) {
     final localizations = AppLocalizations.of(context)!;
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(localizations.appTitle),
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-      ),
-      drawer: Drawer(
-        child: ListView(
-          padding: EdgeInsets.zero,
-          children: [
-            DrawerHeader(
-              decoration: const BoxDecoration(color: Colors.blue),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const CircleAvatar(
-                    backgroundColor: Colors.white,
-                    child: Icon(Icons.person, color: Colors.blue),
-                  ),
-                  const SizedBox(height: 10),
-                  Text(
-                    localizations.appTitle,
-                    style: const TextStyle(color: Colors.white, fontSize: 24),
-                  ),
-                  Text(
-                    WebAuthService.currentUser?['displayName'] ??
-                        WebAuthService.currentUser?['username'] ??
-                        localizations.navigationWelcome,
-                    style: const TextStyle(color: Colors.white70, fontSize: 14),
-                  ),
-                ],
-              ),
-            ),
-            ListTile(
-              leading: const Icon(Icons.monitor),
-              title: Text(localizations.navigationMonitorItems),
-              selected: _selectedIndex == 0,
-              onTap: () {
-                setState(() {
-                  _selectedIndex = 0;
-                });
-                Navigator.pop(context);
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.settings_applications),
-              title: Text(localizations.navigationMonitorConfigs),
-              selected: _selectedIndex == 1,
-              onTap: () {
-                setState(() {
-                  _selectedIndex = 1;
-                });
-                Navigator.pop(context);
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.person),
-              title: Text(localizations.navigationProfile),
-              selected: _selectedIndex == 2,
-              onTap: () {
-                setState(() {
-                  _selectedIndex = 2;
-                });
-                Navigator.pop(context);
-              },
-            ),
-            // Notifications menu hidden - auto-managed by system
-            // ListTile(
-            //   leading: const Icon(Icons.notifications),
-            //   title: Text(localizations.translate('navigation.notifications')),
-            //   selected: _selectedIndex == 3,
-            //   onTap: () {
-            //     setState(() {
-            //       _selectedIndex = 3;
-            //     });
-            //     Navigator.pop(context);
-            //   },
-            // ),
-            ListTile(
-              leading: const Icon(Icons.settings),
-              title: Text(localizations.navigationSettings),
-              selected: _selectedIndex == 3,
-              onTap: () {
-                setState(() {
-                  _selectedIndex = 3;
-                });
-                Navigator.pop(context);
-              },
-            ),
-            const Divider(),
-            ListTile(
-              leading: const Icon(Icons.info),
-              title: Text(localizations.navigationAbout),
-              selected: _selectedIndex == 4,
-              onTap: () {
-                setState(() {
-                  _selectedIndex = 4;
-                });
-                Navigator.pop(context);
-              },
-            ),
-            const Divider(),
-            ListTile(
-              leading: const Icon(Icons.logout, color: Colors.red),
-              title: Text(
-                localizations.authLogout,
-                style: const TextStyle(color: Colors.red),
-              ),
-              onTap: () async {
-                Navigator.pop(context);
-                final shouldSignOut = await showDialog<bool>(
-                  context: context,
-                  builder: (context) => AlertDialog(
-                    title: Text(localizations.authLogout),
-                    content: const Text('Bạn có chắc chắn muốn đăng xuất?'),
-                    actions: [
-                      TextButton(
-                        onPressed: () => Navigator.of(context).pop(false),
-                        child: Text(localizations.appCancel),
+    return ScaffoldMessenger(
+      key: _scaffoldMessengerKey,
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text(localizations.appTitle),
+          backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+          actions: [
+            // Language Selector with Flag
+            Consumer<LanguageManager>(
+              builder: (context, languageManager, child) {
+                final currentLanguageCode =
+                    languageManager.currentLocale.languageCode;
+
+                if (_isLoadingLanguages) {
+                  return const Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 16.0),
+                    child: Center(
+                      child: SizedBox(
+                        width: 20,
+                        height: 20,
+                        child: CircularProgressIndicator(strokeWidth: 2),
                       ),
-                      TextButton(
-                        onPressed: () => Navigator.of(context).pop(true),
-                        child: Text(localizations.authLogout),
-                      ),
-                    ],
-                  ),
+                    ),
+                  );
+                }
+
+                final currentLang = _availableLanguages.firstWhere(
+                  (lang) => lang.code == currentLanguageCode,
+                  orElse: () => _availableLanguages.first,
                 );
 
-                if (shouldSignOut == true) {
-                  try {
-                    // Show loading indicator
-                    if (context.mounted) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Đang đăng xuất...'),
-                          duration: Duration(seconds: 1),
+                return PopupMenuButton<String>(
+                  offset: const Offset(0, 50),
+                  tooltip: 'Change Language',
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        CountryFlag.fromCountryCode(
+                          currentLang.flagCode?.toUpperCase() ?? 'US',
+                          height: 20,
+                          width: 30,
+                        ),
+                        const SizedBox(width: 8),
+                        Text(
+                          currentLang.code.toUpperCase(),
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 14,
+                          ),
+                        ),
+                        const Icon(Icons.arrow_drop_down),
+                      ],
+                    ),
+                  ),
+                  itemBuilder: (context) {
+                    return _availableLanguages.map((lang) {
+                      final isSelected = lang.code == currentLanguageCode;
+                      return PopupMenuItem<String>(
+                        value: lang.code,
+                        child: SizedBox(
+                          width: 200, // Fixed width to prevent overflow
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              CountryFlag.fromCountryCode(
+                                lang.flagCode?.toUpperCase() ?? 'US',
+                                height: 20,
+                                width: 30,
+                              ),
+                              const SizedBox(width: 12),
+                              Flexible(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Text(
+                                      lang.nativeName,
+                                      style: TextStyle(
+                                        fontWeight: isSelected
+                                            ? FontWeight.bold
+                                            : FontWeight.normal,
+                                      ),
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                    Text(
+                                      lang.name,
+                                      style: TextStyle(
+                                        fontSize: 12,
+                                        color: Colors.grey.shade600,
+                                      ),
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              if (isSelected)
+                                const Icon(Icons.check,
+                                    color: Colors.blue, size: 20),
+                            ],
+                          ),
                         ),
                       );
+                    }).toList();
+                  },
+                  onSelected: (languageCode) async {
+                    if (languageCode != currentLanguageCode) {
+                      await _changeLanguage(
+                          languageManager, Locale(languageCode, ''));
                     }
-
-                    await WebAuthService.signOut();
-
-                    // Navigate to WebAuthWrapper (root) to trigger auth check
-                    if (context.mounted) {
-                      Navigator.of(context).pushAndRemoveUntil(
-                        MaterialPageRoute(
-                            builder: (context) => const WebAuthWrapper()),
-                        (route) => false,
-                      );
-
-                      // Show success message after navigation
-                      Future.delayed(const Duration(milliseconds: 500), () {
-                        if (context.mounted) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text('✅ Đăng xuất thành công'),
-                              duration: Duration(seconds: 2),
-                              backgroundColor: Colors.green,
-                            ),
-                          );
-                        }
-                      });
-                    }
-                  } catch (e) {
-                    if (context.mounted) {
-                      final messenger = ScaffoldMessenger.of(context);
-                      messenger.showSnackBar(
-                        SnackBar(
-                          content: Text('❌ Lỗi khi đăng xuất: $e'),
-                          backgroundColor: Colors.red,
-                        ),
-                      );
-                    }
-                  }
-                }
+                  },
+                );
               },
             ),
           ],
         ),
+        drawer: Drawer(
+          child: ListView(
+            padding: EdgeInsets.zero,
+            children: [
+              DrawerHeader(
+                decoration: const BoxDecoration(color: Colors.blue),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const CircleAvatar(
+                      backgroundColor: Colors.white,
+                      child: Icon(Icons.person, color: Colors.blue),
+                    ),
+                    const SizedBox(height: 10),
+                    Text(
+                      localizations.appTitle,
+                      style: const TextStyle(color: Colors.white, fontSize: 24),
+                    ),
+                    Text(
+                      WebAuthService.currentUser?['displayName'] ??
+                          WebAuthService.currentUser?['username'] ??
+                          localizations.navigationWelcome,
+                      style:
+                          const TextStyle(color: Colors.white70, fontSize: 14),
+                    ),
+                  ],
+                ),
+              ),
+              ListTile(
+                leading: const Icon(Icons.monitor),
+                title: Text(localizations.navigationMonitorItems),
+                selected: _selectedIndex == 0,
+                onTap: () {
+                  setState(() {
+                    _selectedIndex = 0;
+                  });
+                  Navigator.pop(context);
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.settings_applications),
+                title: Text(localizations.navigationMonitorConfigs),
+                selected: _selectedIndex == 1,
+                onTap: () {
+                  setState(() {
+                    _selectedIndex = 1;
+                  });
+                  Navigator.pop(context);
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.person),
+                title: Text(localizations.navigationProfile),
+                selected: _selectedIndex == 2,
+                onTap: () {
+                  setState(() {
+                    _selectedIndex = 2;
+                  });
+                  Navigator.pop(context);
+                },
+              ),
+              // Notifications menu hidden - auto-managed by system
+              // ListTile(
+              //   leading: const Icon(Icons.notifications),
+              //   title: Text(localizations.translate('navigation.notifications')),
+              //   selected: _selectedIndex == 3,
+              //   onTap: () {
+              //     setState(() {
+              //       _selectedIndex = 3;
+              //     });
+              //     Navigator.pop(context);
+              //   },
+              // ),
+              ListTile(
+                leading: const Icon(Icons.settings),
+                title: Text(localizations.navigationSettings),
+                selected: _selectedIndex == 3,
+                onTap: () {
+                  setState(() {
+                    _selectedIndex = 3;
+                  });
+                  Navigator.pop(context);
+                },
+              ),
+              const Divider(),
+              ListTile(
+                leading: const Icon(Icons.info),
+                title: Text(localizations.navigationAbout),
+                selected: _selectedIndex == 4,
+                onTap: () {
+                  setState(() {
+                    _selectedIndex = 4;
+                  });
+                  Navigator.pop(context);
+                },
+              ),
+              const Divider(),
+              ListTile(
+                leading: const Icon(Icons.logout, color: Colors.red),
+                title: Text(
+                  localizations.authLogout,
+                  style: const TextStyle(color: Colors.red),
+                ),
+                onTap: () async {
+                  Navigator.pop(context);
+                  final shouldSignOut = await showDialog<bool>(
+                    context: context,
+                    builder: (context) => AlertDialog(
+                      title: Text(localizations.authLogout),
+                      content: const Text('Bạn có chắc chắn muốn đăng xuất?'),
+                      actions: [
+                        TextButton(
+                          onPressed: () => Navigator.of(context).pop(false),
+                          child: Text(localizations.appCancel),
+                        ),
+                        TextButton(
+                          onPressed: () => Navigator.of(context).pop(true),
+                          child: Text(localizations.authLogout),
+                        ),
+                      ],
+                    ),
+                  );
+
+                  if (shouldSignOut == true) {
+                    try {
+                      // Show loading indicator
+                      if (context.mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Đang đăng xuất...'),
+                            duration: Duration(seconds: 1),
+                          ),
+                        );
+                      }
+
+                      await WebAuthService.signOut();
+
+                      // Navigate to WebAuthWrapper (root) to trigger auth check
+                      if (context.mounted) {
+                        Navigator.of(context).pushAndRemoveUntil(
+                          MaterialPageRoute(
+                              builder: (context) => const WebAuthWrapper()),
+                          (route) => false,
+                        );
+
+                        // Show success message after navigation
+                        Future.delayed(const Duration(milliseconds: 500), () {
+                          if (context.mounted) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('✅ Đăng xuất thành công'),
+                                duration: Duration(seconds: 2),
+                                backgroundColor: Colors.green,
+                              ),
+                            );
+                          }
+                        });
+                      }
+                    } catch (e) {
+                      if (context.mounted) {
+                        final messenger = ScaffoldMessenger.of(context);
+                        messenger.showSnackBar(
+                          SnackBar(
+                            content: Text('❌ Lỗi khi đăng xuất: $e'),
+                            backgroundColor: Colors.red,
+                          ),
+                        );
+                      }
+                    }
+                  }
+                },
+              ),
+            ],
+          ),
+        ),
+        body: _screens[_selectedIndex],
       ),
-      body: _screens[_selectedIndex],
     );
+  }
+
+  /// Change language and reload current view
+  Future<void> _changeLanguage(
+      LanguageManager languageManager, Locale locale) async {
+    try {
+      // Show loading indicator using GlobalKey
+      _scaffoldMessengerKey.currentState?.showSnackBar(
+        SnackBar(
+          content: Row(
+            children: [
+              const SizedBox(
+                width: 16,
+                height: 16,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                ),
+              ),
+              const SizedBox(width: 12),
+              Text(AppLocalizations.of(context)!.appLoading),
+            ],
+          ),
+          duration: const Duration(seconds: 2),
+        ),
+      );
+
+      // Load server translations for selected language
+      await DynamicAppLocalizations.loadServerTranslations(locale);
+
+      // Change language in LanguageManager (this triggers rebuild of entire app)
+      await languageManager.changeLanguage(locale);
+
+      // Wait a bit for the language change to propagate
+      await Future.delayed(const Duration(milliseconds: 100));
+
+      // Force rebuild of current screen by changing the screens key
+      // This will recreate all screens with new translations
+      if (mounted) {
+        setState(() {
+          _screensKey = UniqueKey(); // Generate new key to force rebuild
+        });
+      }
+
+      // Show success message using GlobalKey
+      _scaffoldMessengerKey.currentState?.hideCurrentSnackBar();
+      _scaffoldMessengerKey.currentState?.showSnackBar(
+        SnackBar(
+          content: Row(
+            children: [
+              const Icon(Icons.check_circle, color: Colors.white, size: 20),
+              const SizedBox(width: 12),
+              Text(AppLocalizations.of(context)!.appSuccess),
+            ],
+          ),
+          duration: const Duration(seconds: 1),
+          backgroundColor: Colors.green,
+        ),
+      );
+    } catch (e) {
+      print('❌ Error changing language: $e');
+
+      // Show error message using GlobalKey
+      _scaffoldMessengerKey.currentState?.hideCurrentSnackBar();
+      _scaffoldMessengerKey.currentState?.showSnackBar(
+        SnackBar(
+          content: Row(
+            children: [
+              const Icon(Icons.error, color: Colors.white, size: 20),
+              const SizedBox(width: 12),
+              Text('${AppLocalizations.of(context)!.appError}: $e'),
+            ],
+          ),
+          duration: const Duration(seconds: 3),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
   }
 }
 

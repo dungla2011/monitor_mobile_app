@@ -79,9 +79,11 @@ class DynamicLocalizationService {
     final isExpired = hoursSinceSync >= _cacheDurationHours;
 
     if (isExpired) {
-      print('🔄 [$languageCode] Cache expired (${hoursSinceSync.toStringAsFixed(1)}h ago) - need to re-download');
+      print(
+          '🔄 [$languageCode] Cache expired (${hoursSinceSync.toStringAsFixed(1)}h ago) - need to re-download');
     } else {
-      print('✅ [$languageCode] Cache valid (${hoursSinceSync.toStringAsFixed(1)}h ago, expires in ${(_cacheDurationHours - hoursSinceSync).toStringAsFixed(1)}h)');
+      print(
+          '✅ [$languageCode] Cache valid (${hoursSinceSync.toStringAsFixed(1)}h ago, expires in ${(_cacheDurationHours - hoursSinceSync).toStringAsFixed(1)}h)');
     }
 
     return isExpired;
@@ -302,7 +304,8 @@ class DynamicLocalizationService {
     try {
       // Get available languages from server
       final languages = await getAvailableLanguages();
-      print('📋 Found ${languages.length} available languages: ${languages.map((l) => l.code).join(", ")}');
+      print(
+          '📋 Found ${languages.length} available languages: ${languages.map((l) => l.code).join(", ")}');
 
       // Download each language if needed
       for (final lang in languages) {
@@ -328,7 +331,8 @@ class DynamicLocalizationService {
         }
       }
 
-      print('✅ Language sync completed: ${syncedLanguages.length}/${languages.length} languages available');
+      print(
+          '✅ Language sync completed: ${syncedLanguages.length}/${languages.length} languages available');
     } catch (e) {
       print('❌ Language sync error: $e');
     }
