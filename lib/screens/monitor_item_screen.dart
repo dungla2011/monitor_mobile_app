@@ -199,6 +199,7 @@ class _MonitorItemScreenState extends BaseCrudScreenState<MonitorItemScreen> {
 
   // Update filtered items when source items change
   void _updateFilteredItems() {
+    if (!mounted) return;
     setState(() {
       _filteredItems = _applyFilters(items);
     });
@@ -207,6 +208,7 @@ class _MonitorItemScreenState extends BaseCrudScreenState<MonitorItemScreen> {
   @override
   Future<void> loadItemsData() async {
     await super.loadItemsData();
+    if (!mounted) return;
     _updateFilteredItems();
   }
 

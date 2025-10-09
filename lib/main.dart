@@ -132,7 +132,7 @@ class _MyAppState extends State<MyApp> {
             GlobalWidgetsLocalizations.delegate,
             GlobalCupertinoLocalizations.delegate,
           ],
-          supportedLocales: LanguageManager.supportedLocales,
+          supportedLocales: languageManager.supportedLocales,
           // Use current locale from provider
           locale: languageManager.currentLocale,
           home: const WebAuthWrapper(),

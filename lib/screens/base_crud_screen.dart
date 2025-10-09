@@ -51,6 +51,7 @@ abstract class BaseCrudScreenState<T extends BaseCrudScreen> extends State<T> {
   }
 
   Future<void> initializeScreen() async {
+    if (!mounted) return;
     setState(() {
       isLoading = true;
       errorMessage = null;
@@ -60,6 +61,7 @@ abstract class BaseCrudScreenState<T extends BaseCrudScreen> extends State<T> {
       // Initialize config
       final configResult = await initializeConfig();
 
+      if (!mounted) return;
       if (!configResult['success']) {
         setState(() {
           errorMessage = configResult['message'];
@@ -77,6 +79,7 @@ abstract class BaseCrudScreenState<T extends BaseCrudScreen> extends State<T> {
       // Load items
       await loadItemsData();
     } catch (e) {
+      if (!mounted) return;
       setState(() {
         errorMessage = '${l10n.crudInitError}: $e';
         isLoading = false;
@@ -88,6 +91,7 @@ abstract class BaseCrudScreenState<T extends BaseCrudScreen> extends State<T> {
     try {
       final result = await loadItems();
 
+      if (!mounted) return;
       if (result['success']) {
         // Use base service helper to extract pagination data
         final extractedData = BaseCrudService.extractPaginationData(
@@ -110,6 +114,7 @@ abstract class BaseCrudScreenState<T extends BaseCrudScreen> extends State<T> {
         }
       }
     } catch (e) {
+      if (!mounted) return;
       setState(() {
         errorMessage = '${l10n.crudLoadDataError}: $e';
         isLoading = false;
@@ -182,6 +187,7 @@ abstract class BaseCrudScreenState<T extends BaseCrudScreen> extends State<T> {
       try {
         final result = await deleteItems(selectedItems.toList());
 
+        if (!mounted) return;
         if (result['success']) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
@@ -200,6 +206,7 @@ abstract class BaseCrudScreenState<T extends BaseCrudScreen> extends State<T> {
           );
         }
       } catch (e) {
+        if (!mounted) return;
         ScaffoldMessenger.of(
           context,
         ).showSnackBar(SnackBar(content: Text('${l10n.appError}: $e')));

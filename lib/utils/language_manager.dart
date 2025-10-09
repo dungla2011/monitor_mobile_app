@@ -7,15 +7,30 @@ import '../config/app_config.dart';
 
 class LanguageManager extends ChangeNotifier {
   static const String _languageKey = 'selected_language';
+  static const String _cachedLanguagesKey = 'cached_available_languages';
 
   Locale _currentLocale = const Locale('vi', ''); // Default to Vietnamese
 
   Locale get currentLocale => _currentLocale;
 
-  // Supported languages - expanded to support all server languages
-  // These locales allow the app to switch to any language from server
-  // Even if ARB files don't exist, ServerAppLocalizationsDelegate handles translations
-  static const List<Locale> supportedLocales = [
+  // Dynamic list of supported locales loaded from server
+  List<Locale> _supportedLocales = [
+    const Locale('vi', ''), // Vietnamese (default)
+    const Locale('en', ''), // English (default)
+  ];
+
+  List<Locale> get supportedLocales => _supportedLocales;
+
+  // Dynamic map of language names loaded from server
+  Map<String, String> _languageNames = {
+    'vi': 'Tiếng Việt',
+    'en': 'English',
+  };
+
+  Map<String, String> get languageNames => _languageNames;
+
+  // Fallback static values for when API is not available
+  static const List<Locale> _fallbackLocales = [
     Locale('vi', ''), // Vietnamese
     Locale('en', ''), // English
     Locale('ja', ''), // Japanese
@@ -23,9 +38,10 @@ class LanguageManager extends ChangeNotifier {
     Locale('fr', ''), // French
     Locale('de', ''), // German
     Locale('es', ''), // Spanish
+    Locale('km', ''), // Khmer
   ];
 
-  static const Map<String, String> languageNames = {
+  static const Map<String, String> _fallbackLanguageNames = {
     'vi': 'Tiếng Việt',
     'en': 'English',
     'ja': '日本語',
@@ -33,10 +49,91 @@ class LanguageManager extends ChangeNotifier {
     'fr': 'Français',
     'de': 'Deutsch',
     'es': 'Español',
+    'km': 'ភាសាខ្មែរ',
   };
 
   LanguageManager() {
     _initializeLanguage();
+    _loadAvailableLanguagesFromServer();
+  }
+
+  // Load available languages from server API
+  Future<void> _loadAvailableLanguagesFromServer() async {
+    try {
+      final String apiUrl = '${AppConfig.apiUrl}/get-available-languages';
+      
+      print('🌍 Loading available languages from server...');
+      
+      final response = await http.get(Uri.parse(apiUrl));
+      
+      if (response.statusCode == 200) {
+        final jsonResponse = jsonDecode(response.body);
+        
+        if (jsonResponse['code'] == 1 && jsonResponse['payload'] != null) {
+          final List<dynamic> languages = jsonResponse['payload'];
+          
+          // Build dynamic lists
+          final List<Locale> newLocales = [];
+          final Map<String, String> newNames = {};
+          
+          for (var lang in languages) {
+            if (lang['is_active'] == 1) {
+              final code = lang['code'] as String;
+              final nativeName = lang['native_name'] as String;
+              
+              newLocales.add(Locale(code, ''));
+              newNames[code] = nativeName;
+            }
+          }
+          
+          if (newLocales.isNotEmpty) {
+            _supportedLocales = newLocales;
+            _languageNames = newNames;
+            
+            // Cache to SharedPreferences
+            final prefs = await SharedPreferences.getInstance();
+            await prefs.setString(_cachedLanguagesKey, jsonEncode({
+              'locales': newLocales.map((l) => l.languageCode).toList(),
+              'names': newNames,
+            }));
+            
+            print('✅ Loaded ${newLocales.length} languages from server');
+            notifyListeners();
+          }
+        }
+      } else {
+        print('⚠️ Failed to load languages from server, using fallback');
+        _useFallbackLanguages();
+      }
+    } catch (e) {
+      print('❌ Error loading languages from server: $e');
+      _useFallbackLanguages();
+      
+      // Try to load from cache
+      try {
+        final prefs = await SharedPreferences.getInstance();
+        final cached = prefs.getString(_cachedLanguagesKey);
+        if (cached != null) {
+          final data = jsonDecode(cached);
+          final List<String> codes = List<String>.from(data['locales']);
+          final Map<String, String> names = Map<String, String>.from(data['names']);
+          
+          _supportedLocales = codes.map((code) => Locale(code, '')).toList();
+          _languageNames = names;
+          
+          print('✅ Loaded ${_supportedLocales.length} languages from cache');
+          notifyListeners();
+        }
+      } catch (cacheError) {
+        print('❌ Error loading from cache: $cacheError');
+      }
+    }
+  }
+
+  // Use fallback languages when server is not available
+  void _useFallbackLanguages() {
+    _supportedLocales = List.from(_fallbackLocales);
+    _languageNames = Map.from(_fallbackLanguageNames);
   }
 
   // Initialize language - load from API first, then fallback to local
@@ -308,6 +405,11 @@ class LanguageManager extends ChangeNotifier {
 
   // Check if language is supported
   bool isSupported(Locale locale) {
-    return supportedLocales.any((l) => l.languageCode == locale.languageCode);
+    return _supportedLocales.any((l) => l.languageCode == locale.languageCode);
+  }
+
+  // Public method to refresh available languages from server
+  Future<void> refreshAvailableLanguages() async {
+    await _loadAvailableLanguagesFromServer();
   }
 }

@@ -61,8 +61,9 @@ class ServerAppLocalizationsDelegate
 
   @override
   bool isSupported(Locale locale) {
-    return ['vi', 'en', 'ja', 'ko', 'fr', 'de', 'es']
-        .contains(locale.languageCode);
+    // Support all language codes - no hardcoded list
+    // This allows dynamic languages from server to work
+    return true;
   }
 
   @override
