@@ -88,10 +88,11 @@ void main() {
       // Verify confirmation dialog appears
       expect(find.byType(AlertDialog), findsOneWidget);
       expect(find.text('Bạn có chắc chắn muốn đăng xuất?'), findsOneWidget);
-      
+
       // Verify dialog has Cancel and Logout buttons
       expect(find.text('Cancel'), findsOneWidget);
-      expect(find.text('Logout'), findsAtLeastNWidgets(1)); // At least 1 (may have multiple)
+      expect(find.text('Logout'),
+          findsAtLeastNWidgets(1)); // At least 1 (may have multiple)
     });
 
     testWidgets('Cancel button should close dialog without logout', (
@@ -183,7 +184,7 @@ void main() {
       // Verify token was cleared (main goal of logout)
       final refreshedPrefs = await SharedPreferences.getInstance();
       expect(refreshedPrefs.getString('bearer_token'), isNull);
-      
+
       // After navigation, MainScreen should be removed from widget tree
       // (it navigates to WebAuthWrapper with pushAndRemoveUntil)
       expect(find.byType(MainScreen), findsNothing);
@@ -199,7 +200,7 @@ void main() {
       });
 
       final prefs = await SharedPreferences.getInstance();
-      
+
       // Verify token exists before logout
       expect(prefs.getString('bearer_token'), isNotNull);
       expect(prefs.getString('bearer_token'), equals('test_token_xyz'));
@@ -276,7 +277,7 @@ void main() {
       if (logoutButtons.evaluate().isNotEmpty) {
         await tester.tap(logoutButtons.last);
         await tester.pump();
-        
+
         // Even with errors, should not crash
         // Just verify app is still running
         expect(find.byType(MaterialApp), findsOneWidget);

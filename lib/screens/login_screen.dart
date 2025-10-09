@@ -208,7 +208,7 @@ class _LoginScreenState extends State<LoginScreen>
             if (mounted) {
               Future.microtask(() => _loadAvailableLanguages());
             }
-            
+
             return const Padding(
               padding: EdgeInsets.all(8.0),
               child: SizedBox(
@@ -219,106 +219,108 @@ class _LoginScreenState extends State<LoginScreen>
             );
           }
 
-          final currentLanguageCode = languageManager.currentLocale.languageCode;
+          final currentLanguageCode =
+              languageManager.currentLocale.languageCode;
           final currentLang = _availableLanguages.firstWhere(
             (lang) => lang.code == currentLanguageCode,
             orElse: () => _availableLanguages.first,
           );
 
-        return PopupMenuButton<String>(
-          offset: const Offset(0, 40),
-          tooltip: 'Change Language',
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8.0),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                CountryFlag.fromCountryCode(
-                  currentLang.flagCode?.toUpperCase() ?? 'US',
-                  height: 16,
-                  width: 24,
-                ),
-                const SizedBox(width: 4),
-                const Icon(Icons.arrow_drop_down, size: 20),
-              ],
-            ),
-          ),
-          itemBuilder: (context) {
-            return _availableLanguages.map((lang) {
-              final isSelected = lang.code == currentLanguageCode;
-              return PopupMenuItem<String>(
-                value: lang.code,
-                child: SizedBox(
-                  width: 180,
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      CountryFlag.fromCountryCode(
-                        lang.flagCode?.toUpperCase() ?? 'US',
-                        height: 18,
-                        width: 27,
-                      ),
-                      const SizedBox(width: 10),
-                      Flexible(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text(
-                              lang.nativeName,
-                              style: TextStyle(
-                                fontWeight: isSelected
-                                    ? FontWeight.bold
-                                    : FontWeight.normal,
-                                fontSize: 14,
-                              ),
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                            Text(
-                              lang.name,
-                              style: TextStyle(
-                                fontSize: 11,
-                                color: Colors.grey.shade600,
-                              ),
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ],
-                        ),
-                      ),
-                      if (isSelected)
-                        const Icon(Icons.check, color: Colors.blue, size: 18),
-                    ],
+          return PopupMenuButton<String>(
+            offset: const Offset(0, 40),
+            tooltip: 'Change Language',
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8.0),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  CountryFlag.fromCountryCode(
+                    currentLang.flagCode?.toUpperCase() ?? 'US',
+                    height: 16,
+                    width: 24,
                   ),
-                ),
-              );
-            }).toList();
-          },
-          onSelected: (languageCode) async {
-            if (languageCode != currentLanguageCode) {
-              // Show loading
-              if (mounted) {
-                setState(() => _isLoading = true);
-              }
-
-              // Change language
-              final result = await languageManager
-                  .changeLanguage(Locale(languageCode, ''));
-
-              if (mounted) {
-                setState(() => _isLoading = false);
-
-                if (result['success']) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text('Language changed to ${languageCode.toUpperCase()}'),
-                      duration: const Duration(seconds: 2),
+                  const SizedBox(width: 4),
+                  const Icon(Icons.arrow_drop_down, size: 20),
+                ],
+              ),
+            ),
+            itemBuilder: (context) {
+              return _availableLanguages.map((lang) {
+                final isSelected = lang.code == currentLanguageCode;
+                return PopupMenuItem<String>(
+                  value: lang.code,
+                  child: SizedBox(
+                    width: 180,
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        CountryFlag.fromCountryCode(
+                          lang.flagCode?.toUpperCase() ?? 'US',
+                          height: 18,
+                          width: 27,
+                        ),
+                        const SizedBox(width: 10),
+                        Flexible(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                                lang.nativeName,
+                                style: TextStyle(
+                                  fontWeight: isSelected
+                                      ? FontWeight.bold
+                                      : FontWeight.normal,
+                                  fontSize: 14,
+                                ),
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                              Text(
+                                lang.name,
+                                style: TextStyle(
+                                  fontSize: 11,
+                                  color: Colors.grey.shade600,
+                                ),
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ],
+                          ),
+                        ),
+                        if (isSelected)
+                          const Icon(Icons.check, color: Colors.blue, size: 18),
+                      ],
                     ),
-                  );
+                  ),
+                );
+              }).toList();
+            },
+            onSelected: (languageCode) async {
+              if (languageCode != currentLanguageCode) {
+                // Show loading
+                if (mounted) {
+                  setState(() => _isLoading = true);
+                }
+
+                // Change language
+                final result = await languageManager
+                    .changeLanguage(Locale(languageCode, ''));
+
+                if (mounted) {
+                  setState(() => _isLoading = false);
+
+                  if (result['success']) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(
+                            'Language changed to ${languageCode.toUpperCase()}'),
+                        duration: const Duration(seconds: 2),
+                      ),
+                    );
+                  }
                 }
               }
-            }
-          },
-        );
+            },
+          );
         } catch (e) {
           // If any error occurs, show a simple fallback
           print('❌ Error building language selector: $e');
@@ -331,7 +333,7 @@ class _LoginScreenState extends State<LoginScreen>
   @override
   Widget build(BuildContext context) {
     final localizations = AppLocalizations.of(context)!;
-    
+
     // Wrap in Consumer to rebuild when language changes
     return Consumer<LanguageManager>(
       builder: (context, languageManager, child) {
@@ -344,74 +346,74 @@ class _LoginScreenState extends State<LoginScreen>
                 colors: [Colors.blue.shade400, Colors.blue.shade800],
               ),
             ),
-        child: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Card(
-              elevation: 8,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16),
-              ),
-              child: Column(
-                children: [
-                  // Header với tiêu đề và language selector
-                  Container(
-                    padding: const EdgeInsets.all(6.0),
-                    decoration: const BoxDecoration(
-                      color: Colors.transparent,
-                      borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(16),
-                        topRight: Radius.circular(16),
-                      ),
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Expanded(
-                          child: Text(
-                            'Monitor App [${languageManager.currentLocale.languageCode.toUpperCase()}]',
-                            textAlign: TextAlign.center,
-                            style: const TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.blue,
-                            ),
+            child: SafeArea(
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Card(
+                  elevation: 8,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  child: Column(
+                    children: [
+                      // Header với tiêu đề và language selector
+                      Container(
+                        padding: const EdgeInsets.all(6.0),
+                        decoration: const BoxDecoration(
+                          color: Colors.transparent,
+                          borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(16),
+                            topRight: Radius.circular(16),
                           ),
                         ),
-                        // Language Selector
-                        _buildLanguageSelector(),
-                      ],
-                    ),
-                  ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Expanded(
+                              child: Text(
+                                'Monitor App [${languageManager.currentLocale.languageCode.toUpperCase()}]',
+                                textAlign: TextAlign.center,
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.blue,
+                                ),
+                              ),
+                            ),
+                            // Language Selector
+                            _buildLanguageSelector(),
+                          ],
+                        ),
+                      ),
 
-                  // Tab Bar
-                  Container(
-                    color: Colors.white,
-                    child: TabBar(
-                      controller: _tabController,
-                      labelColor: Colors.blue,
-                      unselectedLabelColor: Colors.grey,
-                      indicatorColor: Colors.blue,
-                      tabs: [
-                        Tab(text: localizations.authLogin),
-                        Tab(text: localizations.authRegister),
-                      ],
-                    ),
-                  ),
+                      // Tab Bar
+                      Container(
+                        color: Colors.white,
+                        child: TabBar(
+                          controller: _tabController,
+                          labelColor: Colors.blue,
+                          unselectedLabelColor: Colors.grey,
+                          indicatorColor: Colors.blue,
+                          tabs: [
+                            Tab(text: localizations.authLogin),
+                            Tab(text: localizations.authRegister),
+                          ],
+                        ),
+                      ),
 
-                  // Tab Bar View - Expanded để fill remaining space
-                  Expanded(
-                    child: TabBarView(
-                      controller: _tabController,
-                      children: [_buildLoginForm(), _buildRegisterForm()],
-                    ),
+                      // Tab Bar View - Expanded để fill remaining space
+                      Expanded(
+                        child: TabBarView(
+                          controller: _tabController,
+                          children: [_buildLoginForm(), _buildRegisterForm()],
+                        ),
+                      ),
+                    ],
                   ),
-                ],
+                ),
               ),
             ),
           ),
-        ),
-      ),
         ); // Close Scaffold
       }, // Close Consumer builder
     ); // Close Consumer
@@ -419,7 +421,7 @@ class _LoginScreenState extends State<LoginScreen>
 
   Widget _buildLoginForm() {
     final localizations = AppLocalizations.of(context)!;
-    
+
     return Form(
       key: _loginFormKey,
       child: Padding(
@@ -535,7 +537,8 @@ class _LoginScreenState extends State<LoginScreen>
                   const Expanded(child: Divider()),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16),
-                    child: Text(localizations.authOr, style: const TextStyle(color: Colors.grey)),
+                    child: Text(localizations.authOr,
+                        style: const TextStyle(color: Colors.grey)),
                   ),
                   const Expanded(child: Divider()),
                 ],
@@ -569,7 +572,7 @@ class _LoginScreenState extends State<LoginScreen>
 
   Widget _buildRegisterForm() {
     final localizations = AppLocalizations.of(context)!;
-    
+
     return Form(
       key: _registerFormKey,
       child: Padding(
@@ -706,7 +709,8 @@ class _LoginScreenState extends State<LoginScreen>
                           strokeWidth: 2,
                         ),
                       )
-                    : Text(localizations.authRegister, style: const TextStyle(fontSize: 16)),
+                    : Text(localizations.authRegister,
+                        style: const TextStyle(fontSize: 16)),
               ),
             ),
           ],

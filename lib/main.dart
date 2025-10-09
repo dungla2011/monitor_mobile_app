@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -58,6 +59,8 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
+  Timer? _autoSyncTimer;
+
   @override
   void initState() {
     super.initState();
@@ -65,33 +68,52 @@ class _MyAppState extends State<MyApp> {
     _autoSyncLanguagesAfterDelay();
   }
 
+  @override
+  void dispose() {
+    _autoSyncTimer?.cancel();
+    super.dispose();
+  }
+
   /// Auto-sync languages from server after 10 seconds
-  Future<void> _autoSyncLanguagesAfterDelay() async {
-    await Future.delayed(const Duration(seconds: 10));
-    try {
-      print('🔄 Auto-syncing languages from server (10s delay)...');
+  void _autoSyncLanguagesAfterDelay() {
+    _autoSyncTimer = Timer(const Duration(seconds: 10), () async {
+      // Check if widget is still mounted
+      if (!mounted) {
+        print('⏭️ Skipping auto-sync - widget disposed');
+        return;
+      }
 
-      // Sync all languages from server
-      final syncedLanguages = await DynamicLocalizationService.syncAllLanguages(
-        forceSync: false, // Only sync if cache expired
-      );
+      try {
+        print('🔄 Auto-syncing languages from server (10s delay)...');
 
-      // Load synced languages into memory
-      for (final langCode in syncedLanguages) {
-        await DynamicAppLocalizations.loadServerTranslations(
-          Locale(langCode),
+        // Sync all languages from server
+        final syncedLanguages =
+            await DynamicLocalizationService.syncAllLanguages(
+          forceSync: false, // Only sync if cache expired
         );
-      }
 
-      print('✅ Auto-sync completed: ${syncedLanguages.length} languages');
+        // Check again after async operation
+        if (!mounted) return;
 
-      // Trigger rebuild to apply new translations if on current locale
-      if (mounted) {
-        setState(() {});
+        // Load synced languages into memory
+        for (final langCode in syncedLanguages) {
+          if (!mounted) return;
+
+          await DynamicAppLocalizations.loadServerTranslations(
+            Locale(langCode),
+          );
+        }
+
+        print('✅ Auto-sync completed: ${syncedLanguages.length} languages');
+
+        // Trigger rebuild to apply new translations if on current locale
+        if (mounted) {
+          setState(() {});
+        }
+      } catch (e) {
+        print('⚠️ Auto-sync error (non-blocking): $e');
       }
-    } catch (e) {
-      print('⚠️ Auto-sync error (non-blocking): $e');
-    }
+    });
   }
 
   /// Load server translations for initial language

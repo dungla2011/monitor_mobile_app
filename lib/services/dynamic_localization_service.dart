@@ -52,7 +52,8 @@ class DynamicLocalizationService {
   static const String _cachePrefix = 'lang_cache_';
   static const String _lastSyncKey = 'lang_last_sync_';
   static const String _availableLangsKey = 'lang_available';
-  static const int _cacheDurationHours = 1; // Changed from 24 to 1 hour for easier testing
+  static const int _cacheDurationHours =
+      1; // Changed from 24 to 1 hour for easier testing
 
   /// Get authentication headers
   static Future<Map<String, String>> _getHeaders() async {

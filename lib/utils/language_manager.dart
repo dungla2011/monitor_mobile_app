@@ -63,45 +63,47 @@ class LanguageManager extends ChangeNotifier {
   Future<void> _loadAvailableLanguagesFromServer() async {
     try {
       final String apiUrl = '${AppConfig.apiUrl}/get-available-languages';
-      
+
       print('🌍 Loading available languages from server...');
-      
+
       final response = await http.get(Uri.parse(apiUrl));
-      
+
       if (response.statusCode == 200) {
         final jsonResponse = jsonDecode(response.body);
-        
+
         if (jsonResponse['code'] == 1 && jsonResponse['payload'] != null) {
           final List<dynamic> languages = jsonResponse['payload'];
-          
+
           // Build dynamic lists
           final List<Locale> newLocales = [];
           final Map<String, String> newNames = {};
-          
+
           for (var lang in languages) {
             if (lang['is_active'] == 1) {
               final code = lang['code'] as String;
               final nativeName = lang['native_name'] as String;
-              
+
               newLocales.add(Locale(code, ''));
               newNames[code] = nativeName;
             }
           }
-          
+
           if (newLocales.isNotEmpty) {
             _supportedLocales = newLocales;
             _languageNames = newNames;
-            
+
             // Cache to SharedPreferences
             final prefs = await SharedPreferences.getInstance();
-            await prefs.setString(_cachedLanguagesKey, jsonEncode({
-              'locales': newLocales.map((l) => l.languageCode).toList(),
-              'names': newNames,
-            }));
-            
+            await prefs.setString(
+                _cachedLanguagesKey,
+                jsonEncode({
+                  'locales': newLocales.map((l) => l.languageCode).toList(),
+                  'names': newNames,
+                }));
+
             print('✅ Loaded ${newLocales.length} languages from server');
             notifyListeners();
-            
+
             // Download ARB files for all languages in background
             _downloadAllLanguageARBFiles(newLocales);
           }
@@ -113,7 +115,7 @@ class LanguageManager extends ChangeNotifier {
     } catch (e) {
       print('❌ Error loading languages from server: $e');
       _useFallbackLanguages();
-      
+
       // Try to load from cache
       try {
         final prefs = await SharedPreferences.getInstance();
@@ -121,11 +123,12 @@ class LanguageManager extends ChangeNotifier {
         if (cached != null) {
           final data = jsonDecode(cached);
           final List<String> codes = List<String>.from(data['locales']);
-          final Map<String, String> names = Map<String, String>.from(data['names']);
-          
+          final Map<String, String> names =
+              Map<String, String>.from(data['names']);
+
           _supportedLocales = codes.map((code) => Locale(code, '')).toList();
           _languageNames = names;
-          
+
           print('✅ Loaded ${_supportedLocales.length} languages from cache');
           notifyListeners();
         }
@@ -137,22 +140,25 @@ class LanguageManager extends ChangeNotifier {
 
   // Download ARB files for all available languages in background
   void _downloadAllLanguageARBFiles(List<Locale> locales) async {
-    print('📥 Starting background download of ARB files for ${locales.length} languages...');
-    
+    print(
+        '📥 Starting background download of ARB files for ${locales.length} languages...');
+
     for (final locale in locales) {
       try {
         final languageCode = locale.languageCode;
-        
+
         // Check if already cached recently (within 24 hours)
-        final shouldDownload = await DynamicLocalizationService.shouldSyncLanguage(languageCode);
-        
+        final shouldDownload =
+            await DynamicLocalizationService.shouldSyncLanguage(languageCode);
+
         if (shouldDownload) {
           print('📥 Downloading ARB file for: $languageCode');
-          final translations = await DynamicLocalizationService.downloadLanguage(languageCode);
-          
+          final translations =
+              await DynamicLocalizationService.downloadLanguage(languageCode);
+
           if (translations != null && translations.isNotEmpty) {
             print('✅ Downloaded ${translations.length} keys for $languageCode');
-            
+
             // Load into DynamicAppLocalizations for immediate use
             await DynamicAppLocalizations.loadServerTranslations(locale);
           }
@@ -163,7 +169,7 @@ class LanguageManager extends ChangeNotifier {
         print('❌ Error downloading ARB for ${locale.languageCode}: $e');
       }
     }
-    
+
     print('✅ Completed background ARB download');
   }
 
