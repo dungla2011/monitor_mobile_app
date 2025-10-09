@@ -47,6 +47,12 @@
   "authLoginFailed": "Đăng nhập thất bại",
   "authPleaseEnterUsername": "Vui lòng nhập tên đăng nhập",
   "authPleaseEnterPassword": "Vui lòng nhập mật khẩu",
+  "authRegister": "Đăng ký",
+  "authLoginWith": "Đăng nhập với",
+  "authForgotPassword": "Quên mật khẩu",
+  "authOr": "hoặc",
+  "authFullName": "Họ và Tên",
+  "authPleaseEnterFullName": "Vui lòng nhập họ và tên",
   
   "monitorItems": "Monitor Items",
   "monitorConfigs": "Monitor Cảnh báo",

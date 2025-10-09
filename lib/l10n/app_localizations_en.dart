@@ -145,6 +145,24 @@ class AppLocalizationsEn extends AppLocalizations {
   String get authPleaseEnterPassword => 'Please enter password';
 
   @override
+  String get authRegister => 'Register';
+
+  @override
+  String get authLoginWith => 'Login with';
+
+  @override
+  String get authForgotPassword => 'Forgot password';
+
+  @override
+  String get authOr => 'or';
+
+  @override
+  String get authFullName => 'Full Name';
+
+  @override
+  String get authPleaseEnterFullName => 'Please enter full name';
+
+  @override
   String get monitorItems => 'Monitor Items';
 
   @override

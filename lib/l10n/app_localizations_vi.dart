@@ -145,6 +145,24 @@ class AppLocalizationsVi extends AppLocalizations {
   String get authPleaseEnterPassword => 'Vui lòng nhập mật khẩu';
 
   @override
+  String get authRegister => 'Đăng ký';
+
+  @override
+  String get authLoginWith => 'Đăng nhập với';
+
+  @override
+  String get authForgotPassword => 'Quên mật khẩu';
+
+  @override
+  String get authOr => 'hoặc';
+
+  @override
+  String get authFullName => 'Họ và Tên';
+
+  @override
+  String get authPleaseEnterFullName => 'Vui lòng nhập họ và tên';
+
+  @override
   String get monitorItems => 'Monitor Items';
 
   @override

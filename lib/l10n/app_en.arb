@@ -65,6 +65,12 @@
   "authLoginFailed": "Login failed",
   "authPleaseEnterUsername": "Please enter username",
   "authPleaseEnterPassword": "Please enter password",
+  "authRegister": "Register",
+  "authLoginWith": "Login with",
+  "authForgotPassword": "Forgot password",
+  "authOr": "or",
+  "authFullName": "Full Name",
+  "authPleaseEnterFullName": "Please enter full name",
   
   "monitorItems": "Monitor Items",
   "monitorConfigs": "Monitor Alerts",

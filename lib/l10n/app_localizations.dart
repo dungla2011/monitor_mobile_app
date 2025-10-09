@@ -362,6 +362,42 @@ abstract class AppLocalizations {
   /// **'Please enter password'**
   String get authPleaseEnterPassword;
 
+  /// No description provided for @authRegister.
+  ///
+  /// In en, this message translates to:
+  /// **'Register'**
+  String get authRegister;
+
+  /// No description provided for @authLoginWith.
+  ///
+  /// In en, this message translates to:
+  /// **'Login with'**
+  String get authLoginWith;
+
+  /// No description provided for @authForgotPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Forgot password'**
+  String get authForgotPassword;
+
+  /// No description provided for @authOr.
+  ///
+  /// In en, this message translates to:
+  /// **'or'**
+  String get authOr;
+
+  /// No description provided for @authFullName.
+  ///
+  /// In en, this message translates to:
+  /// **'Full Name'**
+  String get authFullName;
+
+  /// No description provided for @authPleaseEnterFullName.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter full name'**
+  String get authPleaseEnterFullName;
+
   /// No description provided for @monitorItems.
   ///
   /// In en, this message translates to:

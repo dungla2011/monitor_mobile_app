@@ -3,6 +3,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import '../services/web_auth_service.dart';
+import '../services/dynamic_localization_service.dart';
+import '../l10n/dynamic_app_localizations.dart';
 import '../config/app_config.dart';
 
 class LanguageManager extends ChangeNotifier {
@@ -99,6 +101,9 @@ class LanguageManager extends ChangeNotifier {
             
             print('✅ Loaded ${newLocales.length} languages from server');
             notifyListeners();
+            
+            // Download ARB files for all languages in background
+            _downloadAllLanguageARBFiles(newLocales);
           }
         }
       } else {
@@ -128,6 +133,38 @@ class LanguageManager extends ChangeNotifier {
         print('❌ Error loading from cache: $cacheError');
       }
     }
+  }
+
+  // Download ARB files for all available languages in background
+  void _downloadAllLanguageARBFiles(List<Locale> locales) async {
+    print('📥 Starting background download of ARB files for ${locales.length} languages...');
+    
+    for (final locale in locales) {
+      try {
+        final languageCode = locale.languageCode;
+        
+        // Check if already cached recently (within 24 hours)
+        final shouldDownload = await DynamicLocalizationService.shouldSyncLanguage(languageCode);
+        
+        if (shouldDownload) {
+          print('📥 Downloading ARB file for: $languageCode');
+          final translations = await DynamicLocalizationService.downloadLanguage(languageCode);
+          
+          if (translations != null && translations.isNotEmpty) {
+            print('✅ Downloaded ${translations.length} keys for $languageCode');
+            
+            // Load into DynamicAppLocalizations for immediate use
+            await DynamicAppLocalizations.loadServerTranslations(locale);
+          }
+        } else {
+          print('⏭️ Skipping $languageCode (recently synced)');
+        }
+      } catch (e) {
+        print('❌ Error downloading ARB for ${locale.languageCode}: $e');
+      }
+    }
+    
+    print('✅ Completed background ARB download');
   }
 
   // Use fallback languages when server is not available

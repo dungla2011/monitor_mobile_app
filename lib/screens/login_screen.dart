@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:country_flags/country_flags.dart';
 import '../services/web_auth_service.dart';
 import '../services/google_auth_service.dart';
+import '../services/dynamic_localization_service.dart';
+import '../l10n/app_localizations.dart';
+import '../utils/language_manager.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -23,10 +28,14 @@ class _LoginScreenState extends State<LoginScreen>
 
   late TabController _tabController;
 
+  // Language selection
+  List<LanguageInfo> _availableLanguages = [];
+
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
+    _loadAvailableLanguages();
   }
 
   @override
@@ -37,6 +46,31 @@ class _LoginScreenState extends State<LoginScreen>
     _nameController.dispose();
     _tabController.dispose();
     super.dispose();
+  }
+
+  Future<void> _loadAvailableLanguages() async {
+    try {
+      final languages =
+          await DynamicLocalizationService.getAvailableLanguages();
+      if (mounted) {
+        setState(() {
+          _availableLanguages =
+              languages.where((lang) => lang.isActive).toList();
+        });
+      }
+    } catch (e) {
+      print('❌ Error loading languages: $e');
+      // Fallback to default languages
+      if (mounted) {
+        setState(() {
+          _availableLanguages = [
+            LanguageInfo(
+                code: 'vi', name: 'Vietnamese', nativeName: 'Tiếng Việt'),
+            LanguageInfo(code: 'en', name: 'English', nativeName: 'English'),
+          ];
+        });
+      }
+    }
   }
 
   Future<void> _signInWithUsername() async {
@@ -164,17 +198,152 @@ class _LoginScreenState extends State<LoginScreen>
     );
   }
 
+  Widget _buildLanguageSelector() {
+    return Consumer<LanguageManager>(
+      builder: (context, languageManager, child) {
+        try {
+          // Safe check for available languages
+          if (_availableLanguages.isEmpty) {
+            // Re-trigger load if needed
+            if (mounted) {
+              Future.microtask(() => _loadAvailableLanguages());
+            }
+            
+            return const Padding(
+              padding: EdgeInsets.all(8.0),
+              child: SizedBox(
+                width: 20,
+                height: 20,
+                child: CircularProgressIndicator(strokeWidth: 2),
+              ),
+            );
+          }
+
+          final currentLanguageCode = languageManager.currentLocale.languageCode;
+          final currentLang = _availableLanguages.firstWhere(
+            (lang) => lang.code == currentLanguageCode,
+            orElse: () => _availableLanguages.first,
+          );
+
+        return PopupMenuButton<String>(
+          offset: const Offset(0, 40),
+          tooltip: 'Change Language',
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                CountryFlag.fromCountryCode(
+                  currentLang.flagCode?.toUpperCase() ?? 'US',
+                  height: 16,
+                  width: 24,
+                ),
+                const SizedBox(width: 4),
+                const Icon(Icons.arrow_drop_down, size: 20),
+              ],
+            ),
+          ),
+          itemBuilder: (context) {
+            return _availableLanguages.map((lang) {
+              final isSelected = lang.code == currentLanguageCode;
+              return PopupMenuItem<String>(
+                value: lang.code,
+                child: SizedBox(
+                  width: 180,
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      CountryFlag.fromCountryCode(
+                        lang.flagCode?.toUpperCase() ?? 'US',
+                        height: 18,
+                        width: 27,
+                      ),
+                      const SizedBox(width: 10),
+                      Flexible(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              lang.nativeName,
+                              style: TextStyle(
+                                fontWeight: isSelected
+                                    ? FontWeight.bold
+                                    : FontWeight.normal,
+                                fontSize: 14,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            Text(
+                              lang.name,
+                              style: TextStyle(
+                                fontSize: 11,
+                                color: Colors.grey.shade600,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ],
+                        ),
+                      ),
+                      if (isSelected)
+                        const Icon(Icons.check, color: Colors.blue, size: 18),
+                    ],
+                  ),
+                ),
+              );
+            }).toList();
+          },
+          onSelected: (languageCode) async {
+            if (languageCode != currentLanguageCode) {
+              // Show loading
+              if (mounted) {
+                setState(() => _isLoading = true);
+              }
+
+              // Change language
+              final result = await languageManager
+                  .changeLanguage(Locale(languageCode, ''));
+
+              if (mounted) {
+                setState(() => _isLoading = false);
+
+                if (result['success']) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('Language changed to ${languageCode.toUpperCase()}'),
+                      duration: const Duration(seconds: 2),
+                    ),
+                  );
+                }
+              }
+            }
+          },
+        );
+        } catch (e) {
+          // If any error occurs, show a simple fallback
+          print('❌ Error building language selector: $e');
+          return const SizedBox.shrink();
+        }
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [Colors.blue.shade400, Colors.blue.shade800],
-          ),
-        ),
+    final localizations = AppLocalizations.of(context)!;
+    
+    // Wrap in Consumer to rebuild when language changes
+    return Consumer<LanguageManager>(
+      builder: (context, languageManager, child) {
+        return Scaffold(
+          body: Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [Colors.blue.shade400, Colors.blue.shade800],
+              ),
+            ),
         child: SafeArea(
           child: Padding(
             padding: const EdgeInsets.all(16.0),
@@ -185,7 +354,7 @@ class _LoginScreenState extends State<LoginScreen>
               ),
               child: Column(
                 children: [
-                  // Header với tiêu đề
+                  // Header với tiêu đề và language selector
                   Container(
                     padding: const EdgeInsets.all(6.0),
                     decoration: const BoxDecoration(
@@ -195,16 +364,22 @@ class _LoginScreenState extends State<LoginScreen>
                         topRight: Radius.circular(16),
                       ),
                     ),
-                    child: const Column(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text(
-                          'Monitor App',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.blue,
+                        Expanded(
+                          child: Text(
+                            'Monitor App [${languageManager.currentLocale.languageCode.toUpperCase()}]',
+                            textAlign: TextAlign.center,
+                            style: const TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.blue,
+                            ),
                           ),
                         ),
+                        // Language Selector
+                        _buildLanguageSelector(),
                       ],
                     ),
                   ),
@@ -217,9 +392,9 @@ class _LoginScreenState extends State<LoginScreen>
                       labelColor: Colors.blue,
                       unselectedLabelColor: Colors.grey,
                       indicatorColor: Colors.blue,
-                      tabs: const [
-                        Tab(text: 'Đăng nhập'),
-                        Tab(text: 'Đăng ký'),
+                      tabs: [
+                        Tab(text: localizations.authLogin),
+                        Tab(text: localizations.authRegister),
                       ],
                     ),
                   ),
@@ -237,10 +412,14 @@ class _LoginScreenState extends State<LoginScreen>
           ),
         ),
       ),
-    );
+        ); // Close Scaffold
+      }, // Close Consumer builder
+    ); // Close Consumer
   }
 
   Widget _buildLoginForm() {
+    final localizations = AppLocalizations.of(context)!;
+    
     return Form(
       key: _loginFormKey,
       child: Padding(
@@ -251,18 +430,18 @@ class _LoginScreenState extends State<LoginScreen>
             // Username field
             TextFormField(
               controller: _usernameController,
-              decoration: const InputDecoration(
-                labelText: 'Username',
-                prefixIcon: Icon(Icons.person),
-                border: OutlineInputBorder(),
-                contentPadding: EdgeInsets.symmetric(
+              decoration: InputDecoration(
+                labelText: localizations.authUsername,
+                prefixIcon: const Icon(Icons.person),
+                border: const OutlineInputBorder(),
+                contentPadding: const EdgeInsets.symmetric(
                   horizontal: 16,
                   vertical: 12,
                 ),
               ),
               validator: (value) {
                 if (value == null || value.trim().isEmpty) {
-                  return 'Vui lòng nhập username';
+                  return localizations.authPleaseEnterUsername;
                 }
                 if (value.trim().length < 3) {
                   return 'Username phải có ít nhất 3 ký tự';
@@ -277,7 +456,7 @@ class _LoginScreenState extends State<LoginScreen>
               controller: _passwordController,
               obscureText: _obscurePassword,
               decoration: InputDecoration(
-                labelText: 'Mật khẩu',
+                labelText: localizations.authPassword,
                 prefixIcon: const Icon(Icons.lock),
                 suffixIcon: IconButton(
                   icon: Icon(
@@ -297,7 +476,7 @@ class _LoginScreenState extends State<LoginScreen>
               ),
               validator: (value) {
                 if (value == null || value.isEmpty) {
-                  return 'Vui lòng nhập mật khẩu';
+                  return localizations.authPleaseEnterPassword;
                 }
                 if (value.length < 6) {
                   return 'Mật khẩu phải có ít nhất 6 ký tự';
@@ -311,9 +490,9 @@ class _LoginScreenState extends State<LoginScreen>
               alignment: Alignment.centerRight,
               child: TextButton(
                 onPressed: _resetPassword,
-                child: const Text(
-                  'Quên mật khẩu?',
-                  style: TextStyle(fontSize: 14),
+                child: Text(
+                  '${localizations.authForgotPassword}?',
+                  style: const TextStyle(fontSize: 14),
                 ),
               ),
             ),
@@ -341,24 +520,24 @@ class _LoginScreenState extends State<LoginScreen>
                           strokeWidth: 2,
                         ),
                       )
-                    : const Text(
-                        'Đăng nhập',
-                        style: TextStyle(fontSize: 16),
+                    : Text(
+                        localizations.authLogin,
+                        style: const TextStyle(fontSize: 16),
                       ),
               ),
             ),
 
             // Divider "hoặc"
-            const Padding(
-              padding: EdgeInsets.symmetric(vertical: 16),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 16),
               child: Row(
                 children: [
-                  Expanded(child: Divider()),
+                  const Expanded(child: Divider()),
                   Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 16),
-                    child: Text('hoặc', style: TextStyle(color: Colors.grey)),
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: Text(localizations.authOr, style: const TextStyle(color: Colors.grey)),
                   ),
-                  Expanded(child: Divider()),
+                  const Expanded(child: Divider()),
                 ],
               ),
             ),
@@ -376,9 +555,9 @@ class _LoginScreenState extends State<LoginScreen>
                   ),
                 ),
                 icon: const Icon(Icons.login, color: Colors.red),
-                label: const Text(
-                  'Đăng nhập với Google',
-                  style: TextStyle(fontSize: 16, color: Colors.black87),
+                label: Text(
+                  '${localizations.authLoginWith} Google',
+                  style: const TextStyle(fontSize: 16, color: Colors.black87),
                 ),
               ),
             ),
@@ -389,6 +568,8 @@ class _LoginScreenState extends State<LoginScreen>
   }
 
   Widget _buildRegisterForm() {
+    final localizations = AppLocalizations.of(context)!;
+    
     return Form(
       key: _registerFormKey,
       child: Padding(
@@ -399,18 +580,18 @@ class _LoginScreenState extends State<LoginScreen>
             // Name field
             TextFormField(
               controller: _nameController,
-              decoration: const InputDecoration(
-                labelText: 'Họ và tên',
-                prefixIcon: Icon(Icons.person),
-                border: OutlineInputBorder(),
-                contentPadding: EdgeInsets.symmetric(
+              decoration: InputDecoration(
+                labelText: localizations.authFullName,
+                prefixIcon: const Icon(Icons.person),
+                border: const OutlineInputBorder(),
+                contentPadding: const EdgeInsets.symmetric(
                   horizontal: 16,
                   vertical: 12,
                 ),
               ),
               validator: (value) {
                 if (value == null || value.trim().isEmpty) {
-                  return 'Vui lòng nhập họ và tên';
+                  return localizations.authPleaseEnterFullName;
                 }
                 return null;
               },
@@ -420,18 +601,18 @@ class _LoginScreenState extends State<LoginScreen>
             // Username field - Sử dụng controller riêng để không bị mất khi chuyển tab
             TextFormField(
               controller: _usernameController,
-              decoration: const InputDecoration(
-                labelText: 'Username',
-                prefixIcon: Icon(Icons.person),
-                border: OutlineInputBorder(),
-                contentPadding: EdgeInsets.symmetric(
+              decoration: InputDecoration(
+                labelText: localizations.authUsername,
+                prefixIcon: const Icon(Icons.person),
+                border: const OutlineInputBorder(),
+                contentPadding: const EdgeInsets.symmetric(
                   horizontal: 16,
                   vertical: 12,
                 ),
               ),
               validator: (value) {
                 if (value == null || value.trim().isEmpty) {
-                  return 'Vui lòng nhập username';
+                  return localizations.authPleaseEnterUsername;
                 }
                 if (value.trim().length < 3) {
                   return 'Username phải có ít nhất 3 ký tự';
@@ -473,7 +654,7 @@ class _LoginScreenState extends State<LoginScreen>
               controller: _passwordController,
               obscureText: _obscurePassword,
               decoration: InputDecoration(
-                labelText: 'Mật khẩu',
+                labelText: localizations.authPassword,
                 prefixIcon: const Icon(Icons.lock),
                 suffixIcon: IconButton(
                   icon: Icon(
@@ -493,7 +674,7 @@ class _LoginScreenState extends State<LoginScreen>
               ),
               validator: (value) {
                 if (value == null || value.isEmpty) {
-                  return 'Vui lòng nhập mật khẩu';
+                  return localizations.authPleaseEnterPassword;
                 }
                 if (value.length < 6) {
                   return 'Mật khẩu phải có ít nhất 6 ký tự';
@@ -525,7 +706,7 @@ class _LoginScreenState extends State<LoginScreen>
                           strokeWidth: 2,
                         ),
                       )
-                    : const Text('Đăng ký', style: TextStyle(fontSize: 16)),
+                    : Text(localizations.authRegister, style: const TextStyle(fontSize: 16)),
               ),
             ),
           ],
