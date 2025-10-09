@@ -163,6 +163,15 @@ class AppLocalizationsVi extends AppLocalizations {
   String get authPleaseEnterFullName => 'Vui lòng nhập họ và tên';
 
   @override
+  String get authLogoutConfirm => 'Bạn có chắc chắn muốn đăng xuất?';
+
+  @override
+  String get authLoggingOut => 'Đang đăng xuất...';
+
+  @override
+  String get authLogoutError => 'Lỗi đăng xuất';
+
+  @override
   String get monitorItems => 'Monitor Items';
 
   @override

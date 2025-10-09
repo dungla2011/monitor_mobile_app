@@ -457,7 +457,7 @@ class _MainScreenState extends State<MainScreen> {
                     context: context,
                     builder: (context) => AlertDialog(
                       title: Text(localizations.authLogout),
-                      content: const Text('Bạn có chắc chắn muốn đăng xuất?'),
+                      content: Text(localizations.authLogoutConfirm),
                       actions: [
                         TextButton(
                           onPressed: () => Navigator.of(context).pop(false),
@@ -475,9 +475,9 @@ class _MainScreenState extends State<MainScreen> {
                     try {
                       // Show loading indicator using GlobalKey
                       _scaffoldMessengerKey.currentState?.showSnackBar(
-                        const SnackBar(
-                          content: Text('Đang đăng xuất...'),
-                          duration: Duration(seconds: 1),
+                        SnackBar(
+                          content: Text(localizations.authLoggingOut),
+                          duration: const Duration(seconds: 1),
                         ),
                       );
 
@@ -496,7 +496,7 @@ class _MainScreenState extends State<MainScreen> {
                       if (context.mounted) {
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
-                            content: Text('❌ Lỗi đăng xuất: $e'),
+                            content: Text('❌ ${localizations.authLogoutError}: $e'),
                             backgroundColor: Colors.red,
                           ),
                         );

@@ -53,6 +53,9 @@
   "authOr": "hoặc",
   "authFullName": "Họ và Tên",
   "authPleaseEnterFullName": "Vui lòng nhập họ và tên",
+  "authLogoutConfirm": "Bạn có chắc chắn muốn đăng xuất?",
+  "authLoggingOut": "Đang đăng xuất...",
+  "authLogoutError": "Lỗi đăng xuất",
   
   "monitorItems": "Monitor Items",
   "monitorConfigs": "Monitor Cảnh báo",

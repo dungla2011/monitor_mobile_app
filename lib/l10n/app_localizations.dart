@@ -398,6 +398,24 @@ abstract class AppLocalizations {
   /// **'Please enter full name'**
   String get authPleaseEnterFullName;
 
+  /// No description provided for @authLogoutConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to logout?'**
+  String get authLogoutConfirm;
+
+  /// No description provided for @authLoggingOut.
+  ///
+  /// In en, this message translates to:
+  /// **'Logging out...'**
+  String get authLoggingOut;
+
+  /// No description provided for @authLogoutError.
+  ///
+  /// In en, this message translates to:
+  /// **'Logout error'**
+  String get authLogoutError;
+
   /// No description provided for @monitorItems.
   ///
   /// In en, this message translates to:

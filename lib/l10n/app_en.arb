@@ -71,6 +71,9 @@
   "authOr": "or",
   "authFullName": "Full Name",
   "authPleaseEnterFullName": "Please enter full name",
+  "authLogoutConfirm": "Are you sure you want to logout?",
+  "authLoggingOut": "Logging out...",
+  "authLogoutError": "Logout error",
   
   "monitorItems": "Monitor Items",
   "monitorConfigs": "Monitor Alerts",

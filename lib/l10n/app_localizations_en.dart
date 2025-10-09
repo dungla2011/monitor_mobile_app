@@ -163,6 +163,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get authPleaseEnterFullName => 'Please enter full name';
 
   @override
+  String get authLogoutConfirm => 'Are you sure you want to logout?';
+
+  @override
+  String get authLoggingOut => 'Logging out...';
+
+  @override
+  String get authLogoutError => 'Logout error';
+
+  @override
   String get monitorItems => 'Monitor Items';
 
   @override
