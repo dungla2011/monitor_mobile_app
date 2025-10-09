@@ -451,15 +451,13 @@ class _MainScreenState extends State<MainScreen> {
 
                   if (shouldSignOut == true) {
                     try {
-                      // Show loading indicator
-                      if (context.mounted) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text('Đang đăng xuất...'),
-                            duration: Duration(seconds: 1),
-                          ),
-                        );
-                      }
+                      // Show loading indicator using GlobalKey
+                      _scaffoldMessengerKey.currentState?.showSnackBar(
+                        const SnackBar(
+                          content: Text('Đang đăng xuất...'),
+                          duration: Duration(seconds: 1),
+                        ),
+                      );
 
                       await WebAuthService.signOut();
 
@@ -470,26 +468,13 @@ class _MainScreenState extends State<MainScreen> {
                               builder: (context) => const WebAuthWrapper()),
                           (route) => false,
                         );
-
-                        // Show success message after navigation
-                        Future.delayed(const Duration(milliseconds: 500), () {
-                          if (context.mounted) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text('✅ Đăng xuất thành công'),
-                                duration: Duration(seconds: 2),
-                                backgroundColor: Colors.green,
-                              ),
-                            );
-                          }
-                        });
                       }
                     } catch (e) {
+                      print('❌ Logout error: $e');
                       if (context.mounted) {
-                        final messenger = ScaffoldMessenger.of(context);
-                        messenger.showSnackBar(
+                        ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
-                            content: Text('❌ Lỗi khi đăng xuất: $e'),
+                            content: Text('❌ Lỗi đăng xuất: $e'),
                             backgroundColor: Colors.red,
                           ),
                         );
