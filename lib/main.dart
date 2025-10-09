@@ -72,7 +72,7 @@ class _MyAppState extends State<MyApp> {
       
       // Sync all languages from server
       final syncedLanguages = await DynamicLocalizationService.syncAllLanguages(
-        forceSync: true, // Only sync if cache expired
+        forceSync: false, // Only sync if cache expired
       );
       
       // Load synced languages into memory
