@@ -496,7 +496,8 @@ class _MainScreenState extends State<MainScreen> {
                       if (context.mounted) {
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
-                            content: Text('❌ ${localizations.authLogoutError}: $e'),
+                            content:
+                                Text('❌ ${localizations.authLogoutError}: $e'),
                             backgroundColor: Colors.red,
                           ),
                         );

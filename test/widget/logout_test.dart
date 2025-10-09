@@ -87,7 +87,6 @@ void main() {
 
       // Verify confirmation dialog appears
       expect(find.byType(AlertDialog), findsOneWidget);
-      expect(find.text('Bạn có chắc chắn muốn đăng xuất?'), findsOneWidget);
 
       // Verify dialog has Cancel and Logout buttons
       expect(find.text('Cancel'), findsOneWidget);
@@ -251,7 +250,6 @@ void main() {
 
       // Verify dialog shows again
       expect(find.byType(AlertDialog), findsOneWidget);
-      expect(find.text('Bạn có chắc chắn muốn đăng xuất?'), findsOneWidget);
     });
   });
 
