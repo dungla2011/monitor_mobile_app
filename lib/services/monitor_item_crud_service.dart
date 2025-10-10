@@ -17,20 +17,16 @@ class MonitorItemCrudService extends BaseCrudService {
 
   // Cached config data
   static dynamic _fieldDetails;
-  static Map<String, dynamic>? _apiList;
-  static Map<String, dynamic>? _apiGetOne;
 
   // Getters
   static dynamic get fieldDetails => _fieldDetails;
-  static Map<String, dynamic>? get apiList => _apiList;
-  static Map<String, dynamic>? get apiGetOne => _apiGetOne;
 
   // Fetch all configuration data
   static Future<Map<String, dynamic>> initializeConfig() async {
     try {
       print('🔄 Initializing Monitor Item CRUD Service...');
 
-      // Fetch field details
+      // Fetch field details only
       final fieldDetailsResult = await BaseCrudService.fetchConfig(
         _tableName,
         'field_details',
@@ -40,34 +36,12 @@ class MonitorItemCrudService extends BaseCrudService {
       }
       _fieldDetails = fieldDetailsResult['data'];
 
-      // Fetch API list
-      final apiListResult = await BaseCrudService.fetchConfig(
-        _tableName,
-        'api_list',
-      );
-      if (!apiListResult['success']) {
-        return apiListResult;
-      }
-      _apiList = apiListResult['data'];
-
-      // Fetch API get one
-      final apiGetOneResult = await BaseCrudService.fetchConfig(
-        _tableName,
-        'api_get_one',
-      );
-      if (!apiGetOneResult['success']) {
-        return apiGetOneResult;
-      }
-      _apiGetOne = apiGetOneResult['data'];
-
       print('✅ Monitor Item CRUD Service initialized successfully');
       return {
         'success': true,
         'message': 'Config loaded successfully',
         'data': {
           'field_details': _fieldDetails,
-          'api_list': _apiList,
-          'api_get_one': _apiGetOne,
         },
       };
     } catch (e) {
@@ -150,12 +124,12 @@ class MonitorItemCrudService extends BaseCrudService {
 
   // Helper method to check if config is loaded
   static bool get isConfigLoaded {
-    return _fieldDetails != null && _apiList != null && _apiGetOne != null;
+    return _fieldDetails != null;
   }
 
-  // Force reload config from server (always refresh all)
+  // Force reload config from server
   static Future<Map<String, dynamic>> reloadConfig() async {
-    print('[RELOAD] Force reloading Monitor Items config (all APIs)...');
+    print('[RELOAD] Force reloading Monitor Items field_details...');
     return await initializeConfig();
   }
 

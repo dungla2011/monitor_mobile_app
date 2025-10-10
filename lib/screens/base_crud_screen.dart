@@ -21,7 +21,7 @@ abstract class BaseCrudScreenState<T extends BaseCrudScreen> extends State<T> {
   // Selected items for bulk actions
   Set<int> selectedItems = <int>{};
   bool isSelectionMode = false;
-  
+
   // Scroll controller for list
   final ScrollController _scrollController = ScrollController();
 
@@ -133,11 +133,11 @@ abstract class BaseCrudScreenState<T extends BaseCrudScreen> extends State<T> {
 
   /// Refresh field_details only (not api_list/api_get_one)
   Future<void> refreshFieldDetails();
-  
+
   /// Refresh both config (field_details) and items data
   Future<void> refreshAll() async {
     print('🔄 [REFRESH] refreshAll() method called!');
-    
+
     setState(() {
       isLoading = true;
       errorMessage = null;
@@ -145,19 +145,19 @@ abstract class BaseCrudScreenState<T extends BaseCrudScreen> extends State<T> {
 
     try {
       print('[REFRESH] Reloading field_details only...');
-      
+
       // Reload only field_details (not api_list/api_get_one)
       await refreshFieldDetails();
-      
+
       if (!mounted) return;
-      
+
       // Reload form fields with new config
       formFields = getFormFields();
       mobileFields = getMobileFields();
-      
+
       // Reload items data
       await loadItemsData();
-      
+
       print('[REFRESH] Refresh completed successfully');
     } catch (e) {
       if (!mounted) return;
@@ -385,7 +385,7 @@ abstract class BaseCrudScreenState<T extends BaseCrudScreen> extends State<T> {
           onSaved: () async {
             // Reload data first (most important - must happen before SnackBar!)
             await loadItemsData();
-            
+
             // Scroll to top to show the new item (usually added at the beginning)
             if (mounted && _scrollController.hasClients) {
               _scrollController.animateTo(
@@ -394,7 +394,7 @@ abstract class BaseCrudScreenState<T extends BaseCrudScreen> extends State<T> {
                 curve: Curves.easeOut,
               );
             }
-            
+
             // Then try to show success message (non-critical, can fail safely)
             if (mounted) {
               try {
@@ -1135,10 +1135,10 @@ class _BaseCrudDialogState extends State<BaseCrudDialog> {
         if (mounted) {
           Navigator.of(context).pop();
         }
-        
+
         // Wait for dialog close animation to complete
         await Future.delayed(const Duration(milliseconds: 100));
-        
+
         // Trigger refresh in parent screen
         widget.onSaved();
       } else {

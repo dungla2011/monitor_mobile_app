@@ -525,7 +525,8 @@ class _MonitorItemScreenState extends BaseCrudScreenState<MonitorItemScreen> {
             ),
             IconButton(
               icon: const Icon(Icons.refresh),
-              onPressed: refreshAll, // ✅ Changed from loadItemsData to refreshAll
+              onPressed:
+                  refreshAll, // ✅ Changed from loadItemsData to refreshAll
             ),
           ],
         ],
