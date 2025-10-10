@@ -40,6 +40,13 @@ class _MonitorItemScreenState extends BaseCrudScreenState<MonitorItemScreen> {
   }
 
   @override
+  Future<void> refreshFieldDetails() async {
+    // Reload only field_details (not api_list/api_get_one)
+    print('[REFRESH] Reloading only field_details for Monitor Items...');
+    await MonitorItemCrudService.reloadFieldDetails();
+  }
+
+  @override
   List<Map<String, dynamic>> getFormFields({bool isEditMode = false}) {
     return MonitorItemCrudService.getFormFields(isEditMode: isEditMode);
   }
@@ -518,7 +525,7 @@ class _MonitorItemScreenState extends BaseCrudScreenState<MonitorItemScreen> {
             ),
             IconButton(
               icon: const Icon(Icons.refresh),
-              onPressed: loadItemsData,
+              onPressed: refreshAll, // ✅ Changed from loadItemsData to refreshAll
             ),
           ],
         ],

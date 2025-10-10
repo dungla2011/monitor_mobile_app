@@ -21,6 +21,9 @@ abstract class BaseCrudScreenState<T extends BaseCrudScreen> extends State<T> {
   // Selected items for bulk actions
   Set<int> selectedItems = <int>{};
   bool isSelectionMode = false;
+  
+  // Scroll controller for list
+  final ScrollController _scrollController = ScrollController();
 
   // Localization getter
   AppLocalizations get l10n => AppLocalizations.of(context)!;
@@ -48,6 +51,12 @@ abstract class BaseCrudScreenState<T extends BaseCrudScreen> extends State<T> {
   void initState() {
     super.initState();
     initializeScreen();
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
   }
 
   Future<void> initializeScreen() async {
@@ -117,6 +126,43 @@ abstract class BaseCrudScreenState<T extends BaseCrudScreen> extends State<T> {
       if (!mounted) return;
       setState(() {
         errorMessage = '${l10n.crudLoadDataError}: $e';
+        isLoading = false;
+      });
+    }
+  }
+
+  /// Refresh field_details only (not api_list/api_get_one)
+  Future<void> refreshFieldDetails();
+  
+  /// Refresh both config (field_details) and items data
+  Future<void> refreshAll() async {
+    print('🔄 [REFRESH] refreshAll() method called!');
+    
+    setState(() {
+      isLoading = true;
+      errorMessage = null;
+    });
+
+    try {
+      print('[REFRESH] Reloading field_details only...');
+      
+      // Reload only field_details (not api_list/api_get_one)
+      await refreshFieldDetails();
+      
+      if (!mounted) return;
+      
+      // Reload form fields with new config
+      formFields = getFormFields();
+      mobileFields = getMobileFields();
+      
+      // Reload items data
+      await loadItemsData();
+      
+      print('[REFRESH] Refresh completed successfully');
+    } catch (e) {
+      if (!mounted) return;
+      setState(() {
+        errorMessage = '${l10n.crudInitError}: $e';
         isLoading = false;
       });
     }
@@ -217,107 +263,10 @@ abstract class BaseCrudScreenState<T extends BaseCrudScreen> extends State<T> {
   void showAddEditDialog({Map<String, dynamic>? item}) async {
     final isEditMode = item != null;
 
-    // If editing, reload field_details config first
-    if (isEditMode) {
-      print('[RELOAD] Reloading field_details before editing item...');
+    // No need to reload field_details - already loaded when opening list screen
+    // Use cached field_details from initializeConfig() in initState()
 
-      // Show loading dialog
-      showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (context) => AlertDialog(
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const CircularProgressIndicator(),
-              const SizedBox(height: 16),
-              Text(l10n.crudLoadingConfig),
-            ],
-          ),
-        ),
-      );
-
-      try {
-        // Reload config to get latest field_details
-        final configResult = await initializeConfig();
-
-        // Close loading dialog
-        if (mounted) Navigator.of(context).pop();
-
-        if (!configResult['success']) {
-          if (mounted) {
-            final statusCode = configResult['statusCode'] as int?;
-            final responseBody = configResult['responseBody'] as String?;
-            final isException = configResult['isException'] as bool?;
-
-            if (statusCode != null && statusCode >= 400) {
-              // HTTP error (4xx, 5xx)
-              await ErrorDialogUtils.showHttpErrorDialog(
-                context,
-                statusCode,
-                configResult['message'],
-                technicalDetails: responseBody,
-              );
-            } else if (isException == true) {
-              // Server-side exception (HTTP 200 but exception thrown)
-              final exceptionType = configResult['exceptionType'] ?? 'Unknown';
-              final file = configResult['file'] ?? '';
-              final line = configResult['line'] ?? '';
-              final message = configResult['message'] ?? 'Server error';
-
-              await ErrorDialogUtils.showErrorDialog(
-                context,
-                '${l10n.crudCannotLoadConfig}: $message',
-                customHints: [
-                  '⚠️ Server Exception: $exceptionType',
-                  '📁 File: ${file.split('/').last}:$line',
-                  '🔧 This is a server-side error - contact administrator',
-                  '📞 Show this information to technical support',
-                ],
-              );
-              print('❌ Server Exception: $exceptionType');
-              print('❌ File: $file:$line');
-              print('❌ Response: $responseBody');
-            } else if (responseBody != null) {
-              // Parse error or data format error (HTTP 200 but invalid data)
-              await ErrorDialogUtils.showErrorDialog(
-                context,
-                '${l10n.crudCannotLoadConfig}: ${configResult['message']}',
-                customHints: [
-                  '📋 Check server API response format',
-                  '🔧 Verify get-api-info.php returns correct JSON structure',
-                  '📞 Contact technical support if problem persists',
-                ],
-              );
-              // Also print technical details to console for debugging
-              print('❌ Response body: $responseBody');
-            } else {
-              // Generic error (network, timeout, etc.)
-              await ErrorDialogUtils.showErrorDialog(
-                context,
-                '${l10n.crudCannotLoadConfig}: ${configResult['message']}',
-              );
-            }
-          }
-          return;
-        }
-
-        print('[RELOAD] Field details reloaded successfully');
-      } catch (e) {
-        // Close loading dialog
-        if (mounted) Navigator.of(context).pop();
-
-        if (mounted) {
-          await ErrorDialogUtils.showErrorDialog(
-            context,
-            '${l10n.crudLoadConfigError}: $e',
-          );
-        }
-        return;
-      }
-    }
-
-    // Get form fields after config reload
+    // Get form fields from already loaded config
     final dialogFields = getFormFields(isEditMode: isEditMode);
 
     // If editing, load full item data from API
@@ -434,8 +383,28 @@ abstract class BaseCrudScreenState<T extends BaseCrudScreen> extends State<T> {
           fields: dialogFields,
           onSave: (data) => saveItem(fullItemData?['id'], data),
           onSaved: () async {
-            Navigator.of(context).pop();
+            // Reload data first (most important - must happen before SnackBar!)
             await loadItemsData();
+            
+            // Scroll to top to show the new item (usually added at the beginning)
+            if (mounted && _scrollController.hasClients) {
+              _scrollController.animateTo(
+                0,
+                duration: const Duration(milliseconds: 300),
+                curve: Curves.easeOut,
+              );
+            }
+            
+            // Then try to show success message (non-critical, can fail safely)
+            if (mounted) {
+              try {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text(l10n.crudSaveSuccess)),
+                );
+              } catch (e) {
+                // Ignore SnackBar errors - data already reloaded successfully
+              }
+            }
           },
           shouldShowField: shouldShowField,
         ),
@@ -635,7 +604,7 @@ abstract class BaseCrudScreenState<T extends BaseCrudScreen> extends State<T> {
             ),
             IconButton(
               icon: const Icon(Icons.refresh),
-              onPressed: loadItemsData,
+              onPressed: refreshAll,
             ),
           ],
         ],
@@ -713,8 +682,9 @@ abstract class BaseCrudScreenState<T extends BaseCrudScreen> extends State<T> {
     }
 
     return RefreshIndicator(
-      onRefresh: loadItemsData,
+      onRefresh: refreshAll, // Pull to refresh: reload config and items
       child: ListView.builder(
+        controller: _scrollController, // Add scroll controller
         padding: const EdgeInsets.only(bottom: 150),
         itemCount: items.length,
         itemBuilder: (context, index) {
@@ -1158,10 +1128,18 @@ class _BaseCrudDialogState extends State<BaseCrudDialog> {
 
       final result = await widget.onSave(data);
 
+      if (!mounted) return;
+
       if (result['success']) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(result['message'] ?? l10n.crudSaveSuccess)),
-        );
+        // Close dialog first
+        if (mounted) {
+          Navigator.of(context).pop();
+        }
+        
+        // Wait for dialog close animation to complete
+        await Future.delayed(const Duration(milliseconds: 100));
+        
+        // Trigger refresh in parent screen
         widget.onSaved();
       } else {
         // Show detailed error dialog with HTTP status code if available

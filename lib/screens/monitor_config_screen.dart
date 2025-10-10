@@ -32,6 +32,13 @@ class _MonitorConfigScreenState
   }
 
   @override
+  Future<void> refreshFieldDetails() async {
+    // Reload only field_details (not api_list/api_get_one)
+    print('[REFRESH] Reloading only field_details for Monitor Config...');
+    await MonitorConfigCrudService.reloadFieldDetails();
+  }
+
+  @override
   List<Map<String, dynamic>> getFormFields({bool isEditMode = false}) {
     return MonitorConfigCrudService.getFormFields(isEditMode: isEditMode);
   }

@@ -16,7 +16,7 @@ abstract class BaseCrudService {
     String? errorMessage,
   }) {
     print('📥 $operation response status: ${response.statusCode}');
-    print('📥 $operation response body: ${response.body}');
+    print('📥 $operation response body: ... ');
 
     try {
       final jsonResponse = jsonDecode(response.body);

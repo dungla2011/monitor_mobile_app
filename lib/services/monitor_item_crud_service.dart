@@ -153,16 +153,10 @@ class MonitorItemCrudService extends BaseCrudService {
     return _fieldDetails != null && _apiList != null && _apiGetOne != null;
   }
 
-  // Force reload config from server (always refresh)
+  // Force reload config from server (always refresh all)
   static Future<Map<String, dynamic>> reloadConfig() async {
-    // First time: load everything, subsequent times: only reload field_details
-    if (_apiList == null || _apiGetOne == null) {
-      print('📋 First time loading Monitor Items config...');
-      return await initializeConfig();
-    } else {
-      print('🔄 Reloading Monitor Items field_details only...');
-      return await reloadFieldDetails();
-    }
+    print('[RELOAD] Force reloading Monitor Items config (all APIs)...');
+    return await initializeConfig();
   }
 
   // Reload only field_details from server
