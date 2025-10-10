@@ -16,7 +16,7 @@ class AppConfig {
 
   // App metadata
   static const String appName = 'Ping365';
-  static const String appVersion = '1.0.0';
+  static const String appVersion = '1.6.1';
 
   // API Key
   static const String apiKey = 'glx_mobile';

@@ -4,7 +4,7 @@ import 'package:flutter/foundation.dart';
 /// Utility class for generating User-Agent strings
 class UserAgentUtils {
   static const String _appName = 'MonitorApp glx_mobile';
-  static const String _appVersion = '1.0.0';
+  static const String _appVersion = '1.6.1';
 
   /// Get platform-specific User-Agent string
   static String getUserAgent() {

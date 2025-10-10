@@ -643,7 +643,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get aboutTitle => 'About';
 
   @override
-  String get aboutAppVersion => 'Ping365 v1.0.0';
+  String get aboutAppVersion => 'Ping365 v1.6.1';
 
   @override
   String get aboutCopyright => 'GalaxyCloud © 2025';
@@ -653,7 +653,7 @@ class AppLocalizationsEn extends AppLocalizations {
       'Application for monitoring and managing your services.';
 
   @override
-  String get aboutDeveloper => 'Developed by GalaxyCloud.vn';
+  String get aboutDeveloper => 'Developed by GalaxyCloud';
 
   @override
   String get errorDialogTitle => 'Error';
