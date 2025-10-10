@@ -559,13 +559,8 @@ class ErrorDialogUtils {
       case 400:
         return _HttpErrorInfo(
           title: 'Bad Request',
-          description:
-              'The data sent to server is not in correct format or missing required information.',
-          hints: [
-            'Check all information fields again',
-            'Ensure email, URL, phone number are in correct format',
-            'Do not leave required fields empty',
-          ],
+          description: 'Error API',
+          hints: [],
           icon: Icons.error_outline,
           color: Colors.orange,
         );
@@ -576,8 +571,6 @@ class ErrorDialogUtils {
               'Session has expired or you are not logged in to the system.',
           hints: [
             'Please log in again',
-            'Check network connection',
-            'Contact administrator if problem persists',
           ],
           icon: Icons.lock_outline,
           color: Colors.amber,
@@ -587,10 +580,7 @@ class ErrorDialogUtils {
           title: 'Access Denied',
           description:
               'You do not have permission to perform this operation. Please contact administrator.',
-          hints: [
-            'Contact administrator for permission',
-            'Log in with an account that has appropriate permissions',
-          ],
+          hints: [],
           icon: Icons.block,
           color: Colors.red,
         );
@@ -599,11 +589,7 @@ class ErrorDialogUtils {
           title: 'Not Found',
           description:
               'The requested resource does not exist or has been deleted.',
-          hints: [
-            'Check URL or ID again',
-            'Refresh list and try again',
-            'Data may have been deleted earlier',
-          ],
+          hints: [],
           icon: Icons.search_off,
           color: Colors.grey,
         );
@@ -613,8 +599,6 @@ class ErrorDialogUtils {
           description: 'Request took too long. Please try again.',
           hints: [
             'Check internet connection',
-            'Try again after a few seconds',
-            'Contact support if error repeats',
           ],
           icon: Icons.hourglass_empty,
           color: Colors.orange,
@@ -626,7 +610,6 @@ class ErrorDialogUtils {
               'You have sent too many requests in a short time. Please wait and try again.',
           hints: [
             'Wait a few minutes before trying again',
-            'Avoid sending requests continuously',
           ],
           icon: Icons.speed,
           color: Colors.orange,
@@ -636,11 +619,7 @@ class ErrorDialogUtils {
           title: 'Server Error',
           description:
               'Server encountered an error while processing the request. Please try again later.',
-          hints: [
-            'Wait a few minutes then try again',
-            'Contact technical support if error persists',
-            'Save important data before retrying',
-          ],
+          hints: [],
           icon: Icons.dns_outlined,
           color: Colors.red,
         );
@@ -651,11 +630,7 @@ class ErrorDialogUtils {
           title: 'Service Temporarily Unavailable',
           description:
               'Server is under maintenance or overloaded. Please try again later.',
-          hints: [
-            'Try again after 5-10 minutes',
-            'Check maintenance notifications from administrator',
-            'Contact technical support if urgent',
-          ],
+          hints: [],
           icon: Icons.cloud_off,
           color: Colors.grey,
         );
@@ -665,8 +640,6 @@ class ErrorDialogUtils {
           description:
               'An unexpected error occurred. Please try again or contact support.',
           hints: [
-            'Try again after a few minutes',
-            'Check internet connection',
             'Contact support with error code $statusCode',
           ],
           icon: Icons.help_outline,

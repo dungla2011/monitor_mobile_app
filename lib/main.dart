@@ -136,7 +136,7 @@ class _MyAppState extends State<MyApp> {
     return Consumer<LanguageManager>(
       builder: (context, languageManager, child) {
         return MaterialApp(
-          title: 'Ping365 - Monitor Service',
+          title: 'Ping365 - Your Service',
           theme: ThemeData(
             colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
             useMaterial3: true,
