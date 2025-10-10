@@ -6,7 +6,7 @@ import 'package:monitor_app/main.dart' as app;
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
-  group('Monitor App Integration Tests', () {
+  group('Ping365 Integration Tests', () {
     testWidgets('app should launch and display login screen', (
       WidgetTester tester,
     ) async {

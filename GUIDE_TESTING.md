@@ -1,6 +1,6 @@
-# 🧪 Test Automation Guide - Monitor App
+# 🧪 Test Automation Guide - Ping365
 
-Hướng dẫn chi tiết về test automation và CI/CD cho Monitor App.
+Hướng dẫn chi tiết về test automation và CI/CD cho Ping365.
 
 ## 📋 Tổng quan
 

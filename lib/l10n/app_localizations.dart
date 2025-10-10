@@ -101,7 +101,7 @@ abstract class AppLocalizations {
   /// The title of the application
   ///
   /// In en, this message translates to:
-  /// **'Monitor App'**
+  /// **'Ping365'**
   String get appTitle;
 
   /// No description provided for @appLoading.
@@ -1307,7 +1307,7 @@ abstract class AppLocalizations {
   /// No description provided for @aboutAppVersion.
   ///
   /// In en, this message translates to:
-  /// **'Monitor App v1.0.0'**
+  /// **'Ping365 v1.0.0'**
   String get aboutAppVersion;
 
   /// No description provided for @aboutCopyright.

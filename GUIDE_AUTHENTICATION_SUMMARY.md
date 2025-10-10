@@ -1,4 +1,4 @@
-# Tóm tắt: Tích hợp Authentication cho Monitor App
+# Tóm tắt: Tích hợp Authentication cho Ping365
 
 ## ✅ Đã hoàn thành
 
@@ -144,4 +144,4 @@ flutter run
 
 ---
 
-**Monitor App** giờ đây đã có hệ thống authentication hoàn chỉnh và sẵn sàng cho production! 🎊
+**Ping365** giờ đây đã có hệ thống authentication hoàn chỉnh và sẵn sàng cho production! 🎊

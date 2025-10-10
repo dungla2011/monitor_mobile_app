@@ -33,7 +33,7 @@ class MyWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final localizations = AppLocalizations.of(context);
     
-    return Text(localizations.appTitle); // "Monitor App"
+    return Text(localizations.appTitle); // "Ping365"
   }
 }
 ```
@@ -44,7 +44,7 @@ class MyWidget extends StatelessWidget {
 final l10n = AppLocalizations.of(context);
 
 // App general
-l10n.appTitle        // "Monitor App"
+l10n.appTitle        // "Ping365"
 l10n.loading         // "Đang tải..." / "Loading..."
 l10n.save           // "Lưu" / "Save"
 l10n.cancel         // "Hủy" / "Cancel"

@@ -20,7 +20,7 @@ $deviceToken = 'cc15S_s4T2SDIX5eRjZMg1:APA91bF7drTZouofeRzA-aFXIKEmJlLrtbU5VnwQh
 // Ví dụ token: 'fA1B2c3D4e5F6g7H8i9J0k1L2m3N4o5P6q7R8s9T0u1V2w3X4y5Z6a7B8c9D0e1F2'
 
 // 2. Cấu hình nội dung thông báo
-$title = 'Cảnh báo từ Monitor App';
+$title = 'Cảnh báo từ Ping365';
 $body = 'Hệ thống phát hiện bất thường tại thiết bị ABC123';
 
 // 3. Dữ liệu tùy chỉnh (sẽ được gửi đến app)

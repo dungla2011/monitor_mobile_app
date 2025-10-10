@@ -74,7 +74,7 @@ l10n.messagesDeleteConfirm('Monitor Item')
 
 ### ✅ **Metadata & Documentation**
 ```dart
-"appTitle": "Monitor App",
+"appTitle": "Ping365",
 "@appTitle": {
   "description": "The title of the application"
 }

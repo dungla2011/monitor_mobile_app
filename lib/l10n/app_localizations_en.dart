@@ -9,7 +9,7 @@ class AppLocalizationsEn extends AppLocalizations {
   AppLocalizationsEn([String locale = 'en']) : super(locale);
 
   @override
-  String get appTitle => 'Monitor App';
+  String get appTitle => 'Ping365';
 
   @override
   String get appLoading => 'Loading...';
@@ -643,7 +643,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get aboutTitle => 'About';
 
   @override
-  String get aboutAppVersion => 'Monitor App v1.0.0';
+  String get aboutAppVersion => 'Ping365 v1.0.0';
 
   @override
   String get aboutCopyright => 'GalaxyCloud © 2025';

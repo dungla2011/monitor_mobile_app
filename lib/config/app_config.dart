@@ -15,7 +15,7 @@ class AppConfig {
   static const String commonToolUrl = '$toolUrl/common';
 
   // App metadata
-  static const String appName = 'Monitor App';
+  static const String appName = 'Ping365';
   static const String appVersion = '1.0.0';
 
   // API Key

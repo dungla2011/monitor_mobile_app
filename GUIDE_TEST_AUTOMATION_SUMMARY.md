@@ -2,7 +2,7 @@
 
 ## ✅ Hoàn thành thành công!
 
-Hệ thống test automation đã được thiết lập hoàn chỉnh cho **Monitor App** với đầy đủ các components cần thiết cho CI/CD.
+Hệ thống test automation đã được thiết lập hoàn chỉnh cho **Ping365** với đầy đủ các components cần thiết cho CI/CD.
 
 ---
 

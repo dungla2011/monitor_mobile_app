@@ -1,7 +1,7 @@
-# Hướng dẫn cài đặt Authentication cho Monitor App
+# Hướng dẫn cài đặt Authentication cho Ping365
 
 ## Tổng quan
-Ứng dụng Monitor App đã được tích hợp với hệ thống authentication hoàn chỉnh bao gồm:
+Ứng dụng Ping365 đã được tích hợp với hệ thống authentication hoàn chỉnh bao gồm:
 - Đăng nhập bằng Email & Password
 - Đăng ký tài khoản mới
 - Đăng nhập bằng Google

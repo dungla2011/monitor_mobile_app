@@ -642,7 +642,7 @@ class AppLocalizationsVi extends AppLocalizations {
   String get aboutTitle => 'Giới thiệu';
 
   @override
-  String get aboutAppVersion => 'Monitor App v1.0.0';
+  String get aboutAppVersion => 'Ping365 v1.0.0';
 
   @override
   String get aboutCopyright => 'GalaxyCloud © 2025';

@@ -26,7 +26,7 @@ D6:09:D9:82:D4:3C:CF:05:1E:F4:EA:72:CF:7B:A0:AE:29:AD:69:B2
 3. Click **"+ CREATE CREDENTIALS"** → **"OAuth client ID"**
 4. Chọn **Application type**: `Android`
 5. Điền thông tin:
-   - **Name**: `Monitor App (Android)`
+   - **Name**: `Ping365 (Android)`
    - **Package name**: `com.example.monitor_app`
    - **SHA-1 certificate fingerprint**: 
      ```

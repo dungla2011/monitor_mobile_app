@@ -243,4 +243,4 @@ print('✅ Config loaded. Fields: ${_formFields.length}');
 ✅ **Error handling & validation**
 ✅ **Build thành công**
 
-**Monitor App đã sẵn sàng để sử dụng với đầy đủ tính năng CRUD!** 🚀
+**Ping365 đã sẵn sàng để sử dụng với đầy đủ tính năng CRUD!** 🚀
