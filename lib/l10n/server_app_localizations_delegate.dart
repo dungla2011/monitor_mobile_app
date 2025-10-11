@@ -64,6 +64,62 @@ class ServerAppLocalizations extends AppLocalizations {
   String httpErrorDefaultHint3(Object code) =>
       _builtIn.httpErrorDefaultHint3(code);
 
+  // Override new registration getters to check server translations first
+  @override
+  String get authRegisterNewAccount {
+    final serverValue = _serverTranslations['authRegisterNewAccount'];
+    if (serverValue != null) {
+      print('🔵 Using server translation for: authRegisterNewAccount');
+      return serverValue;
+    }
+    print('📦 Using built-in ARB for: authRegisterNewAccount = ${_builtIn.authRegisterNewAccount}');
+    return _builtIn.authRegisterNewAccount;
+  }
+
+  @override
+  String get authRegisterDescription {
+    final serverValue = _serverTranslations['authRegisterDescription'];
+    if (serverValue != null) {
+      print('🔵 Using server translation for: authRegisterDescription');
+      return serverValue;
+    }
+    print('📦 Using built-in ARB for: authRegisterDescription = ${_builtIn.authRegisterDescription}');
+    return _builtIn.authRegisterDescription;
+  }
+
+  @override
+  String get authOpenRegistrationPage {
+    final serverValue = _serverTranslations['authOpenRegistrationPage'];
+    if (serverValue != null) {
+      print('🔵 Using server translation for: authOpenRegistrationPage');
+      return serverValue;
+    }
+    print('📦 Using built-in ARB for: authOpenRegistrationPage = ${_builtIn.authOpenRegistrationPage}');
+    return _builtIn.authOpenRegistrationPage;
+  }
+
+  @override
+  String get authAfterRegistration {
+    final serverValue = _serverTranslations['authAfterRegistration'];
+    if (serverValue != null) {
+      print('🔵 Using server translation for: authAfterRegistration');
+      return serverValue;
+    }
+    print('📦 Using built-in ARB for: authAfterRegistration = ${_builtIn.authAfterRegistration}');
+    return _builtIn.authAfterRegistration;
+  }
+
+  @override
+  String get authCouldNotOpenRegistration {
+    final serverValue = _serverTranslations['authCouldNotOpenRegistration'];
+    if (serverValue != null) {
+      print('🔵 Using server translation for: authCouldNotOpenRegistration');
+      return serverValue;
+    }
+    print('📦 Using built-in ARB for: authCouldNotOpenRegistration = ${_builtIn.authCouldNotOpenRegistration}');
+    return _builtIn.authCouldNotOpenRegistration;
+  }
+
   /// Intercept all property access and check server translations first
   @override
   dynamic noSuchMethod(Invocation invocation) {

@@ -59,6 +59,9 @@ dependencies:
   
   # Audio player for notification sounds
   audioplayers: ^6.1.0
+  
+  # URL launcher for opening external links
+  url_launcher: ^6.3.1
 
 dev_dependencies:
   flutter_test:

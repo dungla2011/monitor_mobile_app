@@ -172,6 +172,23 @@ class AppLocalizationsVi extends AppLocalizations {
   String get authLogoutError => 'Lỗi đăng xuất';
 
   @override
+  String get authRegisterNewAccount => 'Đăng Ký Tài Khoản Mới';
+
+  @override
+  String get authRegisterDescription =>
+      'Nhấn nút bên dưới để mở trang đăng ký trên trình duyệt';
+
+  @override
+  String get authOpenRegistrationPage => 'Mở Trang Đăng Ký';
+
+  @override
+  String get authAfterRegistration =>
+      'Sau khi đăng ký, quay lại đây để đăng nhập';
+
+  @override
+  String get authCouldNotOpenRegistration => 'Không thể mở trang đăng ký';
+
+  @override
   String get monitorItems => 'Monitor Items';
 
   @override

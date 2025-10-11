@@ -74,6 +74,11 @@
   "authLogoutConfirm": "Are you sure you want to logout?",
   "authLoggingOut": "Logging out...",
   "authLogoutError": "Logout error",
+  "authRegisterNewAccount": "Register New Account",
+  "authRegisterDescription": "Click the button below to open the registration page in your browser",
+  "authOpenRegistrationPage": "Open Registration Page",
+  "authAfterRegistration": "After registration, return here to login",
+  "authCouldNotOpenRegistration": "Could not open registration page",
   
   "monitorItems": "Monitor Items",
   "monitorConfigs": "Monitor Alerts",

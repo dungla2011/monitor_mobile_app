@@ -56,6 +56,11 @@
   "authLogoutConfirm": "Bạn có chắc chắn muốn đăng xuất?",
   "authLoggingOut": "Đang đăng xuất...",
   "authLogoutError": "Lỗi đăng xuất",
+  "authRegisterNewAccount": "Đăng Ký Tài Khoản Mới",
+  "authRegisterDescription": "Nhấn nút bên dưới để mở trang đăng ký trên trình duyệt",
+  "authOpenRegistrationPage": "Mở Trang Đăng Ký",
+  "authAfterRegistration": "Sau khi đăng ký, quay lại đây để đăng nhập",
+  "authCouldNotOpenRegistration": "Không thể mở trang đăng ký",
   
   "monitorItems": "Monitor Items",
   "monitorConfigs": "Monitor Cảnh báo",

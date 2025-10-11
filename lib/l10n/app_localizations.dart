@@ -416,6 +416,36 @@ abstract class AppLocalizations {
   /// **'Logout error'**
   String get authLogoutError;
 
+  /// No description provided for @authRegisterNewAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Register New Account'**
+  String get authRegisterNewAccount;
+
+  /// No description provided for @authRegisterDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Click the button below to open the registration page in your browser'**
+  String get authRegisterDescription;
+
+  /// No description provided for @authOpenRegistrationPage.
+  ///
+  /// In en, this message translates to:
+  /// **'Open Registration Page'**
+  String get authOpenRegistrationPage;
+
+  /// No description provided for @authAfterRegistration.
+  ///
+  /// In en, this message translates to:
+  /// **'After registration, return here to login'**
+  String get authAfterRegistration;
+
+  /// No description provided for @authCouldNotOpenRegistration.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not open registration page'**
+  String get authCouldNotOpenRegistration;
+
   /// No description provided for @monitorItems.
   ///
   /// In en, this message translates to:

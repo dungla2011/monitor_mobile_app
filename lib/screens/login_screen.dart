@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:country_flags/country_flags.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../services/web_auth_service.dart';
 import '../services/google_auth_service.dart';
 import '../services/dynamic_localization_service.dart';
 import '../l10n/app_localizations.dart';
+import '../l10n/dynamic_app_localizations.dart';
 import '../utils/language_manager.dart';
 import '../utils/error_dialog_utils.dart';
+import '../config/app_config.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -18,7 +21,6 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen>
     with TickerProviderStateMixin {
   final _loginFormKey = GlobalKey<FormState>();
-  final _registerFormKey = GlobalKey<FormState>();
   final _usernameController = TextEditingController();
   final _emailController = TextEditingController(); // Cho đăng ký
   final _passwordController = TextEditingController();
@@ -118,37 +120,6 @@ class _LoginScreenState extends State<LoginScreen>
           context,
           'Lỗi kết nối: $e',
         );
-      }
-    } finally {
-      if (mounted) {
-        setState(() => _isLoading = false);
-      }
-    }
-  }
-
-  Future<void> _signUpWithUsername() async {
-    if (!_registerFormKey.currentState!.validate()) return;
-
-    setState(() => _isLoading = true);
-
-    try {
-      final result = await WebAuthService.registerWithUsernameAndPassword(
-        username: _usernameController.text.trim(),
-        password: _passwordController.text,
-        email: _emailController.text.trim(),
-        displayName: _nameController.text.trim(),
-      );
-
-      if (mounted) {
-        if (result['success'] == true) {
-          Navigator.of(context).pushReplacementNamed('/home');
-        } else {
-          _showErrorDialog(result['message'] ?? 'Đăng ký không thành công');
-        }
-      }
-    } catch (e) {
-      if (mounted) {
-        _showErrorDialog('Lỗi kết nối: $e');
       }
     } finally {
       if (mounted) {
@@ -596,145 +567,107 @@ class _LoginScreenState extends State<LoginScreen>
 
   Widget _buildRegisterForm() {
     final localizations = AppLocalizations.of(context)!;
-
-    return Form(
-      key: _registerFormKey,
+    
+    // Show button to open registration page in browser
+    return Center(
       child: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(24.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            // Name field
-            TextFormField(
-              controller: _nameController,
-              decoration: InputDecoration(
-                labelText: localizations.authFullName,
-                prefixIcon: const Icon(Icons.person),
-                border: const OutlineInputBorder(),
-                contentPadding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 12,
-                ),
-              ),
-              validator: (value) {
-                if (value == null || value.trim().isEmpty) {
-                  return localizations.authPleaseEnterFullName;
-                }
-                return null;
-              },
-            ),
-            const SizedBox(height: 16),
-
-            // Username field - Sử dụng controller riêng để không bị mất khi chuyển tab
-            TextFormField(
-              controller: _usernameController,
-              decoration: InputDecoration(
-                labelText: localizations.authUsername,
-                prefixIcon: const Icon(Icons.person),
-                border: const OutlineInputBorder(),
-                contentPadding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 12,
-                ),
-              ),
-              validator: (value) {
-                if (value == null || value.trim().isEmpty) {
-                  return localizations.authPleaseEnterUsername;
-                }
-                if (value.trim().length < 3) {
-                  return 'Username phải có ít nhất 3 ký tự';
-                }
-                return null;
-              },
-            ),
-            const SizedBox(height: 16),
-
-            // Email field (optional cho đăng ký)
-            TextFormField(
-              controller: _emailController,
-              keyboardType: TextInputType.emailAddress,
-              decoration: const InputDecoration(
-                labelText: 'Email',
-                prefixIcon: Icon(Icons.email),
-                border: OutlineInputBorder(),
-                contentPadding: EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 12,
-                ),
-              ),
-              validator: (value) {
-                // Email là optional cho đăng ký
-                if (value != null && value.trim().isNotEmpty) {
-                  if (!RegExp(
-                    r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
-                  ).hasMatch(value)) {
-                    return 'Email không hợp lệ';
-                  }
-                }
-                return null;
-              },
-            ),
-            const SizedBox(height: 16),
-
-            // Password field
-            TextFormField(
-              controller: _passwordController,
-              obscureText: _obscurePassword,
-              decoration: InputDecoration(
-                labelText: localizations.authPassword,
-                prefixIcon: const Icon(Icons.lock),
-                suffixIcon: IconButton(
-                  icon: Icon(
-                    _obscurePassword ? Icons.visibility : Icons.visibility_off,
-                  ),
-                  onPressed: () {
-                    setState(() {
-                      _obscurePassword = !_obscurePassword;
-                    });
-                  },
-                ),
-                border: const OutlineInputBorder(),
-                contentPadding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 12,
-                ),
-              ),
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return localizations.authPleaseEnterPassword;
-                }
-                if (value.length < 6) {
-                  return 'Mật khẩu phải có ít nhất 6 ký tự';
-                }
-                return null;
-              },
+            Icon(
+              Icons.app_registration,
+              size: 80,
+              color: Theme.of(context).primaryColor,
             ),
             const SizedBox(height: 24),
-
-            // Register button
+            Text(
+              localizations.authRegisterNewAccount,
+              style: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 16),
+            Text(
+              localizations.authRegisterDescription,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 16,
+                color: Colors.grey.shade600,
+              ),
+            ),
+            const SizedBox(height: 32),
             SizedBox(
               width: double.infinity,
-              height: 48,
-              child: ElevatedButton(
-                onPressed: _isLoading ? null : _signUpWithUsername,
+              height: 56,
+              child: ElevatedButton.icon(
+                onPressed: () async {
+                  final registerUrl = Uri.parse('${AppConfig.apiBaseUrl}/register');
+                  
+                  try {
+                    // Try to launch the URL
+                    if (await canLaunchUrl(registerUrl)) {
+                      await launchUrl(
+                        registerUrl,
+                        mode: LaunchMode.externalApplication, // Always open in external browser
+                      );
+                      
+                      // Show success message
+                      if (mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text('Opening registration page...'),
+                            backgroundColor: Colors.blue,
+                            duration: Duration(seconds: 2),
+                          ),
+                        );
+                      }
+                    } else {
+                      // If can't launch, show error
+                      if (mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(localizations.authCouldNotOpenRegistration),
+                            backgroundColor: Colors.red,
+                          ),
+                        );
+                      }
+                    }
+                  } catch (e) {
+                    // Handle error
+                    if (mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text('${localizations.appError}: $e'),
+                          backgroundColor: Colors.red,
+                        ),
+                      );
+                    }
+                  }
+                },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.green,
+                  backgroundColor: Theme.of(context).primaryColor,
                   foregroundColor: Colors.white,
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
+                    borderRadius: BorderRadius.circular(12),
                   ),
+                  elevation: 2,
                 ),
-                child: _isLoading
-                    ? const SizedBox(
-                        width: 20,
-                        height: 20,
-                        child: CircularProgressIndicator(
-                          color: Colors.white,
-                          strokeWidth: 2,
-                        ),
-                      )
-                    : Text(localizations.authRegister,
-                        style: const TextStyle(fontSize: 16)),
+                icon: Icon(Icons.open_in_browser, size: 24),
+                label: Text(
+                  localizations.authOpenRegistrationPage,
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+                ),
+              ),
+            ),
+            const SizedBox(height: 16),
+            Text(
+              localizations.authAfterRegistration,
+              style: TextStyle(
+                fontSize: 14,
+                color: Colors.grey.shade500,
+                fontStyle: FontStyle.italic,
               ),
             ),
           ],

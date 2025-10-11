@@ -172,6 +172,23 @@ class AppLocalizationsEn extends AppLocalizations {
   String get authLogoutError => 'Logout error';
 
   @override
+  String get authRegisterNewAccount => 'Register New Account';
+
+  @override
+  String get authRegisterDescription =>
+      'Click the button below to open the registration page in your browser';
+
+  @override
+  String get authOpenRegistrationPage => 'Open Registration Page';
+
+  @override
+  String get authAfterRegistration =>
+      'After registration, return here to login';
+
+  @override
+  String get authCouldNotOpenRegistration => 'Could not open registration page';
+
+  @override
   String get monitorItems => 'Monitor Items';
 
   @override
