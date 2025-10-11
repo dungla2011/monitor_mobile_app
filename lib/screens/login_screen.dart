@@ -33,6 +33,7 @@ class _LoginScreenState extends State<LoginScreen>
 
   // Language selection
   List<LanguageInfo> _availableLanguages = [];
+  bool _isLoadingLanguages = false; // Flag to prevent multiple calls
 
   @override
   void initState() {
@@ -52,6 +53,13 @@ class _LoginScreenState extends State<LoginScreen>
   }
 
   Future<void> _loadAvailableLanguages() async {
+    // Prevent multiple simultaneous calls
+    if (_isLoadingLanguages) {
+      print('⏭️ Already loading languages, skipping...');
+      return;
+    }
+
+    _isLoadingLanguages = true;
     try {
       final languages =
           await DynamicLocalizationService.getAvailableLanguages();
@@ -73,6 +81,8 @@ class _LoginScreenState extends State<LoginScreen>
           ];
         });
       }
+    } finally {
+      _isLoadingLanguages = false;
     }
   }
 
@@ -567,7 +577,7 @@ class _LoginScreenState extends State<LoginScreen>
 
   Widget _buildRegisterForm() {
     final localizations = AppLocalizations.of(context)!;
-    
+
     // Show button to open registration page in browser
     return Center(
       child: Padding(
@@ -603,16 +613,18 @@ class _LoginScreenState extends State<LoginScreen>
               height: 56,
               child: ElevatedButton.icon(
                 onPressed: () async {
-                  final registerUrl = Uri.parse('${AppConfig.apiBaseUrl}/register');
-                  
+                  final registerUrl =
+                      Uri.parse('${AppConfig.apiBaseUrl}/register');
+
                   try {
                     // Try to launch the URL
                     if (await canLaunchUrl(registerUrl)) {
                       await launchUrl(
                         registerUrl,
-                        mode: LaunchMode.externalApplication, // Always open in external browser
+                        mode: LaunchMode
+                            .externalApplication, // Always open in external browser
                       );
-                      
+
                       // Show success message
                       if (mounted) {
                         ScaffoldMessenger.of(context).showSnackBar(
@@ -628,7 +640,8 @@ class _LoginScreenState extends State<LoginScreen>
                       if (mounted) {
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
-                            content: Text(localizations.authCouldNotOpenRegistration),
+                            content: Text(
+                                localizations.authCouldNotOpenRegistration),
                             backgroundColor: Colors.red,
                           ),
                         );

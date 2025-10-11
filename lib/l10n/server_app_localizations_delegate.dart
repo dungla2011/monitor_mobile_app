@@ -72,7 +72,8 @@ class ServerAppLocalizations extends AppLocalizations {
       print('🔵 Using server translation for: authRegisterNewAccount');
       return serverValue;
     }
-    print('📦 Using built-in ARB for: authRegisterNewAccount = ${_builtIn.authRegisterNewAccount}');
+    print(
+        '📦 Using built-in ARB for: authRegisterNewAccount = ${_builtIn.authRegisterNewAccount}');
     return _builtIn.authRegisterNewAccount;
   }
 
@@ -83,7 +84,8 @@ class ServerAppLocalizations extends AppLocalizations {
       print('🔵 Using server translation for: authRegisterDescription');
       return serverValue;
     }
-    print('📦 Using built-in ARB for: authRegisterDescription = ${_builtIn.authRegisterDescription}');
+    print(
+        '📦 Using built-in ARB for: authRegisterDescription = ${_builtIn.authRegisterDescription}');
     return _builtIn.authRegisterDescription;
   }
 
@@ -94,7 +96,8 @@ class ServerAppLocalizations extends AppLocalizations {
       print('🔵 Using server translation for: authOpenRegistrationPage');
       return serverValue;
     }
-    print('📦 Using built-in ARB for: authOpenRegistrationPage = ${_builtIn.authOpenRegistrationPage}');
+    print(
+        '📦 Using built-in ARB for: authOpenRegistrationPage = ${_builtIn.authOpenRegistrationPage}');
     return _builtIn.authOpenRegistrationPage;
   }
 
@@ -105,7 +108,8 @@ class ServerAppLocalizations extends AppLocalizations {
       print('🔵 Using server translation for: authAfterRegistration');
       return serverValue;
     }
-    print('📦 Using built-in ARB for: authAfterRegistration = ${_builtIn.authAfterRegistration}');
+    print(
+        '📦 Using built-in ARB for: authAfterRegistration = ${_builtIn.authAfterRegistration}');
     return _builtIn.authAfterRegistration;
   }
 
@@ -116,7 +120,8 @@ class ServerAppLocalizations extends AppLocalizations {
       print('🔵 Using server translation for: authCouldNotOpenRegistration');
       return serverValue;
     }
-    print('📦 Using built-in ARB for: authCouldNotOpenRegistration = ${_builtIn.authCouldNotOpenRegistration}');
+    print(
+        '📦 Using built-in ARB for: authCouldNotOpenRegistration = ${_builtIn.authCouldNotOpenRegistration}');
     return _builtIn.authCouldNotOpenRegistration;
   }
 

@@ -58,6 +58,15 @@ class DynamicLocalizationService {
   static const int _cacheDurationHours =
       1; // Changed from 24 to 1 hour for easier testing
 
+  // In-memory cache for available languages
+  static List<LanguageInfo>? _cachedAvailableLanguages;
+  static DateTime? _cachedAvailableLanguagesTime;
+  static const int _memoryCacheDurationMinutes =
+      5; // Cache in memory for 5 minutes
+
+  // Prevent multiple simultaneous API calls
+  static Future<List<LanguageInfo>>? _ongoingAvailableLanguagesRequest;
+
   /// Get authentication headers
   static Future<Map<String, String>> _getHeaders() async {
     final prefs = await SharedPreferences.getInstance();
@@ -95,6 +104,37 @@ class DynamicLocalizationService {
 
   /// Get list of available languages from server
   static Future<List<LanguageInfo>> getAvailableLanguages() async {
+    // Check in-memory cache first
+    if (_cachedAvailableLanguages != null &&
+        _cachedAvailableLanguagesTime != null) {
+      final age = DateTime.now().difference(_cachedAvailableLanguagesTime!);
+      if (age.inMinutes < _memoryCacheDurationMinutes) {
+        print(
+            '✅ Using cached available languages (${_cachedAvailableLanguages!.length} languages, ${age.inSeconds}s old)');
+        return _cachedAvailableLanguages!;
+      }
+    }
+
+    // If there's already an ongoing request, wait for it instead of making a new one
+    if (_ongoingAvailableLanguagesRequest != null) {
+      print('⏳ Waiting for ongoing available languages request...');
+      return await _ongoingAvailableLanguagesRequest!;
+    }
+
+    // Start new request and store the future
+    _ongoingAvailableLanguagesRequest = _fetchAvailableLanguagesFromServer();
+
+    try {
+      final result = await _ongoingAvailableLanguagesRequest!;
+      return result;
+    } finally {
+      // Clear the ongoing request
+      _ongoingAvailableLanguagesRequest = null;
+    }
+  }
+
+  /// Internal method to fetch from server
+  static Future<List<LanguageInfo>> _fetchAvailableLanguagesFromServer() async {
     try {
       print('🌍 Fetching available languages from server...');
 
@@ -114,10 +154,14 @@ class DynamicLocalizationService {
               .where((lang) => lang.isActive)
               .toList();
 
-          // Cache available languages
+          // Cache in memory
+          _cachedAvailableLanguages = languages;
+          _cachedAvailableLanguagesTime = DateTime.now();
+
+          // Cache to disk
           await _cacheAvailableLanguages(languages);
 
-          print('✅ Found ${languages.length} active languages');
+          print('✅ Loaded ${languages.length} active languages from server');
           return languages;
         }
       }
@@ -127,7 +171,7 @@ class DynamicLocalizationService {
       print('❌ Error fetching languages: $e');
     }
 
-    // Fallback to cached or default
+    // Fallback to disk cache or default
     return await _getCachedAvailableLanguages();
   }
 
