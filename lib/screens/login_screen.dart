@@ -197,7 +197,7 @@ class _LoginScreenState extends State<LoginScreen>
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Lỗi'),
+        title: const Text('Error'),
         content: Text(message),
         actions: [
           TextButton(
