@@ -6,6 +6,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import '../utils/user_agent_utils.dart';
 import 'google_auth_service.dart';
 import 'firebase_messaging_service.dart';
+import 'affiliate_service.dart';
 import '../config/app_config.dart';
 
 class WebAuthService {
@@ -345,16 +346,35 @@ class WebAuthService {
       headers['Authorization'] = 'Bearer $_bearerToken';
     }
 
+    // Tạo cookie string để gộp tất cả cookies
+    List<String> cookies = [];
+    
     // Thêm Firebase FCM token vào cookie
     if (!kIsWeb) {
       try {
         final fcmToken = await FirebaseMessagingService.getToken();
         if (fcmToken != null && fcmToken.isNotEmpty) {
-          headers['Cookie'] = 'firebase_token_cookie=$fcmToken';
+          cookies.add('firebase_token_cookie=$fcmToken');
         }
       } catch (e) {
         print('⚠️ Cannot get FCM token: $e');
       }
+    }
+    
+    // Thêm Affiliate code vào cookie
+    try {
+      final affiliateCookie = await AffiliateService.getAffiliateCookie();
+      if (affiliateCookie != null && affiliateCookie.isNotEmpty) {
+        cookies.add(affiliateCookie);
+      }
+    } catch (e) {
+      print('⚠️ Cannot get affiliate cookie: $e');
+    }
+    
+    // Gộp tất cả cookies vào header
+    if (cookies.isNotEmpty) {
+      headers['Cookie'] = cookies.join('; ');
+      print('🍪 Cookies: ${headers['Cookie']}');
     }
 
     return headers;

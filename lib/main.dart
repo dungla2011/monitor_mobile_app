@@ -13,6 +13,7 @@ import 'package:country_flags/country_flags.dart';
 import 'firebase_options.dart';
 import 'services/firebase_messaging_service.dart';
 import 'services/web_auth_service.dart';
+import 'services/affiliate_service.dart';
 import 'utils/language_manager.dart';
 import 'widgets/web_auth_wrapper.dart';
 import 'screens/profile_screen.dart';
@@ -22,6 +23,9 @@ import 'screens/settings_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Khởi tạo Affiliate Service
+  await AffiliateService.initialize();
 
   // Tạm thời disable Firebase trên web để test Monitor CRUD
   if (!kIsWeb) {
