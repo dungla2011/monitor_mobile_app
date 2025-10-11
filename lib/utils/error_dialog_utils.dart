@@ -348,42 +348,45 @@ class ErrorDialogUtils {
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
               children: [
-                // Error description
-                Container(
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: errorInfo.color.shade50,
-                    borderRadius: BorderRadius.circular(8),
-                    border: Border.all(
-                      color: errorInfo.color.shade200,
-                      width: 1,
-                    ),
-                  ),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Icon(
-                        Icons.info_outline,
-                        size: 20,
-                        color: errorInfo.color.shade700,
+                // Error description - Only show if not empty
+                if (errorInfo.description.isNotEmpty)
+                  Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: errorInfo.color.shade50,
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(
+                        color: errorInfo.color.shade200,
+                        width: 1,
                       ),
-                      const SizedBox(width: 8),
-                      Expanded(
-                        child: Text(
-                          errorInfo.description,
-                          style: const TextStyle(
-                            fontSize: 14,
-                            height: 1.4,
+                    ),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Icon(
+                          Icons.info_outline,
+                          size: 20,
+                          color: errorInfo.color.shade700,
+                        ),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Text(
+                            errorInfo.description,
+                            style: const TextStyle(
+                              fontSize: 10,
+                              height: 1.0,
+                            ),
                           ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
 
                 // Custom error message if provided
                 if (errorMessage != null && errorMessage.isNotEmpty) ...[
-                  const SizedBox(height: 12),
+                  // Add spacing only if description was shown
+                  if (errorInfo.description.isNotEmpty)
+                    const SizedBox(height: 12),
                   Container(
                     padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
@@ -615,7 +618,7 @@ class ErrorDialogUtils {
       case 400:
         return _HttpErrorInfo(
           title: 'Bad Request',
-          description: 'Error API',
+          description: '',
           hints: [],
           icon: Icons.error_outline,
           color: Colors.orange,
@@ -674,7 +677,7 @@ class ErrorDialogUtils {
         return _HttpErrorInfo(
           title: 'Server Error',
           description:
-              'Server encountered an error while processing the request. Please try again later.',
+              '',
           hints: [],
           icon: Icons.dns_outlined,
           color: Colors.red,
