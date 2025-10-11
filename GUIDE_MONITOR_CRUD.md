@@ -11,9 +11,9 @@ Tự động fetch cấu hình từ API khi khởi động:
 
 ```dart
 // URLs được fetch tự động:
-https://mon.lad.vn/tool/common/get-api-info.php?table=monitor_items&field_details=1
-https://mon.lad.vn/tool/common/get-api-info.php?table=monitor_items&api_list=1  
-https://mon.lad.vn/tool/common/get-api-info.php?table=monitor_items&api_get_one=1
+https://ping365.io/tool/common/get-api-info.php?table=monitor_items&field_details=1
+https://ping365.io/tool/common/get-api-info.php?table=monitor_items&api_list=1  
+https://ping365.io/tool/common/get-api-info.php?table=monitor_items&api_get_one=1
 ```
 
 ### ✅ **Full CRUD Operations**

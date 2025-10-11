@@ -88,29 +88,31 @@ class WebAuthService {
         } else {
           // API returned code != 1 (business logic error)
           // Extract message from payload or message field
-          String errorMsg = jsonResponse['message'] ?? 
-                           jsonResponse['payload'] ?? 
-                           'Login failed';
-          
+          String errorMsg = jsonResponse['message'] ??
+              jsonResponse['payload'] ??
+              'Login failed';
+
           return {
             'success': false,
             'message': errorMsg,
             'code': jsonResponse['code'],
-            'isApiError': true, // Flag to indicate this is API business logic error
+            'isApiError':
+                true, // Flag to indicate this is API business logic error
           };
         }
       } else {
         // HTTP error (4xx, 5xx) - try to parse JSON response
-        String errorMessage = 'Server connection error (${response.statusCode})';
+        String errorMessage =
+            'Server connection error (${response.statusCode})';
         Map<String, dynamic>? jsonResponse;
-        
+
         try {
           jsonResponse = jsonDecode(response.body);
           // Extract message from JSON if available
           if (jsonResponse != null) {
-            errorMessage = jsonResponse['message'] ?? 
-                          jsonResponse['payload'] ?? 
-                          errorMessage;
+            errorMessage = jsonResponse['message'] ??
+                jsonResponse['payload'] ??
+                errorMessage;
           }
         } catch (e) {
           // Not JSON, use response body as is
@@ -118,7 +120,7 @@ class WebAuthService {
             errorMessage = response.body;
           }
         }
-        
+
         return {
           'success': false,
           'message': errorMessage,

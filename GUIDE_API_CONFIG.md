@@ -11,7 +11,7 @@ class AppConfig {
   // Base API URL - Thay đổi giá trị này để trỏ sang server khác
   static const String apiBaseUrl = String.fromEnvironment(
     'API_BASE_URL',
-    defaultValue: 'https://mon.lad.vn',
+    defaultValue: 'https://ping365.io',
   );
 
   // Các endpoint được tạo tự động từ baseUrl

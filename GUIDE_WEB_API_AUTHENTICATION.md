@@ -24,7 +24,7 @@
 
 #### ✅ API Endpoints:
 ```dart
-static const String _baseUrl = 'https://mon.lad.vn/';
+static const String _baseUrl = 'https://ping365.io/';
 static const String _loginEndpoint = '$_baseUrl/api/login-api';
 ```
 
@@ -35,7 +35,7 @@ static const String _loginEndpoint = '$_baseUrl/api/login-api';
 
 #### ✅ Login Process:
 ```dart
-// POST https://mon.lad.vn/api/login-api
+// POST https://ping365.io/api/login-api
 {
   "username": "your_username",
   "password": "your_password"
@@ -99,7 +99,7 @@ final result = await ApiService.createPost(
 // Generic API call
 final result = await ApiService.callApi(
   method: 'GET',
-  endpoint: 'https://mon.lad.vn/api/my-endpoint',
+  endpoint: 'https://ping365.io/api/my-endpoint',
   body: {'key': 'value'},
 );
 ```
@@ -163,7 +163,7 @@ final response = await WebAuthService.authenticatedGet('https://api.example.com/
 // Option 2: Sử dụng ApiService
 final result = await ApiService.callApi(
   method: 'POST',
-  endpoint: 'https://mon.lad.vn/api/create-something',
+  endpoint: 'https://ping365.io/api/create-something',
   body: {'name': 'Test'},
 );
 
@@ -229,11 +229,11 @@ static const String _baseUrl = 'https://your-domain.com/';
 ### Environment-specific URLs:
 ```dart
 class ApiConfig {
-  static const String baseUrl = 'https://mon.lad.vn/';
+  static const String baseUrl = 'https://ping365.io/';
   static const String loginEndpoint = '${baseUrl}api/login-api';
   
   // Dev/Staging URLs
-  static const String devBaseUrl = 'https://dev.mon.lad.vn/';
+  static const String devBaseUrl = 'https://dev.ping365.io/';
 }
 ```
 

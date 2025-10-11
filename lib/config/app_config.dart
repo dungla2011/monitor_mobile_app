@@ -1,9 +1,15 @@
 /// App configuration - Centralized config for API URLs and app settings
 class AppConfig {
-  // Base API URL - Change this to point to different environments
+  // Base domain - Change this to point to different environments
+  static const String domain = String.fromEnvironment(
+    'DOMAIN',
+    defaultValue: 'ping365.io',
+  );
+
+  // Base API URL
   static const String apiBaseUrl = String.fromEnvironment(
     'API_BASE_URL',
-    defaultValue: 'https://mon.lad.vn',
+    defaultValue: 'https://$domain',
   );
 
   // API endpoints

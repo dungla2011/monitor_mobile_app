@@ -93,7 +93,7 @@ class _LoginScreenState extends State<LoginScreen>
           final statusCode = result['statusCode'] as int?;
           final responseBody = result['responseBody'] as String?;
           final isApiError = result['isApiError'] as bool?;
-          
+
           if (isApiError == true) {
             // API business logic error (HTTP 200 but code != 1)
             // Show simple error dialog with message

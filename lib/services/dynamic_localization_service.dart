@@ -2,6 +2,9 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+import '../config/app_config.dart';
+import '../utils/language_manager.dart';
+import '../utils/user_agent_utils.dart';
 
 /// Language information from server
 class LanguageInfo {
@@ -48,7 +51,7 @@ class LanguageInfo {
 
 /// Service for dynamic language loading from server
 class DynamicLocalizationService {
-  static const String _baseUrl = 'https://mon.lad.vn/api';
+  static const String _baseUrl = '${AppConfig.apiBaseUrl}/api';
   static const String _cachePrefix = 'lang_cache_';
   static const String _lastSyncKey = 'lang_last_sync_';
   static const String _availableLangsKey = 'lang_available';
