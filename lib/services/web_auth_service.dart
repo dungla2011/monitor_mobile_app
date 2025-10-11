@@ -350,7 +350,7 @@ class WebAuthService {
 
     // Tạo cookie string để gộp tất cả cookies
     List<String> cookies = [];
-    
+
     // Thêm Firebase FCM token vào cookie
     if (!kIsWeb) {
       try {
@@ -362,7 +362,7 @@ class WebAuthService {
         print('⚠️ Cannot get FCM token: $e');
       }
     }
-    
+
     // Thêm Affiliate code vào cookie
     try {
       final affiliateCookie = await AffiliateService.getAffiliateCookie();
@@ -372,7 +372,7 @@ class WebAuthService {
     } catch (e) {
       print('⚠️ Cannot get affiliate cookie: $e');
     }
-    
+
     // Gộp tất cả cookies vào header
     if (cookies.isNotEmpty) {
       headers['Cookie'] = cookies.join('; ');

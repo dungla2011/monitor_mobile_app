@@ -423,9 +423,11 @@ class ErrorDialogUtils {
                             height: 1.4,
                           ),
                         ),
-                        
+
                         // Error link if provided
-                        if (errorLink != null && errorLink.isNotEmpty && _isValidUrl(errorLink)) ...[
+                        if (errorLink != null &&
+                            errorLink.isNotEmpty &&
+                            _isValidUrl(errorLink)) ...[
                           const SizedBox(height: 12),
                           InkWell(
                             onTap: () => _openUrl(errorLink),
@@ -447,7 +449,7 @@ class ErrorDialogUtils {
                                 children: [
                                   Icon(
                                     Icons.link,
-                                    size: 16,
+                                    size: 18, // Increased from 16
                                     color: Colors.blue.shade700,
                                   ),
                                   const SizedBox(width: 6),
@@ -455,9 +457,11 @@ class ErrorDialogUtils {
                                     child: Text(
                                       errorLink,
                                       style: TextStyle(
-                                        fontSize: 13,
+                                        fontSize: 15, // Increased from 13
                                         color: Colors.blue.shade700,
-                                        decoration: TextDecoration.underline,
+                                        fontWeight: FontWeight
+                                            .w500, // Add medium weight
+                                        // decoration: TextDecoration.underline, // ❌ REMOVED
                                       ),
                                       overflow: TextOverflow.ellipsis,
                                     ),
@@ -465,7 +469,7 @@ class ErrorDialogUtils {
                                   const SizedBox(width: 4),
                                   Icon(
                                     Icons.open_in_new,
-                                    size: 14,
+                                    size: 16, // Increased from 14
                                     color: Colors.blue.shade700,
                                   ),
                                 ],
@@ -699,19 +703,19 @@ class ErrorDialogUtils {
         );
     }
   }
-  
+
   /// Validate if string is a valid URL
   static bool _isValidUrl(String url) {
     try {
       final uri = Uri.parse(url);
-      return uri.hasScheme && 
-             (uri.scheme == 'http' || uri.scheme == 'https') &&
-             uri.hasAuthority;
+      return uri.hasScheme &&
+          (uri.scheme == 'http' || uri.scheme == 'https') &&
+          uri.hasAuthority;
     } catch (e) {
       return false;
     }
   }
-  
+
   /// Open URL in browser
   static Future<void> _openUrl(String url) async {
     try {

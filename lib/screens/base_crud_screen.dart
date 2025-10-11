@@ -1158,7 +1158,7 @@ class _BaseCrudDialogState extends State<BaseCrudDialog> {
         // Show detailed error dialog with HTTP status code if available
         final statusCode = result['statusCode'] as int?;
         final errorLink = result['error_link'] as String?;
-        
+
         if (statusCode != null && statusCode >= 400) {
           await ErrorDialogUtils.showHttpErrorDialog(
             context,
