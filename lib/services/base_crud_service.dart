@@ -39,6 +39,7 @@ abstract class BaseCrudService {
             errorMessage ??
             'HTTP error ${response.statusCode}',
         'statusCode': response.statusCode,
+        'error_link': jsonResponse['error_link'], // ✅ ADD error_link
       };
     } catch (e) {
       // Handle JSON parsing errors

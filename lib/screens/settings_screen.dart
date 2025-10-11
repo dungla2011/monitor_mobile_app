@@ -426,6 +426,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               result['statusCode'] as int,
               errorMessage,
               technicalDetails: result['responseBody'] as String?,
+              errorLink: result['error_link'], // Add error_link
             );
           } else {
             // Generic error without status code

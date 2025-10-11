@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:monitor_app/l10n/app_localizations.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 /// Utility class for handling error dialogs with Unicode support
 class ErrorDialogUtils {
@@ -290,6 +291,7 @@ class ErrorDialogUtils {
     int statusCode,
     String? errorMessage, {
     String? technicalDetails,
+    String? errorLink, // Add error link parameter
   }) async {
     final errorInfo = _getHttpErrorInfo(statusCode);
 
@@ -406,7 +408,7 @@ class ErrorDialogUtils {
                             Text(
                               'Error details:',
                               style: TextStyle(
-                                fontSize: 13,
+                                fontSize: 15,
                                 fontWeight: FontWeight.w600,
                                 color: Colors.red.shade900,
                               ),
@@ -417,10 +419,60 @@ class ErrorDialogUtils {
                         SelectableText(
                           decodeUnicodeMessage(errorMessage),
                           style: const TextStyle(
-                            fontSize: 13,
+                            fontSize: 15,
                             height: 1.4,
                           ),
                         ),
+                        
+                        // Error link if provided
+                        if (errorLink != null && errorLink.isNotEmpty && _isValidUrl(errorLink)) ...[
+                          const SizedBox(height: 12),
+                          InkWell(
+                            onTap: () => _openUrl(errorLink),
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 12,
+                                vertical: 8,
+                              ),
+                              decoration: BoxDecoration(
+                                color: Colors.blue.shade50,
+                                borderRadius: BorderRadius.circular(6),
+                                border: Border.all(
+                                  color: Colors.blue.shade200,
+                                  width: 1,
+                                ),
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Icon(
+                                    Icons.link,
+                                    size: 16,
+                                    color: Colors.blue.shade700,
+                                  ),
+                                  const SizedBox(width: 6),
+                                  Flexible(
+                                    child: Text(
+                                      errorLink,
+                                      style: TextStyle(
+                                        fontSize: 13,
+                                        color: Colors.blue.shade700,
+                                        decoration: TextDecoration.underline,
+                                      ),
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 4),
+                                  Icon(
+                                    Icons.open_in_new,
+                                    size: 14,
+                                    color: Colors.blue.shade700,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
                       ],
                     ),
                   ),
@@ -645,6 +697,29 @@ class ErrorDialogUtils {
           icon: Icons.help_outline,
           color: Colors.red,
         );
+    }
+  }
+  
+  /// Validate if string is a valid URL
+  static bool _isValidUrl(String url) {
+    try {
+      final uri = Uri.parse(url);
+      return uri.hasScheme && 
+             (uri.scheme == 'http' || uri.scheme == 'https') &&
+             uri.hasAuthority;
+    } catch (e) {
+      return false;
+    }
+  }
+  
+  /// Open URL in browser
+  static Future<void> _openUrl(String url) async {
+    try {
+      final uri = Uri.parse(url);
+      // Use url_launcher package
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
+    } catch (e) {
+      print('❌ Error opening URL: $e');
     }
   }
 }

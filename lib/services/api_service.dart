@@ -71,6 +71,7 @@ class ApiService {
           return {
             'success': false,
             'message': jsonResponse['message'] ?? 'Post creation failed',
+            'error_link': jsonResponse['error_link'], // Add error_link
           };
         }
       } else if (response.statusCode == 401) {

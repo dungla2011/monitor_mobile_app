@@ -97,6 +97,7 @@ class WebAuthService {
             'success': false,
             'message': errorMsg,
             'code': jsonResponse['code'],
+            'error_link': jsonResponse['error_link'], // Add error_link
             'isApiError':
                 true, // Flag to indicate this is API business logic error
           };
@@ -128,6 +129,7 @@ class WebAuthService {
           'statusCode': response.statusCode,
           'responseBody': response.body,
           'code': jsonResponse?['code'],
+          'error_link': jsonResponse?['error_link'], // Add error_link
         };
       }
     } catch (e) {

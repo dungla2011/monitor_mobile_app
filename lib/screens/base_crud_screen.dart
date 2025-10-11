@@ -305,6 +305,7 @@ abstract class BaseCrudScreenState<T extends BaseCrudScreen> extends State<T> {
             final statusCode = result['statusCode'] as int?;
             final responseBody = result['responseBody'] as String?;
             final isException = result['isException'] as bool?;
+            final errorLink = result['error_link'] as String?;
 
             if (statusCode != null && statusCode >= 400) {
               // HTTP error (4xx, 5xx)
@@ -313,6 +314,15 @@ abstract class BaseCrudScreenState<T extends BaseCrudScreen> extends State<T> {
                 statusCode,
                 result['message'],
                 technicalDetails: responseBody,
+                errorLink: errorLink,
+              );
+            } else if (errorLink != null && errorLink.isNotEmpty) {
+              // API business logic error with error_link
+              await ErrorDialogUtils.showHttpErrorDialog(
+                context,
+                400, // Bad Request
+                result['message'] ?? l10n.crudCannotLoadData,
+                errorLink: errorLink,
               );
             } else if (isException == true) {
               // Server-side exception (HTTP 200 but exception thrown)
@@ -1147,13 +1157,26 @@ class _BaseCrudDialogState extends State<BaseCrudDialog> {
       } else {
         // Show detailed error dialog with HTTP status code if available
         final statusCode = result['statusCode'] as int?;
+        final errorLink = result['error_link'] as String?;
+        
         if (statusCode != null && statusCode >= 400) {
           await ErrorDialogUtils.showHttpErrorDialog(
             context,
             statusCode,
             result['message'],
+            errorLink: errorLink,
+          );
+        } else if (errorLink != null && errorLink.isNotEmpty) {
+          // API business logic error with error_link (code != 1 but HTTP 200)
+          // Use 400 status code to display in HTTP error dialog format
+          await ErrorDialogUtils.showHttpErrorDialog(
+            context,
+            400, // Bad Request
+            result['message'] ?? l10n.crudSaveError,
+            errorLink: errorLink,
           );
         } else {
+          // Generic error without link
           await ErrorDialogUtils.showErrorDialog(
             context,
             result['message'] ?? l10n.crudSaveError,

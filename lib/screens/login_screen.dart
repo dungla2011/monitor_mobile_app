@@ -108,8 +108,13 @@ class _LoginScreenState extends State<LoginScreen>
 
           if (isApiError == true) {
             // API business logic error (HTTP 200 but code != 1)
-            // Show simple error dialog with message
-            _showErrorDialog(result['message'] ?? 'Đăng nhập không thành công');
+            // Show error dialog with link if available
+            await ErrorDialogUtils.showHttpErrorDialog(
+              context,
+              400, // Use 400 Bad Request for API logic errors
+              result['message'] ?? 'Đăng nhập không thành công',
+              errorLink: result['error_link'], // Pass error_link
+            );
           } else if (statusCode != null && statusCode >= 400) {
             // HTTP error - show detailed dialog
             await ErrorDialogUtils.showHttpErrorDialog(
@@ -117,6 +122,7 @@ class _LoginScreenState extends State<LoginScreen>
               statusCode,
               result['message'],
               technicalDetails: responseBody,
+              errorLink: result['error_link'], // Add error_link
             );
           } else {
             // Other error - show simple dialog
