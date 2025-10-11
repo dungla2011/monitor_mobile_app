@@ -530,7 +530,7 @@ abstract class BaseCrudScreenState<T extends BaseCrudScreen> extends State<T> {
       return Icons.link;
     }
 
-    return Icons.text_fields;
+    return Icons.label_outline; // Changed from Icons.text_fields
   }
 
   // Get color for mobile field value
@@ -826,9 +826,12 @@ abstract class BaseCrudScreenState<T extends BaseCrudScreen> extends State<T> {
                 Icon(
                   getFieldIcon(dataType),
                   size: 24,
-                  color: isBooleanStatus
-                      ? (boolValue ? Colors.green : Colors.grey)
-                      : getFieldColor(value, dataType),
+                  // Gray for label_outline icon, dynamic color for others
+                  color: getFieldIcon(dataType) == Icons.label_outline
+                      ? Colors.grey.shade600
+                      : (isBooleanStatus
+                          ? (boolValue ? Colors.green : Colors.grey)
+                          : getFieldColor(value, dataType)),
                 ),
                 const SizedBox(width: 6),
                 Expanded(
