@@ -6,6 +6,7 @@ import '../services/google_auth_service.dart';
 import '../services/dynamic_localization_service.dart';
 import '../l10n/app_localizations.dart';
 import '../utils/language_manager.dart';
+import '../utils/error_dialog_utils.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -88,12 +89,35 @@ class _LoginScreenState extends State<LoginScreen>
         if (result['success'] == true) {
           Navigator.of(context).pushReplacementNamed('/home');
         } else {
-          _showErrorDialog(result['message'] ?? 'Đăng nhập không thành công');
+          // Check error type
+          final statusCode = result['statusCode'] as int?;
+          final responseBody = result['responseBody'] as String?;
+          final isApiError = result['isApiError'] as bool?;
+          
+          if (isApiError == true) {
+            // API business logic error (HTTP 200 but code != 1)
+            // Show simple error dialog with message
+            _showErrorDialog(result['message'] ?? 'Đăng nhập không thành công');
+          } else if (statusCode != null && statusCode >= 400) {
+            // HTTP error - show detailed dialog
+            await ErrorDialogUtils.showHttpErrorDialog(
+              context,
+              statusCode,
+              result['message'],
+              technicalDetails: responseBody,
+            );
+          } else {
+            // Other error - show simple dialog
+            _showErrorDialog(result['message'] ?? 'Đăng nhập không thành công');
+          }
         }
       }
     } catch (e) {
       if (mounted) {
-        _showErrorDialog('Lỗi kết nối: $e');
+        await ErrorDialogUtils.showErrorDialog(
+          context,
+          'Lỗi kết nối: $e',
+        );
       }
     } finally {
       if (mounted) {

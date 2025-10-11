@@ -86,15 +86,45 @@ class WebAuthService {
             'token': _bearerToken,
           };
         } else {
+          // API returned code != 1 (business logic error)
+          // Extract message from payload or message field
+          String errorMsg = jsonResponse['message'] ?? 
+                           jsonResponse['payload'] ?? 
+                           'Login failed';
+          
           return {
             'success': false,
-            'message': jsonResponse['message'] ?? 'Login failed',
+            'message': errorMsg,
+            'code': jsonResponse['code'],
+            'isApiError': true, // Flag to indicate this is API business logic error
           };
         }
       } else {
+        // HTTP error (4xx, 5xx) - try to parse JSON response
+        String errorMessage = 'Server connection error (${response.statusCode})';
+        Map<String, dynamic>? jsonResponse;
+        
+        try {
+          jsonResponse = jsonDecode(response.body);
+          // Extract message from JSON if available
+          if (jsonResponse != null) {
+            errorMessage = jsonResponse['message'] ?? 
+                          jsonResponse['payload'] ?? 
+                          errorMessage;
+          }
+        } catch (e) {
+          // Not JSON, use response body as is
+          if (response.body.isNotEmpty) {
+            errorMessage = response.body;
+          }
+        }
+        
         return {
           'success': false,
-          'message': 'Server connection error (${response.statusCode})',
+          'message': errorMessage,
+          'statusCode': response.statusCode,
+          'responseBody': response.body,
+          'code': jsonResponse?['code'],
         };
       }
     } catch (e) {
