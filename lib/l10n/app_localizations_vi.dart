@@ -652,7 +652,7 @@ class AppLocalizationsVi extends AppLocalizations {
       'Ứng dụng giám sát và quản lý dịch vụ của bạn.';
 
   @override
-  String get aboutDeveloper => 'Phát triển bởi GalaxyCloud';
+  String get aboutDeveloper => 'Phát triển bởi GalaxyCloud.vn';
 
   @override
   String get errorDialogTitle => 'Lỗi';
