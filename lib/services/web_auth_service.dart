@@ -46,12 +46,17 @@ class WebAuthService {
             })}',
       );
 
+      // Get locale for X-Locale header
+      final prefs = await SharedPreferences.getInstance();
+      final locale = prefs.getString('selected_language') ?? 'vi';
+
       final response = await http.post(
         Uri.parse(_loginEndpoint),
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
           'User-Agent': UserAgentUtils.getApiUserAgent(),
+          'X-Locale': locale,
         },
         body: jsonEncode({'username': username, 'password': password}),
       );
@@ -346,6 +351,17 @@ class WebAuthService {
 
     if (_bearerToken != null && _bearerToken!.isNotEmpty) {
       headers['Authorization'] = 'Bearer $_bearerToken';
+    }
+
+    // Thêm X-Locale header
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final locale = prefs.getString('selected_language') ?? 'vi';
+      headers['X-Locale'] = locale;
+      print('🌐 Debug X-Locale: $locale');
+    } catch (e) {
+      print('⚠️ Debug Cannot get locale: $e');
+      headers['X-Locale'] = 'vi'; // fallback
     }
 
     // Tạo cookie string để gộp tất cả cookies
