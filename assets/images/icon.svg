@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1024" height="1024" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <style>
+      .orange { fill: #FF8C00; }
+      .orange-stroke { stroke: #FF8C00; fill: none; }
+      .text { 
+        fill: #FF8C00; 
+        font-family: Arial, Helvetica, sans-serif;
+        font-weight: bold;
+      }
+    </style>
+  </defs>
+  
+  <!-- White background for app icon -->
+  <rect width="1024" height="1024" fill="white"/>
+  
+  <!-- Full circle border -->
+  <circle cx="512" cy="512" r="393" 
+          class="orange-stroke" 
+          stroke-width="34"/>
+  
+  <!-- Top 1/3 circle with orange fill -->
+  <path d="M 512 102.4 A 409.6 409.6 0 0 1 873.8 375.4 L 150.2 375.4 A 409.6 409.6 0 0 1 512 102.4 Z" 
+        class="orange"/>
+  
+  <!-- Middle transparent section with text -->
+  <text x="512" y="512" 
+        text-anchor="middle" 
+        dominant-baseline="central"
+        class="text"
+        font-size="154"
+        letter-spacing="-3">Ping365</text>
+  
+  <!-- Bottom 1/3 circle with orange fill -->
+  <path d="M 512 921.6 A 409.6 409.6 0 0 1 150.2 648.6 L 873.8 648.6 A 409.6 409.6 0 0 1 512 921.6 Z" 
+        class="orange"/>
+  
+</svg>
