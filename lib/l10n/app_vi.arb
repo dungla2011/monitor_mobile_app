@@ -62,11 +62,11 @@
   "authAfterRegistration": "Sau khi đăng ký, quay lại đây để đăng nhập",
   "authCouldNotOpenRegistration": "Không thể mở trang đăng ký",
   
-  "monitorItems": "Monitor Items",
+  "monitorItems": "Ping Items",
   "monitorConfigs": "Monitor Cảnh báo",
-  "monitorAddItem": "Thêm Monitor Item",
-  "monitorEditItem": "Sửa Monitor Item",
-  "monitorDeleteItem": "Xóa Monitor Item",
+  "monitorAddItem": "Thêm Ping Item",
+  "monitorEditItem": "Sửa Ping Item",
+  "monitorDeleteItem": "Xóa Ping Item",
   "monitorAddConfig": "Thêm Monitor Cảnh báo",
   "monitorEditConfig": "Sửa Monitor Cảnh báo",
   "monitorDeleteConfig": "Xóa Monitor Cảnh báo",
@@ -179,7 +179,7 @@
   "notificationSoundPreview": "Nghe thử",
   
   "mobileActionNavigatingToConfig": "Đang chuyển đến Monitor Config...",
-  "mobileActionNavigatingToItems": "Đang chuyển đến Monitor Items...",
+  "mobileActionNavigatingToItems": "Đang chuyển đến Ping Items...",
   "mobileActionCommandNotFound": "Không tìm thấy lệnh: \"{cmd}\"",
   
   "timeSeconds": "Giây",

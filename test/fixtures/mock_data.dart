@@ -105,7 +105,7 @@ class MockData {
     "payload": null,
   };
 
-  // Mock monitor items data
+  // Mock ping items data
   static const List<Map<String, dynamic>> mockMonitorItemFieldDetails = [
     {
       "field_name": "id",

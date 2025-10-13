@@ -69,7 +69,7 @@ Text(l10n.settingsLanguage)
 }
 
 // Dart code
-l10n.messagesDeleteConfirm('Monitor Item')
+l10n.messagesDeleteConfirm('Ping Item')
 ```
 
 ### ✅ **Metadata & Documentation**

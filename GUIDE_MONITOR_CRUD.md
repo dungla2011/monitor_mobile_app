@@ -2,7 +2,7 @@
 
 ## 🎯 Tổng quan
 
-Đã tích hợp **hệ thống CRUD hoàn chỉnh cho Monitor Items** vào ứng dụng Flutter, thay thế trang chủ cũ.
+Đã tích hợp **hệ thống CRUD hoàn chỉnh cho Ping Items** vào ứng dụng Flutter, thay thế trang chủ cũ.
 
 ## 📋 Tính năng đã hoàn thành
 
@@ -17,7 +17,7 @@ https://ping365.io/tool/common/get-api-info.php?table=monitor_items&api_get_one=
 ```
 
 ### ✅ **Full CRUD Operations**
-- **📝 CREATE**: Thêm monitor item mới
+- **📝 CREATE**: Thêm ping item mới
 - **📖 READ**: Hiển thị danh sách và chi tiết
 - **✏️ UPDATE**: Sửa thông tin item
 - **🗑️ DELETE**: Xóa item (single/bulk)
@@ -82,7 +82,7 @@ class MonitorItemDialog extends StatefulWidget {
 
 ### **1. Khởi động App**
 - App tự động fetch config từ 3 URLs
-- Load danh sách monitor items
+- Load danh sách ping items
 - Hiển thị ở trang chủ (thay thế HomeScreen)
 
 ### **2. Xem danh sách**
@@ -170,7 +170,7 @@ MainScreen → MonitorScreen
     ↓
 MonitorConfigService.initializeConfig()
     ↓ (fetch 3 config URLs)
-Load Monitor Items List
+Load Ping Items List
     ↓
 Display CRUD Interface
 ```
@@ -178,7 +178,7 @@ Display CRUD Interface
 ## 🎨 UI Components
 
 ### **MonitorScreen AppBar**
-- Title: "Monitor Items"  
+- Title: "Ping Items"  
 - Actions: Select All, Refresh, Delete (selection mode)
 
 ### **Item List**

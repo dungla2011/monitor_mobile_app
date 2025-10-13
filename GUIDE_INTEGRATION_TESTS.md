@@ -86,7 +86,7 @@ Có thể thêm Android emulator vào workflow:
 - ✅ App launch và stability
 - ✅ Navigation flow
 - ✅ Monitor Config CRUD (placeholder)
-- ✅ Monitor Item CRUD (placeholder)
+- ✅ Ping Item CRUD (placeholder)
 - ✅ Error handling
 - ✅ Performance tests
 

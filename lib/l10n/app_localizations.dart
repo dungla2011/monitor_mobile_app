@@ -449,7 +449,7 @@ abstract class AppLocalizations {
   /// No description provided for @monitorItems.
   ///
   /// In en, this message translates to:
-  /// **'Monitor Items'**
+  /// **'Ping Items'**
   String get monitorItems;
 
   /// No description provided for @monitorConfigs.
@@ -461,19 +461,19 @@ abstract class AppLocalizations {
   /// No description provided for @monitorAddItem.
   ///
   /// In en, this message translates to:
-  /// **'Add Monitor Item'**
+  /// **'Add Ping Item'**
   String get monitorAddItem;
 
   /// No description provided for @monitorEditItem.
   ///
   /// In en, this message translates to:
-  /// **'Edit Monitor Item'**
+  /// **'Edit Ping Item'**
   String get monitorEditItem;
 
   /// No description provided for @monitorDeleteItem.
   ///
   /// In en, this message translates to:
-  /// **'Delete Monitor Item'**
+  /// **'Delete Ping Item'**
   String get monitorDeleteItem;
 
   /// No description provided for @monitorAddConfig.
@@ -707,7 +707,7 @@ abstract class AppLocalizations {
   /// No description provided for @navigationMonitorItems.
   ///
   /// In en, this message translates to:
-  /// **'Monitor Items'**
+  /// **'Ping Items'**
   String get navigationMonitorItems;
 
   /// No description provided for @navigationMonitorConfigs.
@@ -1061,7 +1061,7 @@ abstract class AppLocalizations {
   /// No description provided for @mobileActionNavigatingToItems.
   ///
   /// In en, this message translates to:
-  /// **'Navigating to Monitor Items...'**
+  /// **'Navigating to Ping Items...'**
   String get mobileActionNavigatingToItems;
 
   /// No description provided for @mobileActionCommandNotFound.

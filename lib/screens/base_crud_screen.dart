@@ -30,7 +30,7 @@ abstract class BaseCrudScreenState<T extends BaseCrudScreen> extends State<T> {
 
   // Abstract methods that must be implemented by subclasses
   String get screenTitle;
-  String get itemName; // e.g., "Monitor Item", "Monitor Config"
+  String get itemName; // e.g., "Ping Item", "Monitor Config"
   String get addButtonText;
   String get editButtonText;
 
@@ -1862,7 +1862,7 @@ class _BaseCrudDialogState extends State<BaseCrudDialog> {
 
       case 'open_items':
       case 'monitor_items':
-        // Navigate to Monitor Items screen
+        // Navigate to Ping Items screen
         Navigator.push(
           context,
           MaterialPageRoute(

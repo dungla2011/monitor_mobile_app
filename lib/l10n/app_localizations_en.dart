@@ -189,19 +189,19 @@ class AppLocalizationsEn extends AppLocalizations {
   String get authCouldNotOpenRegistration => 'Could not open registration page';
 
   @override
-  String get monitorItems => 'Monitor Items';
+  String get monitorItems => 'Ping Items';
 
   @override
   String get monitorConfigs => 'Monitor Alerts';
 
   @override
-  String get monitorAddItem => 'Add Monitor Item';
+  String get monitorAddItem => 'Add Ping Item';
 
   @override
-  String get monitorEditItem => 'Edit Monitor Item';
+  String get monitorEditItem => 'Edit Ping Item';
 
   @override
-  String get monitorDeleteItem => 'Delete Monitor Item';
+  String get monitorDeleteItem => 'Delete Ping Item';
 
   @override
   String get monitorAddConfig => 'Add Monitor Alert';
@@ -331,7 +331,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get navigationHome => 'Home';
 
   @override
-  String get navigationMonitorItems => 'Monitor Items';
+  String get navigationMonitorItems => 'Ping Items';
 
   @override
   String get navigationMonitorConfigs => 'Monitor Configs';
@@ -515,7 +515,7 @@ class AppLocalizationsEn extends AppLocalizations {
       'Navigating to Monitor Config...';
 
   @override
-  String get mobileActionNavigatingToItems => 'Navigating to Monitor Items...';
+  String get mobileActionNavigatingToItems => 'Navigating to Ping Items...';
 
   @override
   String mobileActionCommandNotFound(String cmd) {

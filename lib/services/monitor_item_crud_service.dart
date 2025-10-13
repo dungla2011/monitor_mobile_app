@@ -24,7 +24,7 @@ class MonitorItemCrudService extends BaseCrudService {
   // Fetch all configuration data
   static Future<Map<String, dynamic>> initializeConfig() async {
     try {
-      print('🔄 Initializing Monitor Item CRUD Service...');
+      print('🔄 Initializing Ping Item CRUD Service...');
 
       // Fetch field details only
       final fieldDetailsResult = await BaseCrudService.fetchConfig(
@@ -36,7 +36,7 @@ class MonitorItemCrudService extends BaseCrudService {
       }
       _fieldDetails = fieldDetailsResult['data'];
 
-      print('✅ Monitor Item CRUD Service initialized successfully');
+      print('✅ Ping Item CRUD Service initialized successfully');
       return {
         'success': true,
         'message': 'Config loaded successfully',
@@ -52,35 +52,35 @@ class MonitorItemCrudService extends BaseCrudService {
 
   // CRUD Operations
 
-  // Get list of monitor items
+  // Get list of ping items
   static Future<Map<String, dynamic>> getMonitorItems({
     int page = 1,
     int limit = 20,
   }) async {
     final url = '$_listApiUrl?page=$page&limit=$limit';
-    return BaseCrudService.getRequest(url, 'List Monitor Items');
+    return BaseCrudService.getRequest(url, 'List Ping Items');
   }
 
-  // Get single monitor item
+  // Get single ping item
   static Future<Map<String, dynamic>> getMonitorItem(int id) async {
     return BaseCrudService.getRequest(
       _getApiUrl(id),
-      'Get Monitor Item',
+      'Get Ping Item',
     );
   }
 
-  // Add new monitor item
+  // Add new ping item
   static Future<Map<String, dynamic>> addMonitorItem(
     Map<String, dynamic> data,
   ) async {
     return BaseCrudService.postRequest(
       _addApiUrl,
       data,
-      'Add Monitor Item',
+      'Add Ping Item',
     );
   }
 
-  // Update monitor item
+  // Update ping item
   static Future<Map<String, dynamic>> updateMonitorItem(
     int id,
     Map<String, dynamic> data,
@@ -88,16 +88,16 @@ class MonitorItemCrudService extends BaseCrudService {
     return BaseCrudService.postRequest(
       _updateApiUrl(id),
       data,
-      'Update Monitor Item',
+      'Update Ping Item',
     );
   }
 
-  // Delete monitor items
+  // Delete ping items
   static Future<Map<String, dynamic>> deleteMonitorItems(List<int> ids) async {
     return BaseCrudService.deleteRequest(
       _deleteApiUrl,
       ids,
-      'Delete Monitor Items',
+      'Delete Ping Items',
     );
   }
 
@@ -129,7 +129,7 @@ class MonitorItemCrudService extends BaseCrudService {
 
   // Force reload config from server
   static Future<Map<String, dynamic>> reloadConfig() async {
-    print('[RELOAD] Force reloading Monitor Items field_details...');
+    print('[RELOAD] Force reloading Ping Items field_details...');
     return await initializeConfig();
   }
 
@@ -146,14 +146,14 @@ class MonitorItemCrudService extends BaseCrudService {
       }
       _fieldDetails = fieldDetailsResult['data'];
 
-      print('✅ Monitor Items field_details reloaded successfully');
+      print('✅ Ping Items field_details reloaded successfully');
       return {
         'success': true,
         'message': 'Field details reloaded successfully',
         'data': {'field_details': _fieldDetails},
       };
     } catch (e) {
-      print('❌ Error reloading Monitor Items field_details: $e');
+      print('❌ Error reloading Ping Items field_details: $e');
       return {
         'success': false,
         'message': 'Failed to reload field details: $e',

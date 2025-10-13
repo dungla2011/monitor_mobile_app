@@ -21,10 +21,10 @@ class _MonitorItemScreenState extends BaseCrudScreenState<MonitorItemScreen> {
   List<Map<String, dynamic>> _filteredItems = [];
 
   @override
-  String get screenTitle => 'Monitor Items';
+  String get screenTitle => 'Ping Items';
 
   @override
-  String get itemName => 'Monitor Item';
+  String get itemName => 'Ping Item';
 
   @override
   String get addButtonText => AppLocalizations.of(context)!.monitorAddItem;
@@ -35,14 +35,14 @@ class _MonitorItemScreenState extends BaseCrudScreenState<MonitorItemScreen> {
   @override
   Future<Map<String, dynamic>> initializeConfig() async {
     // Always reload config to get latest field changes
-    print('[RELOAD] Reloading Monitor Items config from server...');
+    print('[RELOAD] Reloading Ping Items config from server...');
     return await MonitorItemCrudService.reloadConfig();
   }
 
   @override
   Future<void> refreshFieldDetails() async {
     // Reload only field_details (not api_list/api_get_one)
-    print('[REFRESH] Reloading only field_details for Monitor Items...');
+    print('[REFRESH] Reloading only field_details for Ping Items...');
     await MonitorItemCrudService.reloadFieldDetails();
   }
 

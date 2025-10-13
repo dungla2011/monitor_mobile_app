@@ -80,11 +80,11 @@
   "authAfterRegistration": "After registration, return here to login",
   "authCouldNotOpenRegistration": "Could not open registration page",
   
-  "monitorItems": "Monitor Items",
+  "monitorItems": "Ping Items",
   "monitorConfigs": "Monitor Alerts",
-  "monitorAddItem": "Add Monitor Item",
-  "monitorEditItem": "Edit Monitor Item",
-  "monitorDeleteItem": "Delete Monitor Item",
+  "monitorAddItem": "Add Ping Item",
+  "monitorEditItem": "Edit Ping Item",
+  "monitorDeleteItem": "Delete Ping Item",
   "monitorAddConfig": "Add Monitor Alert",
   "monitorEditConfig": "Edit Monitor Alert",
   "monitorDeleteConfig": "Delete Monitor Alert",
@@ -176,7 +176,7 @@
   },
   
   "navigationHome": "Home",
-  "navigationMonitorItems": "Monitor Items",
+  "navigationMonitorItems": "Ping Items",
   "navigationMonitorConfigs": "Monitor Configs",
   "navigationProfile": "Profile",
   "navigationSettings": "Settings",
@@ -246,7 +246,7 @@
   "notificationSoundPreview": "Preview",
   
   "mobileActionNavigatingToConfig": "Navigating to Monitor Config...",
-  "mobileActionNavigatingToItems": "Navigating to Monitor Items...",
+  "mobileActionNavigatingToItems": "Navigating to Ping Items...",
   "mobileActionCommandNotFound": "Command not found: \"{cmd}\"",
   "@mobileActionCommandNotFound": {
     "placeholders": {

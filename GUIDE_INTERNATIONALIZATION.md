@@ -55,7 +55,7 @@ l10n.username       // "Tên đăng nhập" / "Username"
 l10n.password       // "Mật khẩu" / "Password"
 
 // Monitor
-l10n.monitorItems   // "Monitor Items"
+l10n.monitorItems   // "Ping Items"
 l10n.monitorConfigs // "Monitor Configs"
 l10n.monitorName    // "Tên monitor" / "Monitor name"
 

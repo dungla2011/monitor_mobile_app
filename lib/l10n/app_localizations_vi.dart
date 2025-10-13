@@ -189,19 +189,19 @@ class AppLocalizationsVi extends AppLocalizations {
   String get authCouldNotOpenRegistration => 'Không thể mở trang đăng ký';
 
   @override
-  String get monitorItems => 'Monitor Items';
+  String get monitorItems => 'Ping Items';
 
   @override
   String get monitorConfigs => 'Monitor Cảnh báo';
 
   @override
-  String get monitorAddItem => 'Thêm Monitor Item';
+  String get monitorAddItem => 'Thêm Ping Item';
 
   @override
-  String get monitorEditItem => 'Sửa Monitor Item';
+  String get monitorEditItem => 'Sửa Ping Item';
 
   @override
-  String get monitorDeleteItem => 'Xóa Monitor Item';
+  String get monitorDeleteItem => 'Xóa Ping Item';
 
   @override
   String get monitorAddConfig => 'Thêm Monitor Cảnh báo';
@@ -513,8 +513,7 @@ class AppLocalizationsVi extends AppLocalizations {
       'Đang chuyển đến Monitor Config...';
 
   @override
-  String get mobileActionNavigatingToItems =>
-      'Đang chuyển đến Monitor Items...';
+  String get mobileActionNavigatingToItems => 'Đang chuyển đến Ping Items...';
 
   @override
   String mobileActionCommandNotFound(String cmd) {

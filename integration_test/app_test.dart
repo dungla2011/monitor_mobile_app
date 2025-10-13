@@ -101,27 +101,18 @@ void main() {
       });
     });
 
-    group('Monitor Item CRUD Flow', () {
-      testWidgets('should be able to view monitor items list', (
+    group('Ping Item CRUD Flow', () {
+      testWidgets('should be able to view ping items list', (
         WidgetTester tester,
       ) async {
         app.main();
         await tester.pumpAndSettle();
 
-        // Similar tests for monitor items
+        // Similar tests for ping items
         expect(find.byType(MaterialApp), findsOneWidget);
       });
 
-      testWidgets('should be able to create new monitor item', (
-        WidgetTester tester,
-      ) async {
-        app.main();
-        await tester.pumpAndSettle();
-
-        expect(find.byType(MaterialApp), findsOneWidget);
-      });
-
-      testWidgets('should be able to edit existing monitor item', (
+      testWidgets('should be able to create new ping item', (
         WidgetTester tester,
       ) async {
         app.main();
@@ -130,7 +121,16 @@ void main() {
         expect(find.byType(MaterialApp), findsOneWidget);
       });
 
-      testWidgets('should be able to delete monitor item', (
+      testWidgets('should be able to edit existing ping item', (
+        WidgetTester tester,
+      ) async {
+        app.main();
+        await tester.pumpAndSettle();
+
+        expect(find.byType(MaterialApp), findsOneWidget);
+      });
+
+      testWidgets('should be able to delete ping item', (
         WidgetTester tester,
       ) async {
         app.main();

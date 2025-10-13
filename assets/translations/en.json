@@ -27,11 +27,11 @@
     "pleaseEnterPassword": "Please enter password"
   },
   "monitor": {
-    "items": "Monitor Items",
+    "items": "Ping Items",
     "configs": "Monitor Alerts",
-    "addItem": "Add Monitor Item",
-    "editItem": "Edit Monitor Item",
-    "deleteItem": "Delete Monitor Item",
+    "addItem": "Add Ping Item",
+    "editItem": "Edit Ping Item",
+    "deleteItem": "Delete Ping Item",
     "addConfig": "Add Monitor Alert",
     "editConfig": "Edit Monitor Alert",
     "deleteConfig": "Delete Monitor Alert",
@@ -77,7 +77,7 @@
   },
   "navigation": {
     "home": "Home",
-    "monitorItems": "Monitor Items",
+    "monitorItems": "Ping Items",
     "monitorConfigs": "Monitor Configs",
     "profile": "Profile",
     "settings": "Settings",
@@ -108,7 +108,7 @@
   },
   "mobileAction": {
     "navigatingToConfig": "Navigating to Monitor Config...",
-    "navigatingToItems": "Navigating to Monitor Items...",
+    "navigatingToItems": "Navigating to Ping Items...",
     "commandNotFound": "Command not found: \"{cmd}\""
   },
   "time": {

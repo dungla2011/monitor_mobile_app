@@ -27,11 +27,11 @@
     "pleaseEnterPassword": "Vui lòng nhập mật khẩu"
   },
   "monitor": {
-    "items": "Monitor Items",
+    "items": "Ping Items",
     "configs": "Monitor Cảnh báo",
-    "addItem": "Thêm Monitor Item",
-    "editItem": "Sửa Monitor Item",
-    "deleteItem": "Xóa Monitor Item",
+    "addItem": "Thêm Ping Item",
+    "editItem": "Sửa Ping Item",
+    "deleteItem": "Xóa Ping Item",
     "addConfig": "Thêm Monitor Cảnh báo",
     "editConfig": "Sửa Monitor Cảnh báo",
     "deleteConfig": "Xóa Monitor Cảnh báo",
@@ -108,7 +108,7 @@
   },
   "mobileAction": {
     "navigatingToConfig": "Đang chuyển đến Monitor Config...",
-    "navigatingToItems": "Đang chuyển đến Monitor Items...",
+    "navigatingToItems": "Đang chuyển đến Ping Items...",
     "commandNotFound": "Không tìm thấy lệnh: \"{cmd}\""
   },
   "time": {
