@@ -17,12 +17,48 @@ class MonitorItemCrudService extends BaseCrudService {
 
   // Cached config data
   static dynamic _fieldDetails;
+  static bool _isInitializing = false; // Flag to prevent concurrent initialization
 
   // Getters
   static dynamic get fieldDetails => _fieldDetails;
 
   // Fetch all configuration data
   static Future<Map<String, dynamic>> initializeConfig() async {
+    // If already initializing, wait for it to complete
+    if (_isInitializing) {
+      print('⏳ Config is already being initialized, waiting...');
+      // Wait a bit and check if initialization completed
+      int attempts = 0;
+      while (_isInitializing && attempts < 50) {
+        await Future.delayed(const Duration(milliseconds: 100));
+        attempts++;
+      }
+      
+      if (_fieldDetails != null) {
+        print('✅ Using config from concurrent initialization');
+        return {
+          'success': true,
+          'message': 'Config loaded successfully (cached)',
+          'data': {
+            'field_details': _fieldDetails,
+          },
+        };
+      }
+    }
+
+    // If already loaded, return cached data
+    if (_fieldDetails != null) {
+      print('✅ Using cached Ping Items config');
+      return {
+        'success': true,
+        'message': 'Config loaded successfully (cached)',
+        'data': {
+          'field_details': _fieldDetails,
+        },
+      };
+    }
+
+    _isInitializing = true;
     try {
       print('🔄 Initializing Ping Item CRUD Service...');
 
@@ -37,6 +73,7 @@ class MonitorItemCrudService extends BaseCrudService {
       _fieldDetails = fieldDetailsResult['data'];
 
       print('✅ Ping Item CRUD Service initialized successfully');
+      _isInitializing = false;
       return {
         'success': true,
         'message': 'Config loaded successfully',
@@ -46,6 +83,7 @@ class MonitorItemCrudService extends BaseCrudService {
       };
     } catch (e) {
       print('❌ Error initializing config: $e');
+      _isInitializing = false;
       return {'success': false, 'message': 'Error initializing config: $e'};
     }
   }
@@ -130,6 +168,8 @@ class MonitorItemCrudService extends BaseCrudService {
   // Force reload config from server
   static Future<Map<String, dynamic>> reloadConfig() async {
     print('[RELOAD] Force reloading Ping Items field_details...');
+    _fieldDetails = null; // Clear cache to force reload
+    _isInitializing = false; // Reset flag
     return await initializeConfig();
   }
 
