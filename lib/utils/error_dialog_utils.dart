@@ -676,8 +676,7 @@ class ErrorDialogUtils {
       case 500:
         return _HttpErrorInfo(
           title: 'Server Error',
-          description:
-              '',
+          description: '',
           hints: [],
           icon: Icons.dns_outlined,
           color: Colors.red,

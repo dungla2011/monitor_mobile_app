@@ -17,7 +17,8 @@ class MonitorItemCrudService extends BaseCrudService {
 
   // Cached config data
   static dynamic _fieldDetails;
-  static bool _isInitializing = false; // Flag to prevent concurrent initialization
+  static bool _isInitializing =
+      false; // Flag to prevent concurrent initialization
 
   // Getters
   static dynamic get fieldDetails => _fieldDetails;
@@ -33,7 +34,7 @@ class MonitorItemCrudService extends BaseCrudService {
         await Future.delayed(const Duration(milliseconds: 100));
         attempts++;
       }
-      
+
       if (_fieldDetails != null) {
         print('✅ Using config from concurrent initialization');
         return {

@@ -38,20 +38,21 @@ class WebAuthService {
     print('🔄 Initializing WebAuthService...');
     await _loadSavedUserInfo();
     _isInitialized = true;
-    print('✅ WebAuthService initialized. Bearer token: ${_bearerToken != null ? "PRESENT" : "MISSING"}');
+    print(
+        '✅ WebAuthService initialized. Bearer token: ${_bearerToken != null ? "PRESENT" : "MISSING"}');
   }
 
   // Đợi cho đến khi initialization hoàn tất
   static Future<void> ensureInitialized() async {
     if (_isInitialized) return;
-    
+
     print('⏳ Waiting for WebAuthService initialization...');
     int attempts = 0;
     while (!_isInitialized && attempts < 100) {
       await Future.delayed(const Duration(milliseconds: 50));
       attempts++;
     }
-    
+
     if (!_isInitialized) {
       print('⚠️ WebAuthService initialization timeout, calling initialize()');
       await initialize();
@@ -370,7 +371,7 @@ class WebAuthService {
   static Future<Map<String, String>> getAuthenticatedHeaders() async {
     // ĐỢI initialization hoàn tất trước
     await ensureInitialized();
-    
+
     // Đảm bảo bearer token đã được load từ SharedPreferences
     if (_bearerToken == null || _bearerToken!.isEmpty) {
       print('⚠️ Bearer token not loaded, loading from SharedPreferences...');
@@ -386,7 +387,8 @@ class WebAuthService {
 
     if (_bearerToken != null && _bearerToken!.isNotEmpty) {
       headers['Authorization'] = 'Bearer $_bearerToken';
-      print('✅ Bearer token added to headers: ${_bearerToken!.substring(0, 20)}...');
+      print(
+          '✅ Bearer token added to headers: ${_bearerToken!.substring(0, 20)}...');
     } else {
       print('❌ WARNING: No bearer token available for API request!');
     }
