@@ -21,9 +21,17 @@ import 'screens/profile_screen.dart';
 import 'screens/monitor_item_screen.dart';
 import 'screens/monitor_config_screen.dart';
 import 'screens/settings_screen.dart';
+import 'services/system_tray_service.dart';
+import 'package:window_manager/window_manager.dart';
+import 'package:tray_manager/tray_manager.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Khởi tạo System Tray cho Desktop platforms
+  if (!kIsWeb && (Platform.isWindows || Platform.isMacOS || Platform.isLinux)) {
+    await SystemTrayService.initialize();
+  }
 
   // Khởi tạo Affiliate Service (chỉ cho mobile)
   if (!kIsWeb && (Platform.isAndroid || Platform.isIOS)) {
@@ -63,7 +71,7 @@ class MyApp extends StatefulWidget {
   State<MyApp> createState() => _MyAppState();
 }
 
-class _MyAppState extends State<MyApp> {
+class _MyAppState extends State<MyApp> with WindowListener, TrayListener {
   Timer? _autoSyncTimer;
 
   @override
@@ -71,12 +79,69 @@ class _MyAppState extends State<MyApp> {
     super.initState();
     _loadInitialLanguage();
     _autoSyncLanguagesAfterDelay();
+    _setupWindowAndTrayListeners();
   }
 
   @override
   void dispose() {
     _autoSyncTimer?.cancel();
+    _removeWindowAndTrayListeners();
     super.dispose();
+  }
+
+  /// Setup window and tray event listeners
+  void _setupWindowAndTrayListeners() {
+    if (!kIsWeb && (Platform.isWindows || Platform.isMacOS || Platform.isLinux)) {
+      windowManager.addListener(this);
+      trayManager.addListener(this);
+    }
+  }
+
+  /// Remove window and tray event listeners
+  void _removeWindowAndTrayListeners() {
+    if (!kIsWeb && (Platform.isWindows || Platform.isMacOS || Platform.isLinux)) {
+      windowManager.removeListener(this);
+      trayManager.removeListener(this);
+    }
+  }
+
+  // Window listener methods
+  @override
+  void onWindowClose() async {
+    // Prevent default close behavior
+    bool isPreventClose = await windowManager.isPreventClose();
+    if (isPreventClose) {
+      await SystemTrayService.minimizeToTray();
+    }
+  }
+
+  @override
+  void onWindowFocus() {
+    setState(() {});
+  }
+
+  // Tray listener methods
+  @override
+  void onTrayIconMouseDown() {
+    SystemTrayService.showWindow();
+  }
+
+  @override
+  void onTrayIconRightMouseDown() {
+    trayManager.popUpContextMenu();
+  }
+
+  @override
+  void onTrayMenuItemClick(MenuItem menuItem) {
+    switch (menuItem.key) {
+      case 'show':
+        SystemTrayService.showWindow();
+        break;
+      case 'exit':
+        // Completely exit app
+        windowManager.destroy();
+        break;
+    }
   }
 
   /// Auto-sync languages from server after 10 seconds
