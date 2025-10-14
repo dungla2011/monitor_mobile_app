@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io' show Platform;
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -24,28 +25,28 @@ import 'screens/settings_screen.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Khởi tạo Affiliate Service
-  await AffiliateService.initialize();
+  // Khởi tạo Affiliate Service (chỉ cho mobile)
+  if (!kIsWeb && (Platform.isAndroid || Platform.isIOS)) {
+    await AffiliateService.initialize();
+  }
 
-  // Tạm thời disable Firebase trên web để test Monitor CRUD
-  if (!kIsWeb) {
-    // Khởi tạo Firebase với options cho web
-    if (kIsWeb) {
-      await Firebase.initializeApp(
-        options: DefaultFirebaseOptions.currentPlatform,
-      );
-    } else {
-      await Firebase.initializeApp();
-    }
+  // Khởi tạo Firebase (chỉ cho mobile và web, KHÔNG cho desktop)
+  if (kIsWeb) {
+    // Web platform
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
+  } else if (Platform.isAndroid || Platform.isIOS) {
+    // Mobile platforms only
+    await Firebase.initializeApp();
 
     // Khởi tạo Firebase Messaging
     await FirebaseMessagingService.initialize();
-  }
 
-  // Đăng ký background message handler (chỉ cho mobile)
-  if (!kIsWeb) {
+    // Đăng ký background message handler
     FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
   }
+  // Desktop platforms (Windows, macOS, Linux) - skip Firebase
 
   runApp(
     ChangeNotifierProvider(
