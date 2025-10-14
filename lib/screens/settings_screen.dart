@@ -396,9 +396,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         const SizedBox(width: 12),
                         Text(
                           // Use simple locale check instead of l10n
-                          Localizations.localeOf(context).languageCode == 'vi' 
-                            ? 'Cài đặt Windows' 
-                            : 'Windows Settings',
+                          Localizations.localeOf(context).languageCode == 'vi'
+                              ? 'Cài đặt Windows'
+                              : 'Windows Settings',
                           style: const TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.w600,
@@ -411,8 +411,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     // Auto-start toggle
                     if (!_isLoadingAutoStart)
                       CheckboxListTile(
-                        title: Text('Start up with Windows'), // Hardcoded for testing
-                        subtitle: Text('Launch automatically when Windows starts'), // Hardcoded for testing
+                        title: Text(
+                            'Start up with Windows'), // Hardcoded for testing
+                        subtitle: Text(
+                            'Launch automatically when Windows starts'), // Hardcoded for testing
                         value: _isAutoStartEnabled,
                         onChanged: _toggleAutoStart,
                         contentPadding: EdgeInsets.zero,
