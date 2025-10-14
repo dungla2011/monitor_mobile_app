@@ -104,7 +104,10 @@
     "appInfo": "Thông tin ứng dụng",
     "appName": "Tên ứng dụng",
     "vietnameseDesc": "Tiếng Việt (mặc định)",
-    "englishDesc": "English"
+    "englishDesc": "English",
+    "windowsSettings": "Cài đặt Windows",
+    "startupWithWindows": "Khởi động cùng Windows",
+    "startupWithWindowsDesc": "Tự động khởi chạy khi Windows khởi động"
   },
   "mobileAction": {
     "navigatingToConfig": "Đang chuyển đến Monitor Config...",

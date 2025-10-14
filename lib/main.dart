@@ -24,6 +24,7 @@ import 'screens/settings_screen.dart';
 import 'services/system_tray_service.dart';
 import 'package:window_manager/window_manager.dart';
 import 'package:tray_manager/tray_manager.dart';
+import 'widgets/tray_options_dialog.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -91,7 +92,8 @@ class _MyAppState extends State<MyApp> with WindowListener, TrayListener {
 
   /// Setup window and tray event listeners
   void _setupWindowAndTrayListeners() {
-    if (!kIsWeb && (Platform.isWindows || Platform.isMacOS || Platform.isLinux)) {
+    if (!kIsWeb &&
+        (Platform.isWindows || Platform.isMacOS || Platform.isLinux)) {
       windowManager.addListener(this);
       trayManager.addListener(this);
     }
@@ -99,7 +101,8 @@ class _MyAppState extends State<MyApp> with WindowListener, TrayListener {
 
   /// Remove window and tray event listeners
   void _removeWindowAndTrayListeners() {
-    if (!kIsWeb && (Platform.isWindows || Platform.isMacOS || Platform.isLinux)) {
+    if (!kIsWeb &&
+        (Platform.isWindows || Platform.isMacOS || Platform.isLinux)) {
       windowManager.removeListener(this);
       trayManager.removeListener(this);
     }
@@ -132,9 +135,19 @@ class _MyAppState extends State<MyApp> with WindowListener, TrayListener {
   }
 
   @override
-  void onTrayMenuItemClick(MenuItem menuItem) {
+  void onTrayMenuItemClick(MenuItem menuItem) async {
     switch (menuItem.key) {
-      case 'show':
+      case 'options':
+        // Show Options dialog
+        await SystemTrayService.showWindow();
+        if (mounted) {
+          showDialog(
+            context: context,
+            builder: (context) => const TrayOptionsDialog(),
+          );
+        }
+        break;
+      case 'open':
         SystemTrayService.showWindow();
         break;
       case 'exit':

@@ -104,7 +104,10 @@
     "appInfo": "App Information",
     "appName": "App Name",
     "vietnameseDesc": "Tiếng Việt (Vietnamese)",
-    "englishDesc": "English (default)"
+    "englishDesc": "English (default)",
+    "windowsSettings": "Windows Settings",
+    "startupWithWindows": "Start up with Windows",
+    "startupWithWindowsDesc": "Launch automatically when Windows starts"
   },
   "mobileAction": {
     "navigatingToConfig": "Navigating to Monitor Config...",

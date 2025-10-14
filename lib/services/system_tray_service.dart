@@ -10,7 +10,8 @@ class SystemTrayService {
 
   /// Initialize system tray (Windows/macOS/Linux only)
   static Future<void> initialize() async {
-    if (kIsWeb || !(Platform.isWindows || Platform.isMacOS || Platform.isLinux)) {
+    if (kIsWeb ||
+        !(Platform.isWindows || Platform.isMacOS || Platform.isLinux)) {
       return;
     }
 
@@ -19,7 +20,7 @@ class SystemTrayService {
     try {
       // Setup window manager
       await windowManager.ensureInitialized();
-      
+
       WindowOptions windowOptions = const WindowOptions(
         size: Size(1280, 720),
         center: true,
@@ -28,7 +29,7 @@ class SystemTrayService {
         titleBarStyle: TitleBarStyle.normal,
         title: 'Ping365 - Monitor',
       );
-      
+
       windowManager.waitUntilReadyToShow(windowOptions, () async {
         await windowManager.show();
         await windowManager.focus();
@@ -51,46 +52,49 @@ class SystemTrayService {
 
   /// Setup system tray icon with menu
   static Future<void> _setupTrayIcon() async {
-    // Set tray icon - use PNG for now (ICO is better for Windows but PNG works)
-    String iconPath = 'assets/icon/tray_icon.png';
+    // Set tray icon - Windows needs absolute path to bundled resource
+    String iconPath;
+    if (Platform.isWindows) {
+      // Use absolute path to the ICO file in the app directory
+      final exeDir = File(Platform.resolvedExecutable).parent.path;
+      iconPath = '$exeDir/data/flutter_assets/assets/icon/tray_icon.ico';
+    } else if (Platform.isMacOS) {
+      iconPath = 'assets/icon/logo.png';
+    } else {
+      iconPath = 'assets/icon/logo.png';
+    }
 
     await trayManager.setIcon(iconPath);
-    
-    // Set tray menu
+
+    // Update menu with current state
+    await updateTrayMenu();
+
+    await trayManager.setToolTip('Ping365 - Monitor');
+  }
+
+  /// Update tray menu - simplified with Options dialog
+  static Future<void> updateTrayMenu() async {
+    if (kIsWeb) return;
+
+    // Set tray menu - simplified with 4 essential items
     Menu menu = Menu(
       items: [
         MenuItem(
-          key: 'show',
-          label: 'Show Window',
-        ),
-        MenuItem.separator(),
-        MenuItem(
-          key: 'monitors',
-          label: 'Monitor Items',
+          key: 'options',
+          label: 'Options',
         ),
         MenuItem(
-          key: 'configs',
-          label: 'Monitor Configs',
+          key: 'open',
+          label: 'Open',
         ),
-        MenuItem.separator(),
-        MenuItem(
-          key: 'settings',
-          label: 'Settings',
-        ),
-        MenuItem(
-          key: 'about',
-          label: 'About',
-        ),
-        MenuItem.separator(),
         MenuItem(
           key: 'exit',
           label: 'Exit',
         ),
       ],
     );
-    
+
     await trayManager.setContextMenu(menu);
-    await trayManager.setToolTip('Ping365 - Monitor');
   }
 
   /// Setup auto-start with Windows
@@ -153,7 +157,7 @@ class SystemTrayService {
   /// Show window
   static Future<void> showWindow() async {
     if (kIsWeb) return;
-    
+
     try {
       await windowManager.show();
       await windowManager.focus();
@@ -165,7 +169,7 @@ class SystemTrayService {
   /// Hide window
   static Future<void> hideWindow() async {
     if (kIsWeb) return;
-    
+
     try {
       await windowManager.hide();
     } catch (e) {
@@ -176,7 +180,7 @@ class SystemTrayService {
   /// Minimize to tray
   static Future<void> minimizeToTray() async {
     if (kIsWeb) return;
-    
+
     try {
       await windowManager.hide();
       // Optional: show notification

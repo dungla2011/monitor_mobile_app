@@ -1,3 +1,4 @@
+import 'dart:io' show Platform;
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:monitor_app/l10n/app_localizations.dart';
@@ -7,6 +8,7 @@ import 'package:country_flags/country_flags.dart';
 import '../utils/language_manager.dart';
 import '../models/notification_settings.dart';
 import '../services/notification_sound_service.dart';
+import '../services/system_tray_service.dart';
 import '../utils/error_dialog_utils.dart';
 
 class SettingsScreen extends StatefulWidget {
@@ -21,12 +23,67 @@ class _SettingsScreenState extends State<SettingsScreen> {
   bool _isLoadingSettings = true;
   List<LanguageInfo> _availableLanguages = [];
   bool _isLoadingLanguages = true;
+  bool _isAutoStartEnabled = false;
+  bool _isLoadingAutoStart = false;
 
   @override
   void initState() {
     super.initState();
     _loadNotificationSettings();
     _loadAvailableLanguages();
+    if (Platform.isWindows) {
+      _loadAutoStartSetting();
+    }
+  }
+
+  Future<void> _loadAutoStartSetting() async {
+    setState(() {
+      _isLoadingAutoStart = true;
+    });
+    try {
+      final enabled = await SystemTrayService.isAutoStartEnabled();
+      setState(() {
+        _isAutoStartEnabled = enabled;
+        _isLoadingAutoStart = false;
+      });
+    } catch (e) {
+      setState(() {
+        _isLoadingAutoStart = false;
+      });
+    }
+  }
+
+  Future<void> _toggleAutoStart(bool? value) async {
+    if (value == null) return;
+
+    setState(() {
+      _isLoadingAutoStart = true;
+    });
+
+    try {
+      if (value) {
+        await SystemTrayService.enableAutoStart();
+      } else {
+        await SystemTrayService.disableAutoStart();
+      }
+
+      setState(() {
+        _isAutoStartEnabled = value;
+        _isLoadingAutoStart = false;
+      });
+    } catch (e) {
+      setState(() {
+        _isLoadingAutoStart = false;
+      });
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to update startup settings: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
   }
 
   Future<void> _loadAvailableLanguages() async {
@@ -323,6 +380,57 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ),
             ),
           ),
+
+          // Windows Settings Section (only show on Windows)
+          if (Platform.isWindows) ...[
+            const SizedBox(height: 16),
+            Card(
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Icon(Icons.desktop_windows, color: Colors.orange),
+                        const SizedBox(width: 12),
+                        Text(
+                          // Use simple locale check instead of l10n
+                          Localizations.localeOf(context).languageCode == 'vi' 
+                            ? 'Cài đặt Windows' 
+                            : 'Windows Settings',
+                          style: const TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 16),
+
+                    // Auto-start toggle
+                    if (!_isLoadingAutoStart)
+                      CheckboxListTile(
+                        title: Text('Start up with Windows'), // Hardcoded for testing
+                        subtitle: Text('Launch automatically when Windows starts'), // Hardcoded for testing
+                        value: _isAutoStartEnabled,
+                        onChanged: _toggleAutoStart,
+                        contentPadding: EdgeInsets.zero,
+                      ),
+
+                    // Loading indicator for auto-start
+                    if (_isLoadingAutoStart)
+                      const Center(
+                        child: Padding(
+                          padding: EdgeInsets.all(16.0),
+                          child: CircularProgressIndicator(),
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+            ),
+          ],
 
           const SizedBox(height: 16),
 

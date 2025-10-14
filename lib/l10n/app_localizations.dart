@@ -926,6 +926,24 @@ abstract class AppLocalizations {
   /// **'English (default)'**
   String get settingsEnglishDesc;
 
+  /// No description provided for @settingsWindowsSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Windows Settings'**
+  String get settingsWindowsSettings;
+
+  /// No description provided for @settingsStartupWithWindows.
+  ///
+  /// In en, this message translates to:
+  /// **'Start up with Windows'**
+  String get settingsStartupWithWindows;
+
+  /// No description provided for @settingsStartupWithWindowsDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Launch automatically when Windows starts'**
+  String get settingsStartupWithWindowsDesc;
+
   /// No description provided for @settingsFrenchDesc.
   ///
   /// In en, this message translates to:

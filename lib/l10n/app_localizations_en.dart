@@ -447,6 +447,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get settingsEnglishDesc => 'English (default)';
 
   @override
+  String get settingsWindowsSettings => 'Windows Settings';
+
+  @override
+  String get settingsStartupWithWindows => 'Start up with Windows';
+
+  @override
+  String get settingsStartupWithWindowsDesc =>
+      'Launch automatically when Windows starts';
+
+  @override
   String get settingsFrenchDesc => 'Français (French)';
 
   @override

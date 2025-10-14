@@ -445,6 +445,16 @@ class AppLocalizationsVi extends AppLocalizations {
   String get settingsEnglishDesc => 'English';
 
   @override
+  String get settingsWindowsSettings => 'Cài đặt Windows';
+
+  @override
+  String get settingsStartupWithWindows => 'Khởi động cùng Windows';
+
+  @override
+  String get settingsStartupWithWindowsDesc =>
+      'Tự động chạy khi Windows khởi động';
+
+  @override
   String get settingsFrenchDesc => 'Tiếng Pháp';
 
   @override
