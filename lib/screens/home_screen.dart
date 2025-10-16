@@ -3,6 +3,8 @@ import '../services/api_service.dart';
 import '../widgets/monitor_timeline_widget.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'dart:io' show Platform;
+import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:convert';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -13,7 +15,8 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   String _selectedPeriod = '24h';
-  bool _isLoading = true;
+  bool _isLoading = false;
+  bool _isRefreshing = false;
   String? _errorMessage;
   Map<String, dynamic>? _dashboardData;
 
@@ -32,23 +35,90 @@ class _HomeScreenState extends State<HomeScreen> {
     _loadDashboardData();
   }
 
-  Future<void> _loadDashboardData() async {
-    setState(() {
-      _isLoading = true;
-      _errorMessage = null;
-    });
+  // Cache key for SharedPreferences
+  String _getCacheKey() => 'dashboard_uptime_${_selectedPeriod}';
 
+  // Load cached data from SharedPreferences
+  Future<Map<String, dynamic>?> _loadCachedData() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final cachedJson = prefs.getString(_getCacheKey());
+      if (cachedJson != null) {
+        return json.decode(cachedJson) as Map<String, dynamic>;
+      }
+    } catch (e) {
+      debugPrint('Error loading cache: $e');
+    }
+    return null;
+  }
+
+  // Save data to SharedPreferences
+  Future<void> _saveCachedData(Map<String, dynamic> data) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final jsonString = json.encode(data);
+      await prefs.setString(_getCacheKey(), jsonString);
+    } catch (e) {
+      debugPrint('Error saving cache: $e');
+    }
+  }
+
+  Future<void> _loadDashboardData({bool isRefresh = false}) async {
+    // Load cache first (only if not already showing data)
+    if (!isRefresh && _dashboardData == null) {
+      setState(() {
+        _isLoading = true;
+        _errorMessage = null;
+      });
+      
+      final cachedData = await _loadCachedData();
+      if (cachedData != null && mounted) {
+        setState(() {
+          _dashboardData = cachedData;
+          _isLoading = false;
+        });
+      }
+    }
+
+    // Set refreshing state
+    if (isRefresh) {
+      setState(() {
+        _isRefreshing = true;
+        _errorMessage = null;
+      });
+    } else if (_dashboardData == null) {
+      setState(() {
+        _isLoading = true;
+        _errorMessage = null;
+      });
+    }
+
+    // Fetch fresh data from API
     try {
       final data = await ApiService.getMonitorUptimeList(_selectedPeriod);
-      setState(() {
-        _dashboardData = data;
-        _isLoading = false;
-      });
+      
+      if (mounted) {
+        setState(() {
+          _dashboardData = data;
+          _isLoading = false;
+          _isRefreshing = false;
+          _errorMessage = null;
+        });
+        
+        // Save to cache
+        await _saveCachedData(data);
+      }
     } catch (e) {
-      setState(() {
-        _errorMessage = e.toString();
-        _isLoading = false;
-      });
+      if (mounted) {
+        setState(() {
+          // Only show error if we don't have cached data
+          if (_dashboardData == null) {
+            _errorMessage = e.toString();
+          }
+          _isLoading = false;
+          _isRefreshing = false;
+        });
+      }
     }
   }
 
@@ -56,6 +126,7 @@ class _HomeScreenState extends State<HomeScreen> {
     if (newPeriod != null && newPeriod != _selectedPeriod) {
       setState(() {
         _selectedPeriod = newPeriod;
+        _dashboardData = null; // Clear current data
       });
       _loadDashboardData();
     }
@@ -87,11 +158,26 @@ class _HomeScreenState extends State<HomeScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Dashboard'),
+        title: Row(
+          children: [
+            const Text('Dashboard'),
+            if (_isRefreshing) ...[
+              const SizedBox(width: 12),
+              const SizedBox(
+                width: 16,
+                height: 16,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                ),
+              ),
+            ],
+          ],
+        ),
         actions: [
           IconButton(
             icon: const Icon(Icons.refresh),
-            onPressed: _loadDashboardData,
+            onPressed: _isRefreshing ? null : () => _loadDashboardData(isRefresh: true),
             tooltip: 'Refresh',
           ),
         ],
@@ -190,7 +276,8 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildContent() {
-    if (_isLoading) {
+    // Show loading only when no data and not refreshing
+    if (_isLoading && _dashboardData == null) {
       return const Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -203,7 +290,8 @@ class _HomeScreenState extends State<HomeScreen> {
       );
     }
 
-    if (_errorMessage != null) {
+    // Show error only when no data
+    if (_errorMessage != null && _dashboardData == null) {
       return Center(
         child: Padding(
           padding: const EdgeInsets.all(16),
@@ -219,7 +307,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               const SizedBox(height: 16),
               ElevatedButton.icon(
-                onPressed: _loadDashboardData,
+                onPressed: () => _loadDashboardData(isRefresh: true),
                 icon: const Icon(Icons.refresh),
                 label: const Text('Retry'),
               ),
@@ -272,10 +360,7 @@ class _HomeScreenState extends State<HomeScreen> {
             monitorData: monitor,
             period: _selectedPeriod,
             onPeriodChanged: (newPeriod) {
-              setState(() {
-                _selectedPeriod = newPeriod;
-              });
-              _loadDashboardData();
+              _onPeriodChanged(newPeriod);
             },
           ),
         );
