@@ -7,7 +7,12 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+  final Function(int)? onNavigateToPingList;
+  
+  const HomeScreen({
+    super.key,
+    this.onNavigateToPingList,
+  });
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -184,60 +189,54 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       body: Column(
         children: [
-          // Statistics Header
+          // Statistics Header - Single Row
           Container(
             color: Colors.white,
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            child: Row(
               children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const Text(
-                      '📊 Statistics',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    // Period Selector
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                      decoration: BoxDecoration(
-                        border: Border.all(color: Colors.grey.shade300),
-                        borderRadius: BorderRadius.circular(6),
-                      ),
-                      child: DropdownButtonHideUnderline(
-                        child: DropdownButton<String>(
-                          value: _selectedPeriod,
-                          isDense: true,
-                          items: _periodOptions.map((option) {
-                            return DropdownMenuItem<String>(
-                              value: option['value'],
-                              child: Text(
-                                option['label']!,
-                                style: const TextStyle(fontSize: 13),
-                              ),
-                            );
-                          }).toList(),
-                          onChanged: _onPeriodChanged,
-                        ),
-                      ),
-                    ),
-                  ],
+                const Text(
+                  '📊',
+                  style: TextStyle(fontSize: 16),
                 ),
-                const SizedBox(height: 12),
-                Wrap(
-                  spacing: 16,
-                  runSpacing: 8,
-                  children: [
-                    _buildStatItem('Total', totalMonitors, Colors.grey),
-                    _buildStatItem('Error', totalError, Colors.red),
-                    _buildStatItem('OK', totalOk, Colors.green),
-                    if (totalOther > 0)
-                      _buildStatItem('Other', totalOther, Colors.orange),
-                  ],
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Wrap(
+                    spacing: 16,
+                    runSpacing: 4,
+                    children: [
+                      _buildStatItem('Total', totalMonitors, Colors.grey),
+                      _buildStatItem('Error', totalError, Colors.red),
+                      _buildStatItem('OK', totalOk, Colors.green),
+                      if (totalOther > 0)
+                        _buildStatItem('Other', totalOther, Colors.orange),
+                    ],
+                  ),
+                ),
+                const SizedBox(width: 8),
+                // Period Selector
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Colors.grey.shade300),
+                    borderRadius: BorderRadius.circular(6),
+                  ),
+                  child: DropdownButtonHideUnderline(
+                    child: DropdownButton<String>(
+                      value: _selectedPeriod,
+                      isDense: true,
+                      items: _periodOptions.map((option) {
+                        return DropdownMenuItem<String>(
+                          value: option['value'],
+                          child: Text(
+                            option['label']!,
+                            style: const TextStyle(fontSize: 12),
+                          ),
+                        );
+                      }).toList(),
+                      onChanged: _onPeriodChanged,
+                    ),
+                  ),
                 ),
               ],
             ),
@@ -248,6 +247,14 @@ class _HomeScreenState extends State<HomeScreen> {
             child: _buildContent(),
           ),
         ],
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          // Navigate to Ping List tab
+          widget.onNavigateToPingList?.call(1);
+        },
+        tooltip: 'Add Ping Item',
+        child: const Icon(Icons.add),
       ),
     );
   }
@@ -361,6 +368,10 @@ class _HomeScreenState extends State<HomeScreen> {
             period: _selectedPeriod,
             onPeriodChanged: (newPeriod) {
               _onPeriodChanged(newPeriod);
+            },
+            onEditTapped: () {
+              // Navigate to Ping List tab
+              widget.onNavigateToPingList?.call(1);
             },
           ),
         );

@@ -291,10 +291,34 @@ abstract class BaseCrudScreenState<T extends BaseCrudScreen> extends State<T> {
       );
 
       try {
-        final result = await getItem(itemId);
+        final result = await getItem(itemId).timeout(
+          const Duration(seconds: 10),
+          onTimeout: () {
+            // Return error result on timeout
+            return {
+              'success': false,
+              'message': 'Request timeout after 10 seconds',
+              'isTimeout': true,
+            };
+          },
+        );
 
         // Close loading dialog
         if (mounted) Navigator.of(context).pop();
+
+        // Check if timeout occurred
+        if (result['isTimeout'] == true) {
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: const Text('⏱️ Request timeout. Please try again.'),
+                backgroundColor: Colors.orange,
+                duration: const Duration(seconds: 3),
+              ),
+            );
+          }
+          return;
+        }
 
         if (result['success']) {
           fullItemData = result['data'];

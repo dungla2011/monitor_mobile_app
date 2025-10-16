@@ -5,12 +5,14 @@ class MonitorTimelineWidget extends StatelessWidget {
   final Map<String, dynamic> monitorData;
   final String period;
   final Function(String)? onPeriodChanged;
+  final VoidCallback? onEditTapped;
 
   const MonitorTimelineWidget({
     super.key,
     required this.monitorData,
     required this.period,
     this.onPeriodChanged,
+    this.onEditTapped,
   });
 
   @override
@@ -66,14 +68,7 @@ class MonitorTimelineWidget extends StatelessWidget {
             children: [
               // Edit button
               InkWell(
-                onTap: () {
-                  // Navigate to edit screen
-                  Navigator.pushNamed(
-                    context,
-                    '/monitor-item/edit',
-                    arguments: id,
-                  );
-                },
+                onTap: onEditTapped,
                 child: Container(
                   width: 28,
                   height: 28,

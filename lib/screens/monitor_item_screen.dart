@@ -4,7 +4,9 @@ import '../services/monitor_item_crud_service.dart';
 import 'base_crud_screen.dart';
 
 class MonitorItemScreen extends BaseCrudScreen {
-  const MonitorItemScreen({super.key});
+  const MonitorItemScreen({
+    super.key,
+  });
 
   @override
   State<MonitorItemScreen> createState() => _MonitorItemScreenState();
@@ -19,6 +21,12 @@ class _MonitorItemScreenState extends BaseCrudScreenState<MonitorItemScreen> {
   String _nameFilterText = '';
   final TextEditingController _nameFilterController = TextEditingController();
   List<Map<String, dynamic>> _filteredItems = [];
+  
+  @override
+  void initState() {
+    super.initState();
+    // loadItems() will be called by BaseCrudScreen
+  }
 
   @override
   String get screenTitle => 'Ping Items';

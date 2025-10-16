@@ -305,7 +305,14 @@ class _MainScreenState extends State<MainScreen> {
 
   // Create screens dynamically to allow rebuild
   List<Widget> get _screens => [
-        HomeScreen(key: ValueKey('home_$_screensKey')),
+        HomeScreen(
+          key: ValueKey('home_$_screensKey'),
+          onNavigateToPingList: (tabIndex) {
+            setState(() {
+              _selectedIndex = tabIndex;
+            });
+          },
+        ),
         MonitorItemScreen(key: ValueKey('monitor_$_screensKey')),
         MonitorConfigScreen(key: ValueKey('config_$_screensKey')),
         ProfileScreen(key: ValueKey('profile_$_screensKey')),
