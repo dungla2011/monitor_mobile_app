@@ -175,29 +175,48 @@ class MonitorTimelineWidget extends StatelessWidget {
   List<Widget> _buildTimelineBars(List<int> statusList, List<String> labels, double availableWidth) {
     if (statusList.isEmpty) return [];
     
-    final int totalBars = statusList.length;
-    final double barWidth = 2.0; // Fixed 2px width per bar
-    final double minGap = 1.0; // Minimum 1px gap
+    // Calculate max bars that can fit: (width / (2px bar + 1px gap))
+    final int maxBarsCanFit = (availableWidth / 3).floor();
     
-    // Calculate total width needed for bars only
+    // Sample data if needed
+    List<int> displayStatus;
+    List<String> displayLabels;
+    
+    if (statusList.length > maxBarsCanFit) {
+      // Need to sample data
+      final int step = (statusList.length / maxBarsCanFit).ceil();
+      displayStatus = [];
+      displayLabels = [];
+      
+      for (int i = 0; i < statusList.length; i += step) {
+        // Take majority status from this group
+        int endIdx = (i + step).clamp(0, statusList.length);
+        List<int> group = statusList.sublist(i, endIdx);
+        
+        int onlineCount = group.where((s) => s == 1).length;
+        displayStatus.add(onlineCount > group.length / 2 ? 1 : 0);
+        displayLabels.add(i < labels.length ? labels[i] : '');
+      }
+    } else {
+      displayStatus = statusList;
+      displayLabels = labels;
+    }
+    
+    final int totalBars = displayStatus.length;
+    final double barWidth = 2.0;
     final double totalBarsWidth = totalBars * barWidth;
-    
-    // Calculate total gap width available
     final double totalGapWidth = availableWidth - totalBarsWidth;
-    
-    // Calculate gap per space (between bars)
     final int gapCount = totalBars - 1;
-    final double gapWidth = gapCount > 0 ? (totalGapWidth / gapCount).clamp(minGap, double.infinity) : 0.0;
+    final double gapWidth = gapCount > 0 ? (totalGapWidth / gapCount).clamp(1.0, double.infinity) : 0.0;
     
     List<Widget> bars = [];
     
-    for (int i = 0; i < statusList.length; i++) {
-      final status = statusList[i];
+    for (int i = 0; i < displayStatus.length; i++) {
+      final status = displayStatus[i];
       final color = status == 1 ? Colors.green : Colors.red;
-      final time = i < labels.length ? labels[i] : '';
+      final time = i < displayLabels.length ? displayLabels[i] : '';
       final statusText = status == 1 ? 'Online' : 'Offline';
       
-      // Add the bar (fixed 2px width)
       bars.add(
         Tooltip(
           message: '$statusText\n$time',
@@ -208,11 +227,8 @@ class MonitorTimelineWidget extends StatelessWidget {
         ),
       );
       
-      // Add gap between bars (except last one)
-      if (i < statusList.length - 1) {
-        bars.add(
-          SizedBox(width: gapWidth),
-        );
+      if (i < displayStatus.length - 1) {
+        bars.add(SizedBox(width: gapWidth));
       }
     }
     
