@@ -427,8 +427,17 @@ abstract class BaseCrudService {
       // Check each dependency condition
       for (final entry in showDependency.entries) {
         final dependencyFieldName = entry.key;
-        final allowedValues = entry.value;
+        var allowedValues = entry.value;
         final currentValue = itemData[dependencyFieldName];
+
+        // SUPPORT BOTH FORMATS:
+        // Format 1: {"type": ["value1", "value2"]} - List
+        // Format 2: {"type": {"0": "value1", "1": "value2"}} - Map with numeric keys
+        if (allowedValues is Map) {
+          // Convert Map to List by extracting values
+          allowedValues = allowedValues.values.toList();
+          print('🔄 Converted Map to List: $allowedValues');
+        }
 
         // Convert current value to appropriate type for comparison
         String? currentValueStr = currentValue?.toString();
