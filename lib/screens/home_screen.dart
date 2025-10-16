@@ -348,10 +348,17 @@ class _HomeScreenState extends State<HomeScreen> {
                 l10n.homeNoMonitors,
                 style: const TextStyle(fontSize: 16, color: Colors.grey),
               ),
-              const SizedBox(height: 8),
-              Text(
-                l10n.homeAddMonitorsHint,
-                style: const TextStyle(fontSize: 14, color: Colors.grey),
+              const SizedBox(height: 24),
+              ElevatedButton.icon(
+                onPressed: () {
+                  // Navigate to Ping List tab
+                  widget.onNavigateToPingList?.call(1);
+                },
+                icon: const Icon(Icons.add),
+                label: Text(l10n.homeAddMonitorsHint),
+                style: ElevatedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                ),
               ),
             ],
           ),
