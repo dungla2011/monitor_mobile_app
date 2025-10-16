@@ -18,6 +18,7 @@ import 'services/affiliate_service.dart';
 import 'utils/language_manager.dart';
 import 'widgets/web_auth_wrapper.dart';
 import 'screens/profile_screen.dart';
+import 'screens/home_screen.dart';
 import 'screens/monitor_item_screen.dart';
 import 'screens/monitor_config_screen.dart';
 import 'screens/settings_screen.dart';
@@ -304,6 +305,7 @@ class _MainScreenState extends State<MainScreen> {
 
   // Create screens dynamically to allow rebuild
   List<Widget> get _screens => [
+        HomeScreen(key: ValueKey('home_$_screensKey')),
         MonitorItemScreen(key: ValueKey('monitor_$_screensKey')),
         MonitorConfigScreen(key: ValueKey('config_$_screensKey')),
         ProfileScreen(key: ValueKey('profile_$_screensKey')),
@@ -460,8 +462,8 @@ class _MainScreenState extends State<MainScreen> {
                 ),
               ),
               ListTile(
-                leading: const Icon(Icons.monitor),
-                title: Text(localizations.navigationMonitorItems),
+                leading: const Icon(Icons.home),
+                title: Text(localizations.navigationHome),
                 selected: _selectedIndex == 0,
                 onTap: () {
                   setState(() {
@@ -471,8 +473,8 @@ class _MainScreenState extends State<MainScreen> {
                 },
               ),
               ListTile(
-                leading: const Icon(Icons.settings_applications),
-                title: Text(localizations.navigationMonitorConfigs),
+                leading: const Icon(Icons.monitor),
+                title: Text(localizations.navigationMonitorItems),
                 selected: _selectedIndex == 1,
                 onTap: () {
                   setState(() {
@@ -482,12 +484,23 @@ class _MainScreenState extends State<MainScreen> {
                 },
               ),
               ListTile(
-                leading: const Icon(Icons.person),
-                title: Text(localizations.navigationProfile),
+                leading: const Icon(Icons.settings_applications),
+                title: Text(localizations.navigationMonitorConfigs),
                 selected: _selectedIndex == 2,
                 onTap: () {
                   setState(() {
                     _selectedIndex = 2;
+                  });
+                  Navigator.pop(context);
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.person),
+                title: Text(localizations.navigationProfile),
+                selected: _selectedIndex == 3,
+                onTap: () {
+                  setState(() {
+                    _selectedIndex = 3;
                   });
                   Navigator.pop(context);
                 },
@@ -507,10 +520,10 @@ class _MainScreenState extends State<MainScreen> {
               ListTile(
                 leading: const Icon(Icons.settings),
                 title: Text(localizations.navigationSettings),
-                selected: _selectedIndex == 3,
+                selected: _selectedIndex == 4,
                 onTap: () {
                   setState(() {
-                    _selectedIndex = 3;
+                    _selectedIndex = 4;
                   });
                   Navigator.pop(context);
                 },
@@ -519,10 +532,10 @@ class _MainScreenState extends State<MainScreen> {
               ListTile(
                 leading: const Icon(Icons.info),
                 title: Text(localizations.navigationAbout),
-                selected: _selectedIndex == 4,
+                selected: _selectedIndex == 5,
                 onTap: () {
                   setState(() {
-                    _selectedIndex = 4;
+                    _selectedIndex = 5;
                   });
                   Navigator.pop(context);
                 },

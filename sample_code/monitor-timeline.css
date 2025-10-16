@@ -1,0 +1,415 @@
+/**
+ * Monitor Timeline Widget Styles
+ * CSS cho widget timeline đơn giản hiển thị trạng thái On/Off
+ */
+
+.monitor-timeline-widget {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    background: #ffffff;
+    border: 2px solid #ccc;
+    border-radius: 8px;
+    padding: 16px;
+    margin-bottom: 20px;
+}
+
+/* Header with Stats and Time Range */
+.timeline-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #e5e7eb;
+    gap: 20px;
+}
+
+/* Monitor Name (Left side) */
+.timeline-monitor-name {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.timeline-edit-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    background: #ffffff;
+    color: #6b7280;
+    cursor: pointer;
+    transition: all 0.2s;
+    outline: none;
+}
+
+.timeline-edit-btn:hover {
+    background: #f9fafb;
+    border-color: #9ca3af;
+    color: #374151;
+}
+
+.timeline-edit-btn:active {
+    transform: scale(0.95);
+}
+
+.timeline-edit-btn svg {
+    display: block;
+}
+
+.monitor-name-text {
+    font-size: 15px;
+    font-weight: 600;
+    color: #111827;
+}
+
+/* Right side: Stats + Time Range */
+.timeline-header-right {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    flex: 1;
+    justify-content: flex-end;
+}
+
+/* Stats container */
+.timeline-stats {
+    display: flex;
+    gap: 20px;
+}
+
+.stat-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.stat-label {
+    font-size: 13px;
+    color: #6b7280;
+    font-weight: 500;
+}
+
+.stat-value {
+    font-size: 16px;
+    font-weight: 600;
+    color: #111827;
+}
+
+.stat-value.stat-up {
+    color: #10b981;
+}
+
+.stat-value.stat-down {
+    color: #ef4444;
+}
+
+/* Time Range Selector */
+.timeline-time-range {
+    flex-shrink: 0;
+}
+
+.time-range-select {
+    padding: 6px 12px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 500;
+    color: #374151;
+    background-color: #ffffff;
+    cursor: pointer;
+    transition: all 0.2s;
+    outline: none;
+}
+
+.time-range-select:hover {
+    border-color: #9ca3af;
+    background-color: #f9fafb;
+}
+
+.time-range-select:focus {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+/* Timeline container */
+.timeline-container {
+    height: 20px;
+    position: relative;
+    width: 100%;
+    background: #f9fafb;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.timeline-bars {
+    display: flex;
+    height: 100%;
+    width: 100%;
+    justify-content: space-between;
+    align-items: stretch;
+}
+
+.timeline-bar {
+    height: 100%;
+    cursor: pointer;
+    transition: opacity 0.2s;
+    flex-shrink: 0;
+    /* width được set inline via JavaScript: 1-3px */
+    /* gap tự động bởi space-between */
+}
+
+.timeline-bar:hover {
+    opacity: 0.8;
+}
+
+.timeline-bar.status-up {
+    background-color: #10b981; /* Green */
+}
+
+.timeline-bar.status-down {
+    background-color: #ef4444; /* Red */
+}
+
+/* Labels */
+.timeline-labels {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 8px;
+    padding: 0 4px;
+}
+
+.timeline-label {
+    font-size: 11px;
+    color: #6b7280;
+}
+
+.timeline-label-start {
+    text-align: left;
+}
+
+.timeline-label-middle {
+    text-align: center;
+}
+
+.timeline-label-end {
+    text-align: right;
+}
+
+/* Loading và Error states */
+.timeline-loading,
+.timeline-error {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    font-size: 14px;
+    color: #6b7280;
+}
+
+.timeline-error {
+    color: #ef4444;
+}
+
+/* Dark theme */
+.monitor-timeline-widget.dark-theme {
+    background: #1f2937;
+    border-color: #374151;
+}
+
+.dark-theme .timeline-header {
+    border-bottom-color: #374151;
+}
+
+.dark-theme .timeline-edit-btn {
+    background: #374151;
+    border-color: #4b5563;
+    color: #9ca3af;
+}
+
+.dark-theme .timeline-edit-btn:hover {
+    background: #4b5563;
+    border-color: #6b7280;
+    color: #f9fafb;
+}
+
+.dark-theme .monitor-name-text {
+    color: #f9fafb;
+}
+
+.dark-theme .stat-label {
+    color: #9ca3af;
+}
+
+.dark-theme .stat-value {
+    color: #f9fafb;
+}
+
+.dark-theme .time-range-select {
+    background-color: #374151;
+    border-color: #4b5563;
+    color: #f9fafb;
+}
+
+.dark-theme .time-range-select:hover {
+    background-color: #4b5563;
+    border-color: #6b7280;
+}
+
+.dark-theme .timeline-container {
+    background: #111827;
+}
+
+.dark-theme .timeline-label {
+    color: #9ca3af;
+}
+
+.dark-theme .timeline-loading,
+.dark-theme .timeline-error {
+    color: #9ca3af;
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+    .timeline-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+
+    .timeline-monitor-name {
+        width: 100%;
+    }
+
+    .monitor-name-text {
+        font-size: 14px;
+    }
+
+    .timeline-header-right {
+        width: 100%;
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        gap: 12px;
+    }
+
+    .timeline-stats {
+        flex-direction: row;
+        gap: 12px;
+        flex: 1;
+        min-width: 0;
+    }
+
+    .stat-item {
+        flex-direction: column;
+        gap: 2px;
+        align-items: flex-start;
+    }
+
+    .stat-label {
+        font-size: 11px;
+    }
+
+    .stat-value {
+        font-size: 14px;
+    }
+
+    .timeline-time-range {
+        flex-shrink: 0;
+    }
+
+    .time-range-select {
+        font-size: 12px;
+        padding: 5px 10px;
+    }
+
+    .timeline-label {
+        font-size: 10px;
+    }
+}
+
+/* Compact variant */
+.monitor-timeline-widget.compact {
+    padding: 12px;
+}
+
+.monitor-timeline-widget.compact .timeline-stats {
+    gap: 12px;
+    margin-bottom: 8px;
+    padding-bottom: 8px;
+}
+
+.monitor-timeline-widget.compact .stat-label,
+.monitor-timeline-widget.compact .stat-value {
+    font-size: 12px;
+}
+
+.monitor-timeline-widget.compact .timeline-labels {
+    margin-top: 4px;
+}
+
+/* Tooltip enhancement */
+.timeline-bar {
+    position: relative;
+}
+
+.timeline-bar::after {
+    content: attr(title);
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.9);
+    color: white;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 11px;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s;
+    margin-bottom: 4px;
+    z-index: 10;
+}
+
+.timeline-bar:hover::after {
+    opacity: 1;
+}
+
+/* Status legend (optional) */
+.timeline-legend {
+    display: flex;
+    gap: 16px;
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid #e5e7eb;
+    font-size: 12px;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.legend-color {
+    width: 16px;
+    height: 16px;
+    border-radius: 2px;
+}
+
+.legend-color.up {
+    background-color: #10b981;
+}
+
+.legend-color.down {
+    background-color: #ef4444;
+}
+
+.dark-theme .timeline-legend {
+    border-top-color: #374151;
+}

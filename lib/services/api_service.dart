@@ -213,4 +213,28 @@ class ApiService {
       return {'success': false, 'message': 'Connection error: $e'};
     }
   }
+
+  // Get monitor uptime list for dashboard
+  static Future<Map<String, dynamic>> getMonitorUptimeList(String period) async {
+    try {
+      if (!WebAuthService.hasValidToken()) {
+        throw Exception('Not logged in');
+      }
+
+      final response = await WebAuthService.authenticatedGet(
+        '$_baseUrl/monitor-graph/uptime-list?period=$period',
+      );
+
+      if (response.statusCode == 200) {
+        return jsonDecode(response.body);
+      } else if (response.statusCode == 401) {
+        await WebAuthService.signOut();
+        throw Exception('Token expired, please login again');
+      } else {
+        throw Exception('Server error (${response.statusCode})');
+      }
+    } catch (e) {
+      throw Exception('Failed to load dashboard data: $e');
+    }
+  }
 }
