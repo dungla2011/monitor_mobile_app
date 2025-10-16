@@ -547,7 +547,7 @@ abstract class BaseCrudScreenState<T extends BaseCrudScreen> extends State<T> {
       }
     }
 
-    if (lowerDataType.contains('datetime')) {
+    if (lowerDataType.contains('datetime') || lowerDataType.contains('timestamp')) {
       try {
         final dateTime = DateTime.parse(value);
         return '${dateTime.day.toString().padLeft(2, '0')}/${dateTime.month.toString().padLeft(2, '0')}/${dateTime.year} ${dateTime.hour.toString().padLeft(2, '0')}:${dateTime.minute.toString().padLeft(2, '0')}';
@@ -570,7 +570,7 @@ abstract class BaseCrudScreenState<T extends BaseCrudScreen> extends State<T> {
 
     if (lowerDataType == 'error_status') return Icons.info_outline;
     if (lowerDataType.contains('boolean_status')) return Icons.toggle_on;
-    if (lowerDataType.contains('datetime')) return Icons.access_time;
+    if (lowerDataType.contains('datetime') || lowerDataType.contains('timestamp')) return Icons.access_time;
     if (lowerDataType.contains('url') || lowerDataType.contains('link')) {
       return Icons.link;
     }
@@ -1020,7 +1020,8 @@ class _BaseCrudDialogState extends State<BaseCrudDialog> {
           dataType.contains('tinyint') ||
           (fieldName == 'enable'); // Special case for enable field
       final isDateTimeField =
-          dataType.contains('datetime') && field['editable'] == 'yes';
+          (dataType.contains('datetime') || dataType.contains('timestamp')) && 
+          field['editable'] == 'yes';
 
       if (isBooleanField) {
         // Initialize boolean value: 1, "1", true -> true; others -> false
@@ -1356,7 +1357,8 @@ class _BaseCrudDialogState extends State<BaseCrudDialog> {
         dataType.contains('tinyint') ||
         (fieldName == 'enable'); // Special case for enable field
     final isDateTimeField =
-        dataType.contains('datetime') && field['editable'] == 'yes';
+        (dataType.contains('datetime') || dataType.contains('timestamp')) && 
+        field['editable'] == 'yes';
     final isReadOnly = field['editable'] == 'no';
     final extraMobileInfo = field['extra_mobile_info']?.toString();
 
