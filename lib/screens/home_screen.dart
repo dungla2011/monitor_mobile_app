@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 import 'dart:io' show Platform;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
+import '../l10n/app_localizations.dart';
 
 class HomeScreen extends StatefulWidget {
   final Function(int)? onNavigateToPingList;
@@ -161,11 +162,13 @@ class _HomeScreenState extends State<HomeScreen> {
       }
     }
 
+    final l10n = AppLocalizations.of(context)!;
+
     return Scaffold(
       appBar: AppBar(
         title: Row(
           children: [
-            const Text('Dashboard'),
+            Text(l10n.homeDashboard),
             if (_isRefreshing) ...[
               const SizedBox(width: 12),
               const SizedBox(
@@ -183,7 +186,7 @@ class _HomeScreenState extends State<HomeScreen> {
           IconButton(
             icon: const Icon(Icons.refresh),
             onPressed: _isRefreshing ? null : () => _loadDashboardData(isRefresh: true),
-            tooltip: 'Refresh',
+            tooltip: l10n.homeRefresh,
           ),
         ],
       ),
@@ -205,11 +208,11 @@ class _HomeScreenState extends State<HomeScreen> {
                     spacing: 16,
                     runSpacing: 4,
                     children: [
-                      _buildStatItem('Total', totalMonitors, Colors.grey),
-                      _buildStatItem('Error', totalError, Colors.red),
-                      _buildStatItem('OK', totalOk, Colors.green),
+                      _buildStatItem(l10n.homeTotal, totalMonitors, Colors.grey),
+                      _buildStatItem(l10n.homeError, totalError, Colors.red),
+                      _buildStatItem(l10n.homeOk, totalOk, Colors.green),
                       if (totalOther > 0)
-                        _buildStatItem('Other', totalOther, Colors.orange),
+                        _buildStatItem(l10n.homeOther, totalOther, Colors.orange),
                     ],
                   ),
                 ),
@@ -253,7 +256,7 @@ class _HomeScreenState extends State<HomeScreen> {
           // Navigate to Ping List tab
           widget.onNavigateToPingList?.call(1);
         },
-        tooltip: 'Add Ping Item',
+        tooltip: l10n.homeAddPingItem,
         child: const Icon(Icons.add),
       ),
     );
@@ -283,15 +286,17 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildContent() {
+    final l10n = AppLocalizations.of(context)!;
+    
     // Show loading only when no data and not refreshing
     if (_isLoading && _dashboardData == null) {
-      return const Center(
+      return Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            CircularProgressIndicator(),
-            SizedBox(height: 16),
-            Text('Loading monitors...'),
+            const CircularProgressIndicator(),
+            const SizedBox(height: 16),
+            Text(l10n.homeLoadingMonitors),
           ],
         ),
       );
@@ -316,7 +321,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ElevatedButton.icon(
                 onPressed: () => _loadDashboardData(isRefresh: true),
                 icon: const Icon(Icons.refresh),
-                label: const Text('Retry'),
+                label: Text(l10n.homeRetry),
               ),
             ],
           ),
@@ -325,30 +330,30 @@ class _HomeScreenState extends State<HomeScreen> {
     }
 
     if (_dashboardData == null) {
-      return const Center(
-        child: Text('No data available'),
+      return Center(
+        child: Text(l10n.homeNoData),
       );
     }
 
     final monitors = _dashboardData!['monitors'] as List? ?? [];
 
     if (monitors.isEmpty) {
-      return const Center(
+      return Center(
         child: Padding(
-          padding: EdgeInsets.all(16),
+          padding: const EdgeInsets.all(16),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(Icons.inbox_outlined, size: 64, color: Colors.grey),
-              SizedBox(height: 16),
+              const Icon(Icons.inbox_outlined, size: 64, color: Colors.grey),
+              const SizedBox(height: 16),
               Text(
-                'No monitors found',
-                style: TextStyle(fontSize: 16, color: Colors.grey),
+                l10n.homeNoMonitors,
+                style: const TextStyle(fontSize: 16, color: Colors.grey),
               ),
-              SizedBox(height: 8),
+              const SizedBox(height: 8),
               Text(
-                'Add monitors to see them here',
-                style: TextStyle(fontSize: 14, color: Colors.grey),
+                l10n.homeAddMonitorsHint,
+                style: const TextStyle(fontSize: 14, color: Colors.grey),
               ),
             ],
           ),

@@ -746,6 +746,84 @@ abstract class AppLocalizations {
   /// **'Welcome!'**
   String get navigationWelcome;
 
+  /// No description provided for @homeDashboard.
+  ///
+  /// In en, this message translates to:
+  /// **'Dashboard'**
+  String get homeDashboard;
+
+  /// No description provided for @homeStatistics.
+  ///
+  /// In en, this message translates to:
+  /// **'Statistics'**
+  String get homeStatistics;
+
+  /// No description provided for @homeTotal.
+  ///
+  /// In en, this message translates to:
+  /// **'Total'**
+  String get homeTotal;
+
+  /// No description provided for @homeError.
+  ///
+  /// In en, this message translates to:
+  /// **'Error'**
+  String get homeError;
+
+  /// No description provided for @homeOk.
+  ///
+  /// In en, this message translates to:
+  /// **'OK'**
+  String get homeOk;
+
+  /// No description provided for @homeOther.
+  ///
+  /// In en, this message translates to:
+  /// **'Other'**
+  String get homeOther;
+
+  /// No description provided for @homeLoadingMonitors.
+  ///
+  /// In en, this message translates to:
+  /// **'Loading monitors...'**
+  String get homeLoadingMonitors;
+
+  /// No description provided for @homeNoMonitors.
+  ///
+  /// In en, this message translates to:
+  /// **'No monitors found'**
+  String get homeNoMonitors;
+
+  /// No description provided for @homeAddMonitorsHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Add monitors to see them here'**
+  String get homeAddMonitorsHint;
+
+  /// No description provided for @homeNoData.
+  ///
+  /// In en, this message translates to:
+  /// **'No data available'**
+  String get homeNoData;
+
+  /// No description provided for @homeRefresh.
+  ///
+  /// In en, this message translates to:
+  /// **'Refresh'**
+  String get homeRefresh;
+
+  /// No description provided for @homeRetry.
+  ///
+  /// In en, this message translates to:
+  /// **'Retry'**
+  String get homeRetry;
+
+  /// No description provided for @homeAddPingItem.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Ping Item'**
+  String get homeAddPingItem;
+
   /// No description provided for @settingsTitle.
   ///
   /// In en, this message translates to:

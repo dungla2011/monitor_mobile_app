@@ -352,6 +352,45 @@ class AppLocalizationsEn extends AppLocalizations {
   String get navigationWelcome => 'Welcome!';
 
   @override
+  String get homeDashboard => 'Dashboard';
+
+  @override
+  String get homeStatistics => 'Statistics';
+
+  @override
+  String get homeTotal => 'Total';
+
+  @override
+  String get homeError => 'Error';
+
+  @override
+  String get homeOk => 'OK';
+
+  @override
+  String get homeOther => 'Other';
+
+  @override
+  String get homeLoadingMonitors => 'Loading monitors...';
+
+  @override
+  String get homeNoMonitors => 'No monitors found';
+
+  @override
+  String get homeAddMonitorsHint => 'Add monitors to see them here';
+
+  @override
+  String get homeNoData => 'No data available';
+
+  @override
+  String get homeRefresh => 'Refresh';
+
+  @override
+  String get homeRetry => 'Retry';
+
+  @override
+  String get homeAddPingItem => 'Add Ping Item';
+
+  @override
   String get settingsTitle => 'Settings';
 
   @override

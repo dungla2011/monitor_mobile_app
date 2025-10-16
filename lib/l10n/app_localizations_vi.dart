@@ -352,6 +352,45 @@ class AppLocalizationsVi extends AppLocalizations {
   String get navigationWelcome => 'Chào mừng bạn!';
 
   @override
+  String get homeDashboard => 'Bảng điều khiển';
+
+  @override
+  String get homeStatistics => 'Thống kê';
+
+  @override
+  String get homeTotal => 'Tổng';
+
+  @override
+  String get homeError => 'Lỗi';
+
+  @override
+  String get homeOk => 'OK';
+
+  @override
+  String get homeOther => 'Khác';
+
+  @override
+  String get homeLoadingMonitors => 'Đang tải monitors...';
+
+  @override
+  String get homeNoMonitors => 'Không tìm thấy monitor';
+
+  @override
+  String get homeAddMonitorsHint => 'Thêm monitors để hiển thị ở đây';
+
+  @override
+  String get homeNoData => 'Không có dữ liệu';
+
+  @override
+  String get homeRefresh => 'Làm mới';
+
+  @override
+  String get homeRetry => 'Thử lại';
+
+  @override
+  String get homeAddPingItem => 'Thêm Ping Item';
+
+  @override
   String get settingsTitle => 'Cài đặt';
 
   @override

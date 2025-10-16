@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:monitor_app/l10n/app_localizations.dart';
+import 'package:monitor_app/l10n/app_localizations_en.dart';
 import 'package:monitor_app/services/dynamic_localization_service.dart';
 
 /// Custom AppLocalizations that merges built-in ARB with server translations
@@ -8,9 +9,14 @@ import 'package:monitor_app/services/dynamic_localization_service.dart';
 class ServerAppLocalizations extends AppLocalizations {
   final AppLocalizations _builtIn;
   final Map<String, String> _serverTranslations;
+  final Map<String, String> _serverTranslationsEN;
+  static final AppLocalizationsEn _enFallback = AppLocalizationsEn();
 
-  ServerAppLocalizations(this._builtIn, this._serverTranslations)
-      : super(_builtIn.localeName);
+  ServerAppLocalizations(
+    this._builtIn,
+    this._serverTranslations,
+    this._serverTranslationsEN,
+  ) : super(_builtIn.localeName);
 
   @override
   String get localeName => _builtIn.localeName;
@@ -133,28 +139,48 @@ class ServerAppLocalizations extends AppLocalizations {
       // Extract property name from Symbol format: 'Symbol("propertyName")'
       final propertyName = symbolName.substring(8, symbolName.length - 2);
 
-      // Priority 1: Check server translations first
-      if (_serverTranslations.containsKey(propertyName)) {
-        print('🔵 Using server translation for: $propertyName');
-        return _serverTranslations[propertyName];
+      // Priority 1: Check server translations for current language
+      try {
+        if (_serverTranslations.containsKey(propertyName)) {
+          print('🔵 Using server translation for: $propertyName');
+          return _serverTranslations[propertyName];
+        }
+      } catch (e) {
+        print('❌ Error checking server translations: $e');
       }
 
-      // Priority 2: Try to get from built-in ARB by calling the same invocation
-      // Wrap in try-catch to handle missing properties gracefully
+      // Priority 2: Try to get from built-in ARB (current language)
       try {
-        // Call the actual property getter on built-in instance
-        // This uses reflection through noSuchMethod but catches the error
         final result = _builtIn.noSuchMethod(invocation);
         print('📦 Using built-in ARB for: $propertyName');
         return result;
       } on NoSuchMethodError {
-        // Property doesn't exist in built-in ARB either
-        print(
-            '⚠️ Translation missing for: $propertyName (returning key as fallback)');
-        return propertyName; // Return key name as fallback
+        // Not found in current language, fallback to EN
       } catch (e) {
-        // Other errors
         print('❌ Error getting translation for: $propertyName - $e');
+      }
+
+      // Priority 3: Fallback to server EN translations
+      try {
+        if (_serverTranslationsEN.containsKey(propertyName)) {
+          print('🔄 Fallback to server EN for: $propertyName');
+          return _serverTranslationsEN[propertyName];
+        }
+      } catch (e) {
+        print('❌ Error checking EN server translations: $e');
+      }
+
+      // Priority 4: Fallback to built-in EN (AppLocalizationsEn)
+      try {
+        final result = _enFallback.noSuchMethod(invocation);
+        print('� Fallback to built-in EN for: $propertyName');
+        return result;
+      } on NoSuchMethodError {
+        // Property doesn't exist anywhere
+        print('⚠️ Translation missing everywhere for: $propertyName (returning key)');
+        return propertyName; // Return key name as last resort
+      } catch (e) {
+        print('❌ Error fallback EN for: $propertyName - $e');
         return propertyName;
       }
     }
@@ -189,19 +215,32 @@ class ServerAppLocalizationsDelegate
       builtIn = await AppLocalizations.delegate.load(const Locale('en', ''));
     }
 
-    // Then try to load server translations
+    // Load server translations for current language
     final serverTranslations =
         await DynamicLocalizationService.loadCachedLanguage(
             locale.languageCode);
 
+    // Always load EN translations as fallback
+    final serverTranslationsEN =
+        await DynamicLocalizationService.loadCachedLanguage('en');
+
     if (serverTranslations != null && serverTranslations.isNotEmpty) {
       print(
           '✅ Using ServerAppLocalizations for ${locale.languageCode} (${serverTranslations.length} keys)');
-      return ServerAppLocalizations(builtIn, serverTranslations);
+      return ServerAppLocalizations(
+        builtIn,
+        serverTranslations,
+        serverTranslationsEN ?? {},
+      );
     }
 
-    print('📦 Using built-in translations for ${locale.languageCode}');
-    return builtIn;
+    // If no server translations, still create ServerAppLocalizations with EN fallback
+    print('📦 Using built-in translations for ${locale.languageCode} with EN fallback');
+    return ServerAppLocalizations(
+      builtIn,
+      {},
+      serverTranslationsEN ?? {},
+    );
   }
 
   @override
