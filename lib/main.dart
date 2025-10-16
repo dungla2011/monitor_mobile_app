@@ -320,14 +320,36 @@ class _MainScreenState extends State<MainScreen> {
         AboutScreen(key: ValueKey('about_$_screensKey')),
       ];
 
+  // Get current page title based on selected index
+  String _getPageTitle(AppLocalizations localizations) {
+    switch (_selectedIndex) {
+      case 0:
+        return localizations.navigationHome;
+      case 1:
+        return localizations.navigationMonitorItems;
+      case 2:
+        return localizations.navigationMonitorConfigs;
+      case 3:
+        return localizations.navigationProfile;
+      case 4:
+        return localizations.navigationSettings;
+      case 5:
+        return localizations.navigationAbout;
+      default:
+        return '';
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final localizations = AppLocalizations.of(context)!;
+    final pageTitle = _getPageTitle(localizations);
+    
     return ScaffoldMessenger(
       key: _scaffoldMessengerKey,
       child: Scaffold(
         appBar: AppBar(
-          title: Text(localizations.appTitle),
+          title: Text('${localizations.appTitle} - $pageTitle'),
           backgroundColor: Theme.of(context).colorScheme.inversePrimary,
           actions: [
             // Language Selector with Flag

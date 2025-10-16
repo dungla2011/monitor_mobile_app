@@ -23,7 +23,7 @@ class MonitorTimelineWidget extends StatelessWidget {
     final stats = monitorData['stats'] as Map<String, dynamic>? ?? {};
     final chartData = monitorData['chart_data'] as Map<String, dynamic>? ?? {};
     
-    final uptimePercentage = stats['uptime_percentage'] ?? 0.0;
+    final uptimePercentage = (stats['uptime_percentage'] ?? 0.0).toDouble();
     final totalChecks = stats['total_checks'] ?? 0;
     final successfulChecks = stats['successful_checks'] ?? 0;
     final failedChecks = stats['failed_checks'] ?? 0;

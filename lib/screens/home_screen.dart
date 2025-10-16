@@ -165,31 +165,6 @@ class _HomeScreenState extends State<HomeScreen> {
     final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
-      appBar: AppBar(
-        title: Row(
-          children: [
-            Text(l10n.homeDashboard),
-            if (_isRefreshing) ...[
-              const SizedBox(width: 12),
-              const SizedBox(
-                width: 16,
-                height: 16,
-                child: CircularProgressIndicator(
-                  strokeWidth: 2,
-                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                ),
-              ),
-            ],
-          ],
-        ),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.refresh),
-            onPressed: _isRefreshing ? null : () => _loadDashboardData(isRefresh: true),
-            tooltip: l10n.homeRefresh,
-          ),
-        ],
-      ),
       body: Column(
         children: [
           // Statistics Header - Single Row
@@ -241,6 +216,29 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   ),
                 ),
+                const SizedBox(width: 8),
+                // Refresh Button
+                if (_isRefreshing)
+                  const SizedBox(
+                    width: 20,
+                    height: 20,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                    ),
+                  )
+                else
+                  InkWell(
+                    onTap: () => _loadDashboardData(isRefresh: true),
+                    borderRadius: BorderRadius.circular(20),
+                    child: Padding(
+                      padding: const EdgeInsets.all(4),
+                      child: Icon(
+                        Icons.refresh,
+                        size: 20,
+                        color: Colors.grey.shade700,
+                      ),
+                    ),
+                  ),
               ],
             ),
           ),

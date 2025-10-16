@@ -59,4 +59,4 @@ android/app/upload-keystore.jks
 installer_output/
 *.exe
 !windows/installer/*.iss
- 
+installer_output 
