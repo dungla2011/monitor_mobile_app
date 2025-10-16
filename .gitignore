@@ -49,6 +49,12 @@ app.*.map.json
 _php/fb.json
 _php/vendor
 
+# Android Keystore & Signing (NEVER commit these!)
+android/key.properties
+android/app/upload-keystore.jks
+*.jks
+*.keystore
+
 # Windows Installer Output
 installer_output/
 *.exe

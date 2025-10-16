@@ -18,12 +18,23 @@ Read-Host
 
 $KeystorePath = "android\app\upload-keystore.jks"
 $KeyAlias = "ping365"
+$KeytoolPath = "C:\Program Files (x86)\Java\jre-1.8\bin\keytool.exe"
+
+# Check if keytool exists
+if (-Not (Test-Path $KeytoolPath)) {
+    Write-Host "Error: keytool not found at: $KeytoolPath" -ForegroundColor Red
+    Write-Host ""
+    Write-Host "Please update the KeytoolPath variable in this script" -ForegroundColor Yellow
+    Write-Host "or make sure Java JDK/JRE is installed" -ForegroundColor Yellow
+    Write-Host ""
+    exit 1
+}
 
 Write-Host "Creating keystore at: $KeystorePath" -ForegroundColor Green
 Write-Host ""
 
 # Create keystore
-keytool -genkey -v -keystore $KeystorePath -storetype JKS -keyalg RSA -keysize 2048 -validity 10000 -alias $KeyAlias
+& $KeytoolPath -genkey -v -keystore $KeystorePath -storetype JKS -keyalg RSA -keysize 2048 -validity 10000 -alias $KeyAlias
 
 if ($LASTEXITCODE -eq 0) {
     Write-Host ""

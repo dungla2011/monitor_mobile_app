@@ -8,7 +8,7 @@ use Kreait\Firebase\Messaging\Notification;
 
 // Khởi tạo Firebase
 $factory = (new Factory)
-    ->withServiceAccount('fb.json')
+    ->withServiceAccount('e:\Projects\MonitorApp2025\fb.json')
     ->withDatabaseUri('https://monitorv2-dcf5b-default-rtdb.firebaseio.com');
 
 $cloudMessaging = $factory->createMessaging();
@@ -18,10 +18,11 @@ $cloudMessaging = $factory->createMessaging();
 // 1. Thay thế bằng Device Registration Token thực tế của bạn
 $deviceToken = 'cc15S_s4T2SDIX5eRjZMg1:APA91bF7drTZouofeRzA-aFXIKEmJlLrtbU5VnwQh9359gdKvYk3-r3Q3SmzY0lLEJsOAjKsOz-0M2ISGEHCdHiGUmKP9jMwsmdj55F8Z9aeAIHdy4TtVwY';
 // Ví dụ token: 'fA1B2c3D4e5F6g7H8i9J0k1L2m3N4o5P6q7R8s9T0u1V2w3X4y5Z6a7B8c9D0e1F2'
+$deviceToken = "dM1y4hqPQtqoT3RXcx-t46:APA91bETdrAtOyPKv0l7hzKc6mZDUJDRWTGLGnko80Lcjy43SY0K05huNoGZCESz8U9ekPSwCzQi6qHeC7NwMvwDxMtHVq5A1r7HECuLzqzUBqsmyDaUbTk";
 
 // 2. Cấu hình nội dung thông báo
 $title = 'Cảnh báo từ Ping365';
-$body = 'Hệ thống phát hiện bất thường tại thiết bị ABC123';
+$body = 'Test tin nhắn đến ABC123';
 
 // 3. Dữ liệu tùy chỉnh (sẽ được gửi đến app)
 $customData = [

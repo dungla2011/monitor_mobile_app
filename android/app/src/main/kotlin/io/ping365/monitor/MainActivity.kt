@@ -1,4 +1,4 @@
-package com.example.monitor_app
+package io.ping365.monitor
 
 import io.flutter.embedding.android.FlutterActivity
 

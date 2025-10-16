@@ -7,18 +7,18 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:916524608033:android:023b0ca699317d2fd1d160",
+        "mobilesdk_app_id": "1:916524608033:android:5b2e60188fec6432d1d160",
         "android_client_info": {
           "package_name": "io.ping365.monitor"
         }
       },
       "oauth_client": [
         {
-          "client_id": "916524608033-lhqrsnqrr4c608cab9b14a13n40qa2pn.apps.googleusercontent.com",
+          "client_id": "916524608033-vdnktsibi6fivca3eddtequ2o4hk0h2n.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "io.ping365.monitor",
-            "certificate_hash": "8dd5e75f3888d913a245098c2804e4092b937333"
+            "certificate_hash": "d609d982d43ccf051ef4ea72cf7ba0ae29ad69b2"
           }
         },
         {
