@@ -1,4 +1,5 @@
 import 'dart:io' show Platform;
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:monitor_app/l10n/app_localizations.dart';
@@ -31,7 +32,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     super.initState();
     _loadNotificationSettings();
     _loadAvailableLanguages();
-    if (Platform.isWindows) {
+    if (!kIsWeb && Platform.isWindows) {
       _loadAutoStartSetting();
     }
   }
@@ -381,8 +382,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ),
           ),
 
-          // Windows Settings Section (only show on Windows)
-          if (Platform.isWindows) ...[
+          // Windows Settings Section (only show on Windows desktop)
+          if (!kIsWeb && Platform.isWindows) ...[
             const SizedBox(height: 16),
             Card(
               child: Padding(
