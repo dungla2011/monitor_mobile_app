@@ -329,7 +329,18 @@ abstract class BaseCrudScreenState<T extends BaseCrudScreen> extends State<T> {
             final statusCode = result['statusCode'] as int?;
             final responseBody = result['responseBody'] as String?;
             final isException = result['isException'] as bool?;
-            final errorLink = result['error_link'] as String?;
+            
+            // Extract error_link - can be String or Map
+            String? errorLink;
+            final errorLinkRaw = result['error_link'];
+            if (errorLinkRaw != null) {
+              if (errorLinkRaw is String) {
+                errorLink = errorLinkRaw;
+              } else if (errorLinkRaw is Map) {
+                // Convert Map to JSON string for ErrorDialogUtils
+                errorLink = jsonEncode(errorLinkRaw);
+              }
+            }
 
             if (statusCode != null && statusCode >= 400) {
               // HTTP error (4xx, 5xx)
@@ -1181,7 +1192,18 @@ class _BaseCrudDialogState extends State<BaseCrudDialog> {
       } else {
         // Show detailed error dialog with HTTP status code if available
         final statusCode = result['statusCode'] as int?;
-        final errorLink = result['error_link'] as String?;
+        
+        // Extract error_link - can be String or Map
+        String? errorLink;
+        final errorLinkRaw = result['error_link'];
+        if (errorLinkRaw != null) {
+          if (errorLinkRaw is String) {
+            errorLink = errorLinkRaw;
+          } else if (errorLinkRaw is Map) {
+            // Convert Map to JSON string for ErrorDialogUtils
+            errorLink = jsonEncode(errorLinkRaw);
+          }
+        }
 
         if (statusCode != null && statusCode >= 400) {
           await ErrorDialogUtils.showHttpErrorDialog(

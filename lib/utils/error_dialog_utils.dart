@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:monitor_app/l10n/app_localizations.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -427,58 +428,13 @@ class ErrorDialogUtils {
                           ),
                         ),
 
-                        // Error link if provided
-                        if (errorLink != null &&
-                            errorLink.isNotEmpty &&
-                            _isValidUrl(errorLink)) ...[
+                        // Error link if provided - support 3 formats:
+                        // 1. Plain URL string
+                        // 2. Plain text string
+                        // 3. JSON object: {'link': '...', 'text': '...'}
+                        if (errorLink != null && errorLink.isNotEmpty) ...[
                           const SizedBox(height: 12),
-                          InkWell(
-                            onTap: () => _openUrl(errorLink),
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 12,
-                                vertical: 8,
-                              ),
-                              decoration: BoxDecoration(
-                                color: Colors.blue.shade50,
-                                borderRadius: BorderRadius.circular(6),
-                                border: Border.all(
-                                  color: Colors.blue.shade200,
-                                  width: 1,
-                                ),
-                              ),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Icon(
-                                    Icons.link,
-                                    size: 18, // Increased from 16
-                                    color: Colors.blue.shade700,
-                                  ),
-                                  const SizedBox(width: 6),
-                                  Flexible(
-                                    child: Text(
-                                      errorLink,
-                                      style: TextStyle(
-                                        fontSize: 15, // Increased from 13
-                                        color: Colors.blue.shade700,
-                                        fontWeight: FontWeight
-                                            .w500, // Add medium weight
-                                        // decoration: TextDecoration.underline, // ❌ REMOVED
-                                      ),
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                  ),
-                                  const SizedBox(width: 4),
-                                  Icon(
-                                    Icons.open_in_new,
-                                    size: 16, // Increased from 14
-                                    color: Colors.blue.shade700,
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
+                          _buildErrorLinkWidget(errorLink),
                         ],
                       ],
                     ),
@@ -704,6 +660,145 @@ class ErrorDialogUtils {
           color: Colors.red,
         );
     }
+  }
+
+  /// Build error link widget based on format
+  /// Supports 3 formats:
+  /// 1. Plain URL string: "https://example.com" -> clickable link
+  /// 2. Plain text string: "Contact support" -> plain text
+  /// 3. JSON object string: '{"link": "https://...", "text": "Click here"}' -> text with link
+  static Widget _buildErrorLinkWidget(String errorLink) {
+    // Try to parse as JSON first
+    try {
+      final decoded = jsonDecode(errorLink);
+      if (decoded is Map<String, dynamic>) {
+        final link = decoded['link']?.toString() ?? '';
+        final text = decoded['text']?.toString() ?? '';
+
+        // Format 3: JSON with link and text
+        if (link.isNotEmpty && text.isNotEmpty && _isValidUrl(link)) {
+          return InkWell(
+            onTap: () => _openUrl(link),
+            child: Container(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 12,
+                vertical: 8,
+              ),
+              decoration: BoxDecoration(
+                color: Colors.blue.shade50,
+                borderRadius: BorderRadius.circular(6),
+                border: Border.all(
+                  color: Colors.blue.shade200,
+                  width: 1,
+                ),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Flexible(
+                    child: Text(
+                      text, // Display custom text
+                      style: TextStyle(
+                        fontSize: 20,
+                        color: Colors.blue.shade700,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 4),
+                  Icon(
+                    Icons.open_in_new,
+                    size: 16,
+                    color: Colors.blue.shade700,
+                  ),
+                ],
+              ),
+            ),
+          );
+        }
+      }
+    } catch (e) {
+      // Not JSON, continue to check other formats
+    }
+
+    // Format 1: Plain URL string
+    if (_isValidUrl(errorLink)) {
+      return InkWell(
+        onTap: () => _openUrl(errorLink),
+        child: Container(
+          padding: const EdgeInsets.symmetric(
+            horizontal: 12,
+            vertical: 8,
+          ),
+          decoration: BoxDecoration(
+            color: Colors.blue.shade50,
+            borderRadius: BorderRadius.circular(6),
+            border: Border.all(
+              color: Colors.blue.shade200,
+              width: 1,
+            ),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Flexible(
+                child: Text(
+                  errorLink,
+                  style: TextStyle(
+                    fontSize: 20,
+                    color: Colors.blue.shade700,
+                    fontWeight: FontWeight.w500,
+                  ),
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+              const SizedBox(width: 4),
+              Icon(
+                Icons.open_in_new,
+                size: 16,
+                color: Colors.blue.shade700,
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
+    // Format 2: Plain text string (not a URL)
+    return Container(
+      padding: const EdgeInsets.symmetric(
+        horizontal: 12,
+        vertical: 8,
+      ),
+      decoration: BoxDecoration(
+        color: Colors.grey.shade100,
+        borderRadius: BorderRadius.circular(6),
+        border: Border.all(
+          color: Colors.grey.shade300,
+          width: 1,
+        ),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(
+            Icons.info_outline,
+            size: 18,
+            color: Colors.grey.shade700,
+          ),
+          const SizedBox(width: 6),
+          Flexible(
+            child: Text(
+              errorLink,
+              style: TextStyle(
+                fontSize: 20,
+                color: Colors.grey.shade800,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   /// Validate if string is a valid URL
