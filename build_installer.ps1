@@ -1,11 +1,11 @@
-# Ping365 Monitor - Create Windows Installer
+# Ping24 Monitor - Create Windows Installer
 # This script packages the already-built Flutter app into a Windows installer using Inno Setup
 # Note: Run "flutter build windows --release" first before using this script
 
 # Configuration
 $InnoSetupPath = "C:\Program Files (x86)\Inno Setup 6\ISCC.exe"
 $InnoSetupScript = "windows\installer\setup.iss"
-$AppName = "Ping365 Monitor"
+$AppName = "Ping24 Monitor"
 $ExePath = "build\windows\x64\runner\Release\monitor_app.exe"
 
 Write-Host ""

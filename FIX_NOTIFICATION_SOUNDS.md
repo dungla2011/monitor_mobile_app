@@ -231,7 +231,7 @@ adb uninstall com.example.monitor_app
 adb install build/app/outputs/flutter-apk/app-release.apk
 
 # Option 2: Clear app data (Android Settings)
-Settings → Apps → Ping365 → Storage → Clear Data
+Settings → Apps → Ping24 → Storage → Clear Data
 ```
 
 ### File Naming

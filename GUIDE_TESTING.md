@@ -1,6 +1,6 @@
-# 🧪 Test Automation Guide - Ping365
+# 🧪 Test Automation Guide - Ping24
 
-Hướng dẫn chi tiết về test automation và CI/CD cho Ping365.
+Hướng dẫn chi tiết về test automation và CI/CD cho Ping24.
 
 ## 📋 Tổng quan
 

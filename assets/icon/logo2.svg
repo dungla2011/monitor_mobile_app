@@ -30,7 +30,7 @@
         dominant-baseline="central"
         class="text"
         font-size="45"
-        letter-spacing="-1">Ping365</text>
+        letter-spacing="-1">Ping24</text>
   
   <!-- Bottom 1/3 circle with orange fill -->
   <path d="M 150 270 A 120 120 0 0 1 44 190 L 256 190 A 120 120 0 0 1 150 270 Z" 

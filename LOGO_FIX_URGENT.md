@@ -75,6 +75,6 @@ ls -lah assets/icon/logo.png
 ## 🎯 Kết quả mong đợi:
 Sau khi hoàn thành, icon sẽ là:
 - Vòng tròn cam (#FF8C00)
-- Middle section: White background với text "Ping365" màu cam
+- Middle section: White background với text "Ping24" màu cam
 - Top & Bottom: Orange fill
 

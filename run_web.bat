@@ -1,6 +1,6 @@
 @echo off
 echo ========================================
-echo   Ping365 Monitor - Run Web (Port 8008)
+echo   Ping24 Monitor - Run Web (Port 8008)
 echo ========================================
 echo.
 echo Starting Flutter web server on port 8008...

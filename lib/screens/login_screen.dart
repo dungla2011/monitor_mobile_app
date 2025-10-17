@@ -384,7 +384,7 @@ class _LoginScreenState extends State<LoginScreen>
                           children: [
                             Expanded(
                               child: Text(
-                                'Ping365 [${languageManager.currentLocale.languageCode.toUpperCase()}]',
+                                'Ping24 [${languageManager.currentLocale.languageCode.toUpperCase()}]',
                                 textAlign: TextAlign.center,
                                 style: const TextStyle(
                                   fontSize: 16,

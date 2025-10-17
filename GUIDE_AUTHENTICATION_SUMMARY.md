@@ -1,4 +1,4 @@
-# Tóm tắt: Tích hợp Authentication cho Ping365
+# Tóm tắt: Tích hợp Authentication cho Ping24
 
 ## ✅ Đã hoàn thành
 
@@ -144,4 +144,4 @@ flutter run
 
 ---
 
-**Ping365** giờ đây đã có hệ thống authentication hoàn chỉnh và sẵn sàng cho production! 🎊
+**Ping24** giờ đây đã có hệ thống authentication hoàn chỉnh và sẵn sàng cho production! 🎊

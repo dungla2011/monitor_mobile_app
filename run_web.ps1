@@ -1,8 +1,8 @@
-# Ping365 Monitor - Run Web on Port 8008
+# Ping24 Monitor - Run Web on Port 8008
 
 Write-Host ""
 Write-Host "========================================" -ForegroundColor Cyan
-Write-Host "  Ping365 Monitor - Run Web (Port 8008)" -ForegroundColor Cyan
+Write-Host "  Ping24 Monitor - Run Web (Port 8008)" -ForegroundColor Cyan
 Write-Host "========================================" -ForegroundColor Cyan
 Write-Host ""
 Write-Host "Starting Flutter web server on port 8008..." -ForegroundColor Yellow

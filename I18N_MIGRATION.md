@@ -74,7 +74,7 @@ l10n.messagesDeleteConfirm('Ping Item')
 
 ### ✅ **Metadata & Documentation**
 ```dart
-"appTitle": "Ping365",
+"appTitle": "Ping24",
 "@appTitle": {
   "description": "The title of the application"
 }

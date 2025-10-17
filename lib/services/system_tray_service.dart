@@ -27,7 +27,7 @@ class SystemTrayService {
         backgroundColor: Colors.transparent,
         skipTaskbar: false,
         titleBarStyle: TitleBarStyle.normal,
-        title: 'Ping365 - Monitor',
+        title: 'Ping24 - Monitor',
       );
 
       windowManager.waitUntilReadyToShow(windowOptions, () async {
@@ -69,7 +69,7 @@ class SystemTrayService {
     // Update menu with current state
     await updateTrayMenu();
 
-    await trayManager.setToolTip('Ping365 - Monitor');
+    await trayManager.setToolTip('Ping24 - Monitor');
   }
 
   /// Update tray menu - simplified with Options dialog
@@ -104,7 +104,7 @@ class SystemTrayService {
     try {
       // Configure launch at startup
       launchAtStartup.setup(
-        appName: 'Ping365Monitor',
+        appName: 'Ping24Monitor',
         appPath: Platform.resolvedExecutable,
         // Optional: add arguments
         args: ['--minimized'],

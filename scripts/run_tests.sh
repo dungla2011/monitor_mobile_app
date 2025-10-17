@@ -1,6 +1,6 @@
 #!/bin/bash
 # Bash script để chạy tất cả tests và generate coverage report
-# Run Tests Script for Ping365
+# Run Tests Script for Ping24
 
 echo "🚀 Bắt đầu chạy test automation..."
 

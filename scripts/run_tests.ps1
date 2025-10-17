@@ -1,5 +1,5 @@
 # PowerShell script to run all tests and generate coverage report
-# Run Tests Script for Ping365
+# Run Tests Script for Ping24
 
 Write-Host "🚀 Starting test automation..." -ForegroundColor Green
 

@@ -33,7 +33,7 @@ flutter build windows --release
 
 Installer will be created at:
 ```
-installer_output/Ping365_Monitor_Setup_v1.0.0.exe
+installer_output/Ping24_Monitor_Setup_v1.0.0.exe
 ```
 
 ## Troubleshooting

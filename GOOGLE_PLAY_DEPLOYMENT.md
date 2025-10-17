@@ -136,7 +136,7 @@ java -jar bundletool.jar install-apks --apks=app.apks
 
 2. **Create App (First time only)**
    - Click "Create app"
-   - App name: `Ping365 Monitor`
+   - App name: `Ping24 Monitor`
    - Language: English (or your preferred)
    - App type: App
    - Free or Paid: Free
@@ -256,4 +256,4 @@ android/app/upload-keystore.jks
 
 - Google Play Console Help: https://support.google.com/googleplay/android-developer
 - Flutter Deployment: https://docs.flutter.dev/deployment/android
-- Issue: support@ping365.io
+- Issue: support@ping24.io

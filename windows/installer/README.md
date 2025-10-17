@@ -1,6 +1,6 @@
 # Windows Installer Setup Guide
 
-This guide explains how to create a Windows installer for the Ping365 Monitor application.
+This guide explains how to create a Windows installer for the Ping24 Monitor application.
 
 ## Prerequisites
 
@@ -38,7 +38,7 @@ The script will:
 - ✅ Create installer with Inno Setup
 - ✅ Show installer location and size
 
-**Output:** `installer_output\Ping365_Monitor_Setup_v1.0.0.exe`
+**Output:** `installer_output\Ping24_Monitor_Setup_v1.0.0.exe`
 
 ### Method 2: Manual Steps
 
@@ -61,7 +61,7 @@ The script will:
 The created installer includes:
 
 ✅ **Automatic Installation**
-- Installs to `C:\Program Files\Ping365 Monitor\` by default
+- Installs to `C:\Program Files\Ping24 Monitor\` by default
 - User can choose custom installation path
 
 ✅ **Optional Components**
@@ -91,9 +91,9 @@ Edit `windows\installer\setup.iss`:
 ### Change App Name or Publisher
 Edit `windows\installer\setup.iss`:
 ```pascal
-#define MyAppName "Ping365 Monitor"
+#define MyAppName "Ping24 Monitor"
 #define MyAppPublisher "GalaxyCloud"
-#define MyAppURL "https://ping365.io"
+#define MyAppURL "https://ping24.io"
 ```
 
 ### Custom Installer Icon
@@ -183,4 +183,4 @@ To integrate with GitHub Actions or other CI:
 
 For issues or questions:
 - GitHub: https://github.com/dungla2011/monitor_mobile_app
-- Email: support@ping365.io
+- Email: support@ping24.io

@@ -1,4 +1,4 @@
-# Hướng dẫn cấu hình Firebase cho Ping365
+# Hướng dẫn cấu hình Firebase cho Ping24
 
 ## 1. Tạo Firebase Project
 
@@ -11,7 +11,7 @@
 
 1. Trong Firebase Console, click biểu tượng Android
 2. **Android package name**: `com.example.monitor_app`
-3. **App nickname**: `Ping365 Android`
+3. **App nickname**: `Ping24 Android`
 4. **Debug signing certificate SHA-1**: (tùy chọn, có thể bỏ qua)
 5. Click "Register app"
 
@@ -22,7 +22,7 @@
 ## 3. Thêm Web App (nếu cần chạy trên web)
 
 1. Trong Firebase Console, click biểu tượng Web (`</>`)
-2. **App nickname**: `Ping365 Web`
+2. **App nickname**: `Ping24 Web`
 3. **Also set up Firebase Hosting**: Có thể bỏ qua
 4. Click "Register app"
 

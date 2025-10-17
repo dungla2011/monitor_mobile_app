@@ -1,6 +1,6 @@
 # monitor_app
 
-# Ping365 - Flutter với Firebase Cloud Messaging
+# Ping24 - Flutter với Firebase Cloud Messaging
 
 Ứng dụng Flutter với tích hợp Firebase Cloud Messaging để nhận push notification từ web server PHP.
 

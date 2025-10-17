@@ -3,7 +3,7 @@ class AppConfig {
   // Base domain - Change this to point to different environments
   static const String domain = String.fromEnvironment(
     'DOMAIN',
-    defaultValue: 'ping365.io',
+    defaultValue: 'ping24.io',
   );
 
   // Base API URL
@@ -21,7 +21,7 @@ class AppConfig {
   static const String commonToolUrl = '$toolUrl/common';
 
   // App metadata
-  static const String appName = 'Ping365';
+  static const String appName = 'Ping24';
   static const String appVersion = '1.6.1';
 
   // API Key

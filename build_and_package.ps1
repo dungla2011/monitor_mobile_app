@@ -1,9 +1,9 @@
-# Ping365 Monitor - Build and Package
+# Ping24 Monitor - Build and Package
 # This script builds the Flutter app and creates a Windows installer
 # It combines flutter build + installer creation
 
 # Configuration
-$AppName = "Ping365 Monitor"
+$AppName = "Ping24 Monitor"
 
 Write-Host ""
 Write-Host "========================================" -ForegroundColor Cyan

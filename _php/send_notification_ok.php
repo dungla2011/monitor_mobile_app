@@ -21,7 +21,7 @@ $deviceToken = 'cc15S_s4T2SDIX5eRjZMg1:APA91bF7drTZouofeRzA-aFXIKEmJlLrtbU5VnwQh
 $deviceToken = "dM1y4hqPQtqoT3RXcx-t46:APA91bETdrAtOyPKv0l7hzKc6mZDUJDRWTGLGnko80Lcjy43SY0K05huNoGZCESz8U9ekPSwCzQi6qHeC7NwMvwDxMtHVq5A1r7HECuLzqzUBqsmyDaUbTk";
 
 // 2. Cấu hình nội dung thông báo
-$title = 'Cảnh báo từ Ping365';
+$title = 'Cảnh báo từ Ping24';
 $body = 'Test tin nhắn đến ABC123';
 
 // 3. Dữ liệu tùy chỉnh (sẽ được gửi đến app)

@@ -52,7 +52,7 @@
 
     
 
-  <!-- Orange Text: Ping365 (centered) -->  <!-- Orange Text: Ping365 (centered perfectly) -->
+  <!-- Orange Text: Ping24 (centered) -->  <!-- Orange Text: Ping24 (centered perfectly) -->
 
   <text x="512" y="512"   <text x="150" y="150" 
 
@@ -64,7 +64,7 @@
 
         font-size="177"        font-size="52"
 
-        letter-spacing="-3">Ping365</text>        letter-spacing="-1">Ping365</text>
+        letter-spacing="-3">Ping24</text>        letter-spacing="-1">Ping24</text>
 
     
 

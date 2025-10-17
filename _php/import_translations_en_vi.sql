@@ -6,7 +6,7 @@
 
 -- Insert English (en) translations
 INSERT INTO translations (language_code, translation_key, translation_value, is_active) VALUES
-('en', 'appTitle', 'Ping365', 1),
+('en', 'appTitle', 'Ping24', 1),
 ('en', 'appLoading', 'Loading...', 1),
 ('en', 'appError', 'Error', 1),
 ('en', 'appSuccess', 'Success', 1),
@@ -198,7 +198,7 @@ INSERT INTO translations (language_code, translation_key, translation_value, is_
 ('en', 'profileLoginMethodEmail', 'Email & Password', 1),
 ('en', 'profileLoginMethodUnknown', 'Unknown', 1),
 ('en', 'aboutTitle', 'About', 1),
-('en', 'aboutAppVersion', 'Ping365 v1.0.0', 1),
+('en', 'aboutAppVersion', 'Ping24 v1.0.0', 1),
 ('en', 'aboutCopyright', 'GalaxyCloud © 2025', 1),
 ('en', 'aboutDescription', 'Application for monitoring and managing your services.', 1),
 ('en', 'aboutDeveloper', 'Developed by GalaxyCloud.vn', 1),
@@ -306,7 +306,7 @@ ON DUPLICATE KEY UPDATE
 -- ============================================
 
 INSERT INTO translations (language_code, translation_key, translation_value, is_active) VALUES
-('vi', 'appTitle', 'Ping365', 1),
+('vi', 'appTitle', 'Ping24', 1),
 ('vi', 'appLoading', 'Đang tải...', 1),
 ('vi', 'appError', 'Lỗi', 1),
 ('vi', 'appSuccess', 'Thành công', 1),
@@ -498,7 +498,7 @@ INSERT INTO translations (language_code, translation_key, translation_value, is_
 ('vi', 'profileLoginMethodEmail', 'Email & Mật khẩu', 1),
 ('vi', 'profileLoginMethodUnknown', 'Không xác định', 1),
 ('vi', 'aboutTitle', 'Giới thiệu', 1),
-('vi', 'aboutAppVersion', 'Ping365 v1.0.0', 1),
+('vi', 'aboutAppVersion', 'Ping24 v1.0.0', 1),
 ('vi', 'aboutCopyright', 'GalaxyCloud © 2025', 1),
 ('vi', 'aboutDescription', 'Ứng dụng giám sát và quản lý dịch vụ của bạn.', 1),
 ('vi', 'aboutDeveloper', 'Phát triển bởi GalaxyCloud.vn', 1),

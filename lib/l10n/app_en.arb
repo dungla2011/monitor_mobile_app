@@ -1,7 +1,7 @@
 {
   "@@locale": "en",
   
-  "appTitle": "Ping365",
+  "appTitle": "Ping24",
   "@appTitle": {
     "description": "The title of the application"
   },
@@ -334,7 +334,7 @@
   "profileLoginMethodUnknown": "Unknown",
   
   "aboutTitle": "About",
-  "aboutAppVersion": "Ping365 v1.0.0",
+  "aboutAppVersion": "Ping24 v1.0.0",
   "aboutCopyright": "GalaxyCloud \u00a9 2025",
   "aboutDescription": "Application for monitoring and managing your services.",
   "aboutDeveloper": "Developed by GalaxyCloud.vn",

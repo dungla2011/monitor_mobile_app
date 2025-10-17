@@ -1,4 +1,4 @@
-# Create Android Keystore for Ping365 Monitor
+# Create Android Keystore for Ping24 Monitor
 
 # This script creates a keystore file for signing Android app releases
 # Run this ONCE and keep the keystore file safe!

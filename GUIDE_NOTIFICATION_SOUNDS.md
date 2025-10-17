@@ -227,7 +227,7 @@ await NotificationSoundService.previewSound('notification_alert');
 
 2. **Kiểm tra notification permission:**
    - Vào Settings của Android
-   - App → Ping365 → Notifications
+   - App → Ping24 → Notifications
    - Đảm bảo đã bật
 
 3. **Kiểm tra Firebase logs:**

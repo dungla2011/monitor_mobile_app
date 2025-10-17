@@ -129,7 +129,7 @@ Response:
 {
   "code": 1,
   "payload": {
-    "appTitle": "Ping365",
+    "appTitle": "Ping24",
     "appError": "Lỗi",
     "appSuccess": "Thành công"
   },

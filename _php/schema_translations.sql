@@ -45,10 +45,10 @@ ON DUPLICATE KEY UPDATE
 
 -- Example: Insert some sample translations (optional)
 INSERT INTO `translations` (`language_code`, `translation_key`, `translation_value`) VALUES
-('vi', 'appTitle', 'Ping365 (From Server)'),
+('vi', 'appTitle', 'Ping24 (From Server)'),
 ('vi', 'appError', 'Lỗi (Server)'),
 ('vi', 'appSuccess', 'Thành công (Server)'),
-('en', 'appTitle', 'Ping365 (From Server)'),
+('en', 'appTitle', 'Ping24 (From Server)'),
 ('en', 'appError', 'Error (Server)'),
 ('en', 'appSuccess', 'Success (Server)')
 ON DUPLICATE KEY UPDATE 

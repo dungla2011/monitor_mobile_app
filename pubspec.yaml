@@ -142,7 +142,20 @@ flutter:
 flutter_launcher_icons:
   android: true
   ios: true
-  image_path: "assets/icon/logo.png"
+  image_path: "assets/images/logo.png"  # Logo mới Ping24
   remove_alpha_ios: true
-  adaptive_icon_background: "#FFFFFF"
-  adaptive_icon_foreground: "assets/icon/logo.png"
+  adaptive_icon_background: "#FF9800"  # Màu cam
+  adaptive_icon_foreground: "assets/images/logo.png"
+  
+  # Web icons
+  web:
+    generate: true
+    image_path: "assets/images/logo.png"
+    background_color: "#FF9800"
+    theme_color: "#FF9800"
+  
+  # Windows icons
+  windows:
+    generate: true
+    image_path: "assets/images/logo.png"
+    icon_size: 256

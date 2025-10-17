@@ -16,11 +16,11 @@ adb install build/app/outputs/flutter-apk/app-release.apk
 
 ### Option 2: Uninstall thủ công trên điện thoại
 1. Giữ icon app → **Uninstall**
-2. Hoặc: Settings → Apps → Ping365 → **Uninstall**
+2. Hoặc: Settings → Apps → Ping24 → **Uninstall**
 3. Sau đó install file APK mới
 
 ### Option 3: Clear App Data (Ít hiệu quả hơn)
-Settings → Apps → Ping365 → Storage → **Clear Data**
+Settings → Apps → Ping24 → Storage → **Clear Data**
 
 ---
 

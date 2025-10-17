@@ -1,4 +1,4 @@
-# Hướng dẫn áp dụng Logo mới (Ping365 Orange Circle)
+# Hướng dẫn áp dụng Logo mới (Ping24 Orange Circle)
 
 ## File SVG đã tạo:
 - `assets/images/icon.svg` (1024x1024, white background)
@@ -75,7 +75,7 @@ Sau khi chạy `dart run flutter_launcher_icons`, icons sẽ được tạo tạ
 │   🟠🟠🟠🟠🟠🟠🟠     │  ← Top 1/3: Orange fill
 │   🟠         🟠     │
 │ 🟠             🟠   │
-│ 🟠   Ping365   🟠   │  ← Middle: White with orange text
+│ 🟠   Ping24   🟠   │  ← Middle: White with orange text
 │   🟠         🟠     │
 │   🟠🟠🟠🟠🟠🟠🟠     │  ← Bottom 1/3: Orange fill
 └─────────────────────┘

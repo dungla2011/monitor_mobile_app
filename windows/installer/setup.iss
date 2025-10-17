@@ -1,10 +1,10 @@
-; Ping365 Monitor App - Inno Setup Script
+; Ping24 Monitor App - Inno Setup Script
 ; This script creates a Windows installer for the application
 
-#define MyAppName "Ping365 Monitor"
+#define MyAppName "Ping24 Monitor"
 #define MyAppVersion "1.0.0"
 #define MyAppPublisher "GalaxyCloud"
-#define MyAppURL "https://ping365.io"
+#define MyAppURL "https://ping24.io"
 #define MyAppExeName "monitor_app.exe"
 
 [Setup]
@@ -23,7 +23,7 @@ LicenseFile=..\..\LICENSE
 ; Uncomment the following line to run in non administrative install mode (install for current user only.)
 ;PrivilegesRequired=lowest
 OutputDir=..\..\installer_output
-OutputBaseFilename=Ping365_Monitor_Setup_v{#MyAppVersion}
+OutputBaseFilename=Ping24_Monitor_Setup_v{#MyAppVersion}
 SetupIconFile=..\..\assets\icon\tray_icon.ico
 Compression=lzma
 SolidCompression=yes

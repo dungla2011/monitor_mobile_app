@@ -163,13 +163,13 @@ flutter build windows --release
 
 ```bash
 # Check if auto-start is enabled
-reg query "HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Run" /v Ping365Monitor
+reg query "HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Run" /v Ping24Monitor
 
 # Manually add auto-start
-reg add "HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Run" /v Ping365Monitor /t REG_SZ /d "C:\path\to\monitor_app.exe --minimized"
+reg add "HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Run" /v Ping24Monitor /t REG_SZ /d "C:\path\to\monitor_app.exe --minimized"
 
 # Manually remove auto-start
-reg delete "HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Run" /v Ping365Monitor
+reg delete "HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Run" /v Ping24Monitor
 ```
 
 ## 📝 Notes:
