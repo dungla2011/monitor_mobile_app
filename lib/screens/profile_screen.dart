@@ -161,11 +161,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
       return const Center(child: CircularProgressIndicator());
     }
 
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
+    return SingleChildScrollView(
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
           Text(
             l10n.profileTitle,
             style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
@@ -280,15 +281,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     l10n.profileLoginTime,
                     _loginInfo['login_time']?.split('T')[0] ?? 'N/A',
                     Icons.access_time,
-                  ),
-                  const SizedBox(height: 8),
-                  _buildInfoRow(
-                    l10n.profileBearerToken,
-                    WebAuthService.bearerToken != null
-                        ? '${WebAuthService.bearerToken!.substring(0, 20)}...'
-                        : 'N/A',
-                    Icons.security,
-                  ),
+                  )
                 ],
               ),
             ),
@@ -327,6 +320,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
           ),
         ],
+        ),
       ),
     );
   }

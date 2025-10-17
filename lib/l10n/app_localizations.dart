@@ -479,19 +479,19 @@ abstract class AppLocalizations {
   /// No description provided for @monitorAddConfig.
   ///
   /// In en, this message translates to:
-  /// **'Add Monitor Alert'**
+  /// **'Add Ping Alert'**
   String get monitorAddConfig;
 
   /// No description provided for @monitorEditConfig.
   ///
   /// In en, this message translates to:
-  /// **'Edit Monitor Alert'**
+  /// **'Edit Ping Alert'**
   String get monitorEditConfig;
 
   /// No description provided for @monitorDeleteConfig.
   ///
   /// In en, this message translates to:
-  /// **'Delete Monitor Alert'**
+  /// **'Delete Ping Alert'**
   String get monitorDeleteConfig;
 
   /// No description provided for @monitorName.
@@ -785,19 +785,19 @@ abstract class AppLocalizations {
   /// No description provided for @homeLoadingMonitors.
   ///
   /// In en, this message translates to:
-  /// **'Loading monitors...'**
+  /// **'Loading pings...'**
   String get homeLoadingMonitors;
 
   /// No description provided for @homeNoMonitors.
   ///
   /// In en, this message translates to:
-  /// **'No monitors found'**
+  /// **'No pings found'**
   String get homeNoMonitors;
 
   /// No description provided for @homeAddMonitorsHint.
   ///
   /// In en, this message translates to:
-  /// **'Add monitors to see them here'**
+  /// **'Add pings to see them here'**
   String get homeAddMonitorsHint;
 
   /// No description provided for @homeNoData.
@@ -1151,7 +1151,7 @@ abstract class AppLocalizations {
   /// No description provided for @mobileActionNavigatingToConfig.
   ///
   /// In en, this message translates to:
-  /// **'Navigating to Monitor Config...'**
+  /// **'Navigating to Ping Config...'**
   String get mobileActionNavigatingToConfig;
 
   /// No description provided for @mobileActionNavigatingToItems.
@@ -1889,7 +1889,7 @@ abstract class AppLocalizations {
   /// No description provided for @filterShowError.
   ///
   /// In en, this message translates to:
-  /// **'Show OFFLINE monitors'**
+  /// **'Show OFFLINE pings'**
   String get filterShowError;
 
   /// No description provided for @filterShowErrorDesc.
@@ -1901,7 +1901,7 @@ abstract class AppLocalizations {
   /// No description provided for @filterShowSuccess.
   ///
   /// In en, this message translates to:
-  /// **'Show ONLINE monitors'**
+  /// **'Show ONLINE pings'**
   String get filterShowSuccess;
 
   /// No description provided for @filterShowSuccessDesc.
@@ -1919,7 +1919,7 @@ abstract class AppLocalizations {
   /// No description provided for @filterShowEnabled.
   ///
   /// In en, this message translates to:
-  /// **'Show enabled monitors'**
+  /// **'Show enabled pings'**
   String get filterShowEnabled;
 
   /// No description provided for @filterShowEnabledDesc.
@@ -1931,7 +1931,7 @@ abstract class AppLocalizations {
   /// No description provided for @filterShowDisabled.
   ///
   /// In en, this message translates to:
-  /// **'Show disabled monitors'**
+  /// **'Show disabled pings'**
   String get filterShowDisabled;
 
   /// No description provided for @filterShowDisabledDesc.

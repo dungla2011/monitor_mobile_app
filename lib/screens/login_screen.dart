@@ -1,4 +1,6 @@
+import 'dart:io' show Platform;
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:provider/provider.dart';
 import 'package:country_flags/country_flags.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -402,9 +404,9 @@ class _LoginScreenState extends State<LoginScreen>
                         color: Colors.white,
                         child: TabBar(
                           controller: _tabController,
-                          labelColor: Colors.blue,
+                          labelColor: Colors.blue.shade400,
                           unselectedLabelColor: Colors.grey,
-                          indicatorColor: Colors.blue,
+                          indicatorColor: Colors.blue.shade400,
                           tabs: [
                             Tab(text: localizations.authLogin),
                             Tab(text: localizations.authRegister),
@@ -540,41 +542,43 @@ class _LoginScreenState extends State<LoginScreen>
               ),
             ),
 
-            // Divider "hoặc"
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 16),
-              child: Row(
-                children: [
-                  const Expanded(child: Divider()),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    child: Text(localizations.authOr,
-                        style: const TextStyle(color: Colors.grey)),
-                  ),
-                  const Expanded(child: Divider()),
-                ],
+            // Divider "hoặc" và Google Sign-In (chỉ hiển thị trên Web, Android, iOS)
+            if (kIsWeb || (!Platform.isWindows && !Platform.isLinux && !Platform.isMacOS)) ...[
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 16),
+                child: Row(
+                  children: [
+                    const Expanded(child: Divider()),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: Text(localizations.authOr,
+                          style: const TextStyle(color: Colors.grey)),
+                    ),
+                    const Expanded(child: Divider()),
+                  ],
+                ),
               ),
-            ),
 
-            // Nút Google Sign-In
-            SizedBox(
-              width: double.infinity,
-              height: 48,
-              child: OutlinedButton.icon(
-                onPressed: _isLoading ? null : _signInWithGoogle,
-                style: OutlinedButton.styleFrom(
-                  side: const BorderSide(color: Colors.grey),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
+              // Nút Google Sign-In
+              SizedBox(
+                width: double.infinity,
+                height: 48,
+                child: OutlinedButton.icon(
+                  onPressed: _isLoading ? null : _signInWithGoogle,
+                  style: OutlinedButton.styleFrom(
+                    side: const BorderSide(color: Colors.grey),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
+                  icon: const Icon(Icons.login, color: Colors.red),
+                  label: Text(
+                    '${localizations.authLoginWith} Google',
+                    style: const TextStyle(fontSize: 16, color: Colors.black87),
                   ),
                 ),
-                icon: const Icon(Icons.login, color: Colors.red),
-                label: Text(
-                  '${localizations.authLoginWith} Google',
-                  style: const TextStyle(fontSize: 16, color: Colors.black87),
-                ),
               ),
-            ),
+            ],
           ],
         ),
       ),
@@ -666,7 +670,7 @@ class _LoginScreenState extends State<LoginScreen>
                   }
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Theme.of(context).primaryColor,
+                  backgroundColor: Colors.blue.shade400,
                   foregroundColor: Colors.white,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),

@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "916524608033",
+    "project_id": "monitorv2-dcf5b",
+    "storage_bucket": "monitorv2-dcf5b.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:916524608033:android:023b0ca699317d2fd1d160",
+        "android_client_info": {
+          "package_name": "io.ping365.monitor"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "916524608033-lhqrsnqrr4c608cab9b14a13n40qa2pn.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "io.ping365.monitor",
+            "certificate_hash": "8dd5e75f3888d913a245098c2804e4092b937333"
+          }
+        },
+        {
+          "client_id": "916524608033-pqqvfdhqsosklb0cfb4nrogi6tm5cpvu.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBCHpCDZoONPpwsiBurfvKqOqSMbzFlkio"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "916524608033-pqqvfdhqsosklb0cfb4nrogi6tm5cpvu.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

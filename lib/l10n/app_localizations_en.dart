@@ -204,13 +204,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get monitorDeleteItem => 'Delete Ping Item';
 
   @override
-  String get monitorAddConfig => 'Add Monitor Alert';
+  String get monitorAddConfig => 'Add Ping Alert';
 
   @override
-  String get monitorEditConfig => 'Edit Monitor Alert';
+  String get monitorEditConfig => 'Edit Ping Alert';
 
   @override
-  String get monitorDeleteConfig => 'Delete Monitor Alert';
+  String get monitorDeleteConfig => 'Delete Ping Alert';
 
   @override
   String get monitorName => 'Monitor name';
@@ -370,13 +370,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get homeOther => 'Other';
 
   @override
-  String get homeLoadingMonitors => 'Loading monitors...';
+  String get homeLoadingMonitors => 'Loading pings...';
 
   @override
-  String get homeNoMonitors => 'No monitors found';
+  String get homeNoMonitors => 'No pings found';
 
   @override
-  String get homeAddMonitorsHint => 'Add monitors to see them here';
+  String get homeAddMonitorsHint => 'Add pings to see them here';
 
   @override
   String get homeNoData => 'No data available';
@@ -560,8 +560,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get notificationSoundPreview => 'Preview';
 
   @override
-  String get mobileActionNavigatingToConfig =>
-      'Navigating to Monitor Config...';
+  String get mobileActionNavigatingToConfig => 'Navigating to Ping Config...';
 
   @override
   String get mobileActionNavigatingToItems => 'Navigating to Ping Items...';
@@ -961,13 +960,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get filterByStatus => 'Filter by status';
 
   @override
-  String get filterShowError => 'Show OFFLINE monitors';
+  String get filterShowError => 'Show OFFLINE pings';
 
   @override
   String get filterShowErrorDesc => 'Items with OFFLINE';
 
   @override
-  String get filterShowSuccess => 'Show ONLINE monitors';
+  String get filterShowSuccess => 'Show ONLINE pings';
 
   @override
   String get filterShowSuccessDesc => 'Items with ONLINE';
@@ -976,13 +975,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get filterByEnableStatus => 'Filter by enable status';
 
   @override
-  String get filterShowEnabled => 'Show enabled monitors';
+  String get filterShowEnabled => 'Show enabled pings';
 
   @override
   String get filterShowEnabledDesc => 'Items with enable = 1';
 
   @override
-  String get filterShowDisabled => 'Show disabled monitors';
+  String get filterShowDisabled => 'Show disabled pings';
 
   @override
   String get filterShowDisabledDesc => 'Items with enable = 0';

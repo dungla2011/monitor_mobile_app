@@ -31,6 +31,8 @@ class ErrorDialogUtils {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
+          contentPadding: const EdgeInsets.fromLTRB(10, 20, 10, 0),
+          insetPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 24),
           title: Row(
             children: [
               Icon(Icons.error_outline, color: Colors.red.shade600),
@@ -301,6 +303,8 @@ class ErrorDialogUtils {
       barrierDismissible: false,
       builder: (BuildContext context) {
         return AlertDialog(
+          contentPadding: const EdgeInsets.fromLTRB(10, 24, 10, 24),
+          insetPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 24),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
           ),

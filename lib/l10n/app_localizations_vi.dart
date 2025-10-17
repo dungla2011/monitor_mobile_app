@@ -204,13 +204,13 @@ class AppLocalizationsVi extends AppLocalizations {
   String get monitorDeleteItem => 'Xóa Ping Item';
 
   @override
-  String get monitorAddConfig => 'Thêm Monitor Cảnh báo';
+  String get monitorAddConfig => 'Thêm Ping Cảnh báo';
 
   @override
-  String get monitorEditConfig => 'Sửa Monitor Cảnh báo';
+  String get monitorEditConfig => 'Sửa Ping Cảnh báo';
 
   @override
-  String get monitorDeleteConfig => 'Xóa Monitor Cảnh báo';
+  String get monitorDeleteConfig => 'Xóa Ping Cảnh báo';
 
   @override
   String get monitorName => 'Tên monitor';
@@ -331,7 +331,7 @@ class AppLocalizationsVi extends AppLocalizations {
   String get navigationHome => 'Trang chủ';
 
   @override
-  String get navigationMonitorItems => 'Danh sách Monitor';
+  String get navigationMonitorItems => 'Danh sách Ping';
 
   @override
   String get navigationMonitorConfigs => 'Cấu hình Cảnh báo';
@@ -370,13 +370,13 @@ class AppLocalizationsVi extends AppLocalizations {
   String get homeOther => 'Khác';
 
   @override
-  String get homeLoadingMonitors => 'Đang tải monitors...';
+  String get homeLoadingMonitors => 'Đang tải pings...';
 
   @override
-  String get homeNoMonitors => 'Không tìm thấy monitor';
+  String get homeNoMonitors => 'Chưa có Ping';
 
   @override
-  String get homeAddMonitorsHint => 'Thêm monitors để hiển thị ở đây';
+  String get homeAddMonitorsHint => 'Thêm pings để hiển thị ở đây';
 
   @override
   String get homeNoData => 'Không có dữ liệu';
@@ -558,8 +558,7 @@ class AppLocalizationsVi extends AppLocalizations {
   String get notificationSoundPreview => 'Nghe thử';
 
   @override
-  String get mobileActionNavigatingToConfig =>
-      'Đang chuyển đến Monitor Config...';
+  String get mobileActionNavigatingToConfig => 'Đang chuyển đến Ping Config...';
 
   @override
   String get mobileActionNavigatingToItems => 'Đang chuyển đến Ping Items...';
