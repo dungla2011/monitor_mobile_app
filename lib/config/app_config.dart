@@ -38,5 +38,5 @@ class AppConfig {
   /// Enable/Disable loading languages from server
   /// 0 = disabled (block API calls, use only ARB files)
   /// 1 = enabled (allow API calls and server translations)
-  static const int enableLoadLanguage = 0;
+  static const int enableLoadLanguage = 1;
 }

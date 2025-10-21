@@ -112,6 +112,17 @@ class WebAuthService {
           // Lưu vào SharedPreferences
           await _saveUserInfo(username, 'web_api');
 
+          // Update Firebase token to server (không chờ, chạy background)
+          updateFirebaseToken().then((result) {
+            if (result['success']) {
+              print('✅ Firebase token updated after login');
+            } else {
+              print('⚠️ Failed to update Firebase token: ${result['message']}');
+            }
+          }).catchError((e) {
+            print('❌ Error updating Firebase token: $e');
+          });
+
           return {
             'success': true,
             'message': jsonResponse['message'] ?? 'Login successful',
@@ -288,6 +299,17 @@ class WebAuthService {
 
     // Lưu vào SharedPreferences
     await _saveUserInfo(username, 'google');
+
+    // Update Firebase token to server (không chờ, chạy background)
+    updateFirebaseToken().then((result) {
+      if (result['success']) {
+        print('✅ Firebase token updated after Google login');
+      } else {
+        print('⚠️ Failed to update Firebase token: ${result['message']}');
+      }
+    }).catchError((e) {
+      print('❌ Error updating Firebase token: $e');
+    });
   }
 
   // Lưu thông tin user vào SharedPreferences
@@ -498,6 +520,115 @@ class WebAuthService {
       return response.statusCode < 500;
     } catch (e) {
       return false;
+    }
+  }
+
+  // Update Firebase token to server after successful login
+  static Future<Map<String, dynamic>> updateFirebaseToken() async {
+    try {
+      if (!hasValidToken()) {
+        return {
+          'success': false,
+          'message': 'User not logged in',
+        };
+      }
+
+      print('🔥 Waiting for Firebase token...');
+      
+      // Wait for Firebase token with timeout
+      String? fcmToken;
+      int attempts = 0;
+      const maxAttempts = 20; // 20 attempts * 500ms = 10 seconds max
+      
+      while (fcmToken == null && attempts < maxAttempts) {
+        try {
+          if (!kIsWeb) {
+            fcmToken = await FirebaseMessagingService.getToken();
+          }
+          if (fcmToken == null) {
+            await Future.delayed(const Duration(milliseconds: 500));
+            attempts++;
+          }
+        } catch (e) {
+          print('⚠️ Error getting FCM token (attempt $attempts): $e');
+          await Future.delayed(const Duration(milliseconds: 500));
+          attempts++;
+        }
+      }
+
+      if (fcmToken == null || fcmToken.isEmpty) {
+        print('⚠️ Firebase token not available after $attempts attempts');
+        return {
+          'success': false,
+          'message': 'Firebase token not available',
+        };
+      }
+
+      print('✅ Firebase token obtained: ${fcmToken.substring(0, 20)}...');
+
+      final String apiUrl =
+          '${AppConfig.commonToolUrl}/get-api-info.php?update_firebase_token=1';
+
+      print('🔗 Updating Firebase token to: $apiUrl');
+
+      final headers = await getAuthenticatedHeaders();
+      final response = await http.post(
+        Uri.parse(apiUrl),
+        headers: headers,
+        body: jsonEncode({
+          'firebase_token': fcmToken,
+        }),
+      );
+
+      print('📥 Firebase token update response status: ${response.statusCode}');
+      print('📥 Firebase token update response body: ${response.body}');
+
+      if (response.statusCode == 200) {
+        // Check if response body is empty
+        if (response.body.isEmpty || response.body.trim().isEmpty) {
+          print('✅ Firebase token updated successfully (empty response)');
+          return {
+            'success': true,
+            'message': 'Firebase token updated',
+          };
+        }
+
+        // Try to parse JSON response
+        try {
+          final jsonResponse = jsonDecode(response.body);
+
+          if (jsonResponse['code'] == 1) {
+            print('✅ Firebase token updated successfully');
+            return {
+              'success': true,
+              'message': jsonResponse['message'] ?? 'Firebase token updated',
+            };
+          } else {
+            return {
+              'success': false,
+              'message': jsonResponse['message'] ?? 'Failed to update Firebase token',
+            };
+          }
+        } catch (e) {
+          // If JSON parsing fails but status is 200, assume success
+          print('⚠️ Cannot parse response JSON, but status is 200: $e');
+          return {
+            'success': true,
+            'message': 'Firebase token updated (non-JSON response)',
+          };
+        }
+      } else {
+        return {
+          'success': false,
+          'message': 'HTTP error ${response.statusCode}',
+        };
+      }
+    } catch (e) {
+      print('❌ Error updating Firebase token: $e');
+      return {
+        'success': false,
+        'message': 'Connection error: $e',
+      };
     }
   }
 
