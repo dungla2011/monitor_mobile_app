@@ -12,6 +12,7 @@ import 'package:monitor_app/services/dynamic_localization_service.dart';
 import 'package:monitor_app/l10n/dynamic_app_localizations.dart';
 import 'package:country_flags/country_flags.dart';
 import 'firebase_options.dart';
+import 'config/app_config.dart';
 import 'services/firebase_messaging_service.dart';
 import 'services/web_auth_service.dart';
 import 'services/affiliate_service.dart';
@@ -202,6 +203,13 @@ class _MyAppState extends State<MyApp> with WindowListener, TrayListener {
 
   /// Load server translations for initial language
   Future<void> _loadInitialLanguage() async {
+    // Check if server loading is disabled
+    if (AppConfig.enableLoadLanguage == 0) {
+      DynamicAppLocalizations.clearServerTranslations();
+      print('🚫 Server translations cleared (using only ARB files)');
+      return;
+    }
+
     final languageManager = context.read<LanguageManager>();
     await DynamicAppLocalizations.loadServerTranslations(
       languageManager.currentLocale,
@@ -231,8 +239,10 @@ class _MyAppState extends State<MyApp> with WindowListener, TrayListener {
             ),
           ),
           // Internationalization support
-          localizationsDelegates: const [
-            ServerAppLocalizationsDelegate(), // ⭐ Custom delegate for server translations
+          localizationsDelegates: [
+            // Only use ServerAppLocalizationsDelegate if server loading is enabled
+            if (AppConfig.enableLoadLanguage == 1)
+              const ServerAppLocalizationsDelegate(),
             AppLocalizations.delegate,
             GlobalMaterialLocalizations.delegate,
             GlobalWidgetsLocalizations.delegate,

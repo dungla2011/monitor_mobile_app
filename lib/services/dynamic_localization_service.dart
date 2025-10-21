@@ -104,6 +104,25 @@ class DynamicLocalizationService {
 
   /// Get list of available languages from server
   static Future<List<LanguageInfo>> getAvailableLanguages() async {
+    // Check if server loading is disabled
+    if (AppConfig.enableLoadLanguage == 0) {
+      print('🚫 Server language loading is disabled - returning default languages');
+      return [
+        LanguageInfo(
+          code: 'en',
+          name: 'English',
+          nativeName: 'English',
+          flagCode: 'GB',
+        ),
+        LanguageInfo(
+          code: 'vi',
+          name: 'Tiếng Việt',
+          nativeName: 'Tiếng Việt',
+          flagCode: 'VN',
+        ),
+      ];
+    }
+
     // Check in-memory cache first
     if (_cachedAvailableLanguages != null &&
         _cachedAvailableLanguagesTime != null) {
@@ -179,6 +198,12 @@ class DynamicLocalizationService {
   static Future<Map<String, String>?> downloadLanguage(
     String languageCode,
   ) async {
+    // Check if server loading is disabled
+    if (AppConfig.enableLoadLanguage == 0) {
+      print('🚫 Server language download is blocked (enableLoadLanguage = 0)');
+      return null;
+    }
+
     try {
       print('📥 Downloading language: $languageCode');
 
@@ -226,6 +251,12 @@ class DynamicLocalizationService {
   static Future<Map<String, String>?> loadCachedLanguage(
     String languageCode,
   ) async {
+    // Check if server loading is disabled
+    if (AppConfig.enableLoadLanguage == 0) {
+      print('🚫 Server language cache is blocked (enableLoadLanguage = 0)');
+      return null;
+    }
+
     try {
       final prefs = await SharedPreferences.getInstance();
       final cacheKey = '$_cachePrefix$languageCode';
@@ -345,6 +376,12 @@ class DynamicLocalizationService {
   ///
   /// Returns list of language codes that were successfully synced.
   static Future<List<String>> syncAllLanguages({bool forceSync = false}) async {
+    // Check if server loading is disabled
+    if (AppConfig.enableLoadLanguage == 0) {
+      print('🚫 Server language sync is blocked (enableLoadLanguage = 0)');
+      return [];
+    }
+
     print('🔄 Starting language sync... (force: $forceSync)');
 
     final syncedLanguages = <String>[];

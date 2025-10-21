@@ -34,4 +34,9 @@ class AppConfig {
   // Pagination
   static const int defaultPageSize = 20;
   static const int maxPageSize = 100;
+
+  /// Enable/Disable loading languages from server
+  /// 0 = disabled (block API calls, use only ARB files)
+  /// 1 = enabled (allow API calls and server translations)
+  static const int enableLoadLanguage = 0;
 }

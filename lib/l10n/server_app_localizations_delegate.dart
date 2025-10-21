@@ -234,13 +234,9 @@ class ServerAppLocalizationsDelegate
       );
     }
 
-    // If no server translations, still create ServerAppLocalizations with EN fallback
-    print('📦 Using built-in translations for ${locale.languageCode} with EN fallback');
-    return ServerAppLocalizations(
-      builtIn,
-      {},
-      serverTranslationsEN ?? {},
-    );
+    // Return built-in directly to avoid noSuchMethod forwarding issues
+    print('📦 No server translations: using built-in AppLocalizations');
+    return builtIn;
   }
 
   @override

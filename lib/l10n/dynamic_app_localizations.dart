@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:monitor_app/l10n/app_localizations.dart';
 import 'package:monitor_app/services/dynamic_localization_service.dart';
+import 'package:monitor_app/config/app_config.dart';
 
 /// Wrapper for AppLocalizations that adds server translations
 class DynamicAppLocalizations {
@@ -8,6 +9,12 @@ class DynamicAppLocalizations {
 
   /// Load server translations for a locale
   static Future<void> loadServerTranslations(Locale locale) async {
+    // Check if server loading is disabled
+    if (AppConfig.enableLoadLanguage == 0) {
+      print('🚫 Server language loading is disabled');
+      return;
+    }
+
     print('🌐 Loading server translations for ${locale.languageCode}');
 
     final translations = await DynamicLocalizationService.loadCachedLanguage(
