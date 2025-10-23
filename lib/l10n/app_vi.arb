@@ -244,9 +244,26 @@
   "profileLoginMethodWebApi": "Web API (Username & Password)",
   "profileLoginMethodEmail": "Email & Mật khẩu",
   "profileLoginMethodUnknown": "Không xác định",
+  "profileAbout": "Thông tin ứng dụng",
+  "profileAppName": "Tên ứng dụng",
+  "profileAppVersion": "Phiên bản",
+  "profileApiUrl": "Tên miền API",
+  "profileViewAbout": "Xem thông tin",
+  "profileViewAboutDesc": "Thông tin ứng dụng và phiên bản",
+  "profileAboutDescription": "Ứng dụng giám sát chuyên nghiệp để theo dõi thời gian hoạt động và hiệu suất của các dịch vụ của bạn.",
   
   "aboutTitle": "Giới thiệu",
-  "aboutAppVersion": "Ping24 v1.0.0",
+  "aboutAppVersion": "{appName} v{version}",
+  "@aboutAppVersion": {
+    "placeholders": {
+      "appName": {
+        "type": "String"
+      },
+      "version": {
+        "type": "String"
+      }
+    }
+  },
   "aboutCopyright": "GalaxyCloud \u00a9 2025",
   "aboutDescription": "Ứng dụng giám sát và quản lý dịch vụ của bạn.",
   "aboutDeveloper": "Phát triển bởi GalaxyCloud.vn",

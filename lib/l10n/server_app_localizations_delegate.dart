@@ -67,6 +67,10 @@ class ServerAppLocalizations extends AppLocalizations {
   String profileLoadError(String error) => _builtIn.profileLoadError(error);
 
   @override
+  String aboutAppVersion(String appName, String version) =>
+      _builtIn.aboutAppVersion(appName, version);
+
+  @override
   String httpErrorDefaultHint3(Object code) =>
       _builtIn.httpErrorDefaultHint3(code);
 

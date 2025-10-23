@@ -246,9 +246,98 @@ Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   await Firebase.initializeApp();
 
   if (kDebugMode) {
-    print('Background message received: ${message.messageId}');
+    print('🔔 Background message received: ${message.messageId}');
     print('Title: ${message.notification?.title}');
     print('Body: ${message.notification?.body}');
     print('Data: ${message.data}');
+  }
+
+  // Hiển thị local notification với custom sound khi app ở background
+  if (!kIsWeb && Platform.isAndroid) {
+    await _showBackgroundNotification(message);
+  }
+}
+
+// Helper function để hiển thị notification trong background
+Future<void> _showBackgroundNotification(RemoteMessage message) async {
+  // Khởi tạo local notifications plugin
+  final FlutterLocalNotificationsPlugin localNotificationsPlugin =
+      FlutterLocalNotificationsPlugin();
+
+  // Lấy cài đặt notification
+  final settings = await NotificationSoundService.getSettings();
+
+  if (!settings.notificationEnabled) {
+    if (kDebugMode) {
+      print('⚠️ Background: Notifications are disabled in settings');
+    }
+    return;
+  }
+
+  // Xác định âm thanh
+  String? soundFileName;
+  bool shouldPlaySound = settings.notificationSound !=
+      app_settings.NotificationSettings.soundNone;
+
+  if (settings.notificationSound ==
+      app_settings.NotificationSettings.soundDefault) {
+    soundFileName = null; // Default sound
+  } else if (settings.notificationSound ==
+      app_settings.NotificationSettings.soundNone) {
+    soundFileName = null;
+    shouldPlaySound = false;
+  } else {
+    // Custom sound
+    soundFileName = settings.notificationSound;
+  }
+
+  if (kDebugMode) {
+    print('🔊 Background: Using sound: ${soundFileName ?? "default"}');
+    print('🔊 Background: Should play sound: $shouldPlaySound');
+  }
+
+  final androidPlatformChannelSpecifics = AndroidNotificationDetails(
+    'high_importance_channel',
+    'High Importance Notifications',
+    channelDescription: 'This channel is used for important notifications.',
+    importance: Importance.high,
+    priority: Priority.high,
+    playSound: shouldPlaySound,
+    sound: soundFileName != null
+        ? RawResourceAndroidNotificationSound(soundFileName)
+        : null,
+    enableVibration: settings.notificationVibrate,
+  );
+
+  const iOSPlatformChannelSpecifics = DarwinNotificationDetails(
+    presentAlert: true,
+    presentBadge: true,
+    presentSound: true,
+  );
+
+  final platformChannelSpecifics = NotificationDetails(
+    android: androidPlatformChannelSpecifics,
+    iOS: iOSPlatformChannelSpecifics,
+  );
+
+  // Lấy title và body từ notification hoặc data
+  final title = message.notification?.title ?? 
+                message.data['title'] ?? 
+                'Notification';
+  final body = message.notification?.body ?? 
+               message.data['body'] ?? 
+               message.data['message'] ?? 
+               'You have a new message';
+
+  await localNotificationsPlugin.show(
+    message.hashCode,
+    title,
+    body,
+    platformChannelSpecifics,
+    payload: message.data.toString(),
+  );
+
+  if (kDebugMode) {
+    print('✅ Background notification shown with custom sound');
   }
 }

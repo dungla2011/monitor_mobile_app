@@ -486,9 +486,18 @@ class _MainScreenState extends State<MainScreen> {
                       child: Icon(Icons.person, color: Colors.blue),
                     ),
                     const SizedBox(height: 10),
-                    Text(
-                      localizations.appTitle,
-                      style: const TextStyle(color: Colors.white, fontSize: 24),
+                    Row(
+                      children: [
+                        Text(
+                          localizations.appTitle,
+                          style: const TextStyle(color: Colors.white, fontSize: 24),
+                        ),
+                        const SizedBox(width: 8),
+                        Text(
+                          'v${AppConfig.appVersion}',
+                          style: const TextStyle(color: Colors.white70, fontSize: 14),
+                        ),
+                      ],
                     ),
                     Text(
                       WebAuthService.currentUser?['displayName'] ??
@@ -943,7 +952,7 @@ class AboutScreen extends StatelessWidget {
           ),
           const SizedBox(height: 10),
           Text(
-            '${l10n.aboutAppVersion}\n${l10n.aboutCopyright}\n\n${l10n.aboutDescription}\n\n${l10n.aboutDeveloper}',
+            '${l10n.aboutAppVersion(AppConfig.appName, AppConfig.appVersion)}\n${l10n.aboutCopyright}\n\n${l10n.aboutDescription}\n\n${l10n.aboutDeveloper}',
             style: const TextStyle(fontSize: 16),
             textAlign: TextAlign.center,
           ),

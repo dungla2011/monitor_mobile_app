@@ -687,6 +687,28 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get profileAbout => 'About';
+
+  @override
+  String get profileAppName => 'App Name';
+
+  @override
+  String get profileAppVersion => 'Version';
+
+  @override
+  String get profileApiUrl => 'API Domain';
+
+  @override
+  String get profileViewAbout => 'View About';
+
+  @override
+  String get profileViewAboutDesc => 'App information and version';
+
+  @override
+  String get profileAboutDescription =>
+      'A professional monitoring application for tracking uptime and performance of your services.';
+
+  @override
   String profileLoadError(String error) {
     return 'Error loading information: $error';
   }
@@ -708,7 +730,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get aboutTitle => 'About';
 
   @override
-  String get aboutAppVersion => 'Ping24 v1.0.0';
+  String aboutAppVersion(String appName, String version) {
+    return '$appName v$version';
+  }
 
   @override
   String get aboutCopyright => 'GalaxyCloud © 2025';

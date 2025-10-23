@@ -6,6 +6,11 @@ class AppConfig {
     defaultValue: 'ping24.io',
   );
 
+    // App metadata
+  static const String appName = 'Ping24';
+  static const String appVersion = '1.6.2';
+
+
   // Base API URL
   static const String apiBaseUrl = String.fromEnvironment(
     'API_BASE_URL',
@@ -20,9 +25,6 @@ class AppConfig {
   static const String toolUrl = '$apiBaseUrl/tool';
   static const String commonToolUrl = '$toolUrl/common';
 
-  // App metadata
-  static const String appName = 'Ping24';
-  static const String appVersion = '1.6.1';
 
   // API Key
   static const String apiKey = 'glx_mobile';

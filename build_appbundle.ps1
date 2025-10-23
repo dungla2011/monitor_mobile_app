@@ -29,6 +29,13 @@ Write-Host "[1/3] Cleaning previous build..." -ForegroundColor Yellow
 flutter clean | Out-Null
 Write-Host "Clean completed" -ForegroundColor Green
 
+# Delete generated plugin registrant to force regeneration
+$generatedFile = "android\app\src\main\java\io\flutter\plugins\GeneratedPluginRegistrant.java"
+if (Test-Path $generatedFile) {
+    Remove-Item $generatedFile -Force
+    Write-Host "Removed old GeneratedPluginRegistrant.java" -ForegroundColor Green
+}
+
 # Get dependencies
 Write-Host ""
 Write-Host "[2/3] Getting dependencies..." -ForegroundColor Yellow
@@ -43,7 +50,8 @@ Write-Host "Dependencies downloaded" -ForegroundColor Green
 Write-Host ""
 Write-Host "[3/3] Building app bundle..." -ForegroundColor Yellow
 Write-Host "This may take several minutes..." -ForegroundColor Cyan
-flutter build appbundle --release
+Write-Host "Building with minification and resource shrinking enabled..." -ForegroundColor Cyan
+flutter build appbundle --release --obfuscate --split-debug-info=build/app/outputs/symbols
 
 if ($LASTEXITCODE -ne 0) {
     Write-Host "Build failed!" -ForegroundColor Red

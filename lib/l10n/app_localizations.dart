@@ -1394,6 +1394,48 @@ abstract class AppLocalizations {
   /// **'❌ Error signing out: {error}'**
   String profileLogoutError(String error);
 
+  /// No description provided for @profileAbout.
+  ///
+  /// In en, this message translates to:
+  /// **'About'**
+  String get profileAbout;
+
+  /// No description provided for @profileAppName.
+  ///
+  /// In en, this message translates to:
+  /// **'App Name'**
+  String get profileAppName;
+
+  /// No description provided for @profileAppVersion.
+  ///
+  /// In en, this message translates to:
+  /// **'Version'**
+  String get profileAppVersion;
+
+  /// No description provided for @profileApiUrl.
+  ///
+  /// In en, this message translates to:
+  /// **'API Domain'**
+  String get profileApiUrl;
+
+  /// No description provided for @profileViewAbout.
+  ///
+  /// In en, this message translates to:
+  /// **'View About'**
+  String get profileViewAbout;
+
+  /// No description provided for @profileViewAboutDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'App information and version'**
+  String get profileViewAboutDesc;
+
+  /// No description provided for @profileAboutDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'A professional monitoring application for tracking uptime and performance of your services.'**
+  String get profileAboutDescription;
+
   /// No description provided for @profileLoadError.
   ///
   /// In en, this message translates to:
@@ -1433,8 +1475,8 @@ abstract class AppLocalizations {
   /// No description provided for @aboutAppVersion.
   ///
   /// In en, this message translates to:
-  /// **'Ping24 v1.0.0'**
-  String get aboutAppVersion;
+  /// **'{appName} v{version}'**
+  String aboutAppVersion(String appName, String version);
 
   /// No description provided for @aboutCopyright.
   ///

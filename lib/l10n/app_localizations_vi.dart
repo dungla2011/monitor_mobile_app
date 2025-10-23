@@ -9,7 +9,7 @@ class AppLocalizationsVi extends AppLocalizations {
   AppLocalizationsVi([String locale = 'vi']) : super(locale);
 
   @override
-  String get appTitle => 'Ping2U';
+  String get appTitle => 'Ping24';
 
   @override
   String get appLoading => 'Đang tải...';
@@ -685,6 +685,28 @@ class AppLocalizationsVi extends AppLocalizations {
   }
 
   @override
+  String get profileAbout => 'Thông tin ứng dụng';
+
+  @override
+  String get profileAppName => 'Tên ứng dụng';
+
+  @override
+  String get profileAppVersion => 'Phiên bản';
+
+  @override
+  String get profileApiUrl => 'Tên miền API';
+
+  @override
+  String get profileViewAbout => 'Xem thông tin';
+
+  @override
+  String get profileViewAboutDesc => 'Thông tin ứng dụng và phiên bản';
+
+  @override
+  String get profileAboutDescription =>
+      'Ứng dụng giám sát chuyên nghiệp để theo dõi thời gian hoạt động và hiệu suất của các dịch vụ của bạn.';
+
+  @override
   String profileLoadError(String error) {
     return 'Lỗi khi tải thông tin: $error';
   }
@@ -706,7 +728,9 @@ class AppLocalizationsVi extends AppLocalizations {
   String get aboutTitle => 'Giới thiệu';
 
   @override
-  String get aboutAppVersion => 'Ping24 v1.0.0';
+  String aboutAppVersion(String appName, String version) {
+    return '$appName v$version';
+  }
 
   @override
   String get aboutCopyright => 'GalaxyCloud © 2025';

@@ -320,6 +320,13 @@
       }
     }
   },
+  "profileAbout": "About",
+  "profileAppName": "App Name",
+  "profileAppVersion": "Version",
+  "profileApiUrl": "API Domain",
+  "profileViewAbout": "View About",
+  "profileViewAboutDesc": "App information and version",
+  "profileAboutDescription": "A professional monitoring application for tracking uptime and performance of your services.",
   "profileLoadError": "Error loading information: {error}",
   "@profileLoadError": {
     "placeholders": {
@@ -334,7 +341,17 @@
   "profileLoginMethodUnknown": "Unknown",
   
   "aboutTitle": "About",
-  "aboutAppVersion": "Ping24 v1.0.0",
+  "aboutAppVersion": "{appName} v{version}",
+  "@aboutAppVersion": {
+    "placeholders": {
+      "appName": {
+        "type": "String"
+      },
+      "version": {
+        "type": "String"
+      }
+    }
+  },
   "aboutCopyright": "GalaxyCloud \u00a9 2025",
   "aboutDescription": "Application for monitoring and managing your services.",
   "aboutDeveloper": "Developed by GalaxyCloud.vn",

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:monitor_app/l10n/app_localizations.dart';
 import '../services/web_auth_service.dart';
 import '../widgets/web_auth_wrapper.dart';
+import '../config/app_config.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -151,6 +152,70 @@ class _ProfileScreenState extends State<ProfileScreen> {
         );
       }
     }
+  }
+
+  void _showAboutDialog() {
+    final l10n = AppLocalizations.of(context)!;
+    showAboutDialog(
+      context: context,
+      applicationName: AppConfig.appName,
+      applicationVersion: 'Version ${AppConfig.appVersion}',
+      applicationIcon: Container(
+        width: 64,
+        height: 64,
+        decoration: BoxDecoration(
+          color: Colors.blue,
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: const Icon(
+          Icons.monitor_heart,
+          size: 40,
+          color: Colors.white,
+        ),
+      ),
+      children: [
+        const SizedBox(height: 16),
+        Text(
+          l10n.profileAboutDescription,
+          style: const TextStyle(fontSize: 14),
+        ),
+        const SizedBox(height: 16),
+        _buildAboutInfoRow(l10n.profileApiUrl, AppConfig.domain),
+        _buildAboutInfoRow(l10n.profileAppVersion, AppConfig.appVersion),
+        _buildAboutInfoRow('Build Date', DateTime.now().toString().split(' ')[0]),
+        const SizedBox(height: 16),
+        Text(
+          '© 2025 ${AppConfig.appName}',
+          style: const TextStyle(
+            fontSize: 12,
+            color: Colors.grey,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildAboutInfoRow(String label, String value) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4),
+      child: Row(
+        children: [
+          Text(
+            '$label: ',
+            style: const TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 13,
+            ),
+          ),
+          Expanded(
+            child: Text(
+              value,
+              style: const TextStyle(fontSize: 13),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   @override
@@ -309,11 +374,54 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     onTap: _loadUserInfo,
                   ),
                   ListTile(
+                    leading: const Icon(Icons.info_outline, color: Colors.green),
+                    title: Text(l10n.profileViewAbout),
+                    subtitle: Text(l10n.profileViewAboutDesc),
+                    trailing: const Icon(Icons.arrow_forward_ios),
+                    onTap: _showAboutDialog,
+                  ),
+                  ListTile(
                     leading: const Icon(Icons.logout, color: Colors.red),
                     title: Text(l10n.authLogout),
                     subtitle: Text(l10n.profileLogoutDesc),
                     trailing: const Icon(Icons.arrow_forward_ios),
                     onTap: _signOut,
+                  ),
+                ],
+              ),
+            ),
+          ),
+
+          const SizedBox(height: 16),
+
+          // About / App Info
+          Card(
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    l10n.profileAbout,
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 12),
+                  _buildInfoRow(
+                    l10n.profileAppName,
+                    AppConfig.appName,
+                    Icons.apps,
+                  ),
+                  const SizedBox(height: 8),
+                  _buildInfoRow(
+                    l10n.profileAppVersion,
+                    AppConfig.appVersion,
+                    Icons.info_outline,
+                  ),
+                  const SizedBox(height: 8),
+                  _buildInfoRow(
+                    l10n.profileApiUrl,
+                    AppConfig.domain,
+                    Icons.cloud,
                   ),
                 ],
               ),
