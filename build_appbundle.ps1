@@ -51,7 +51,7 @@ Write-Host ""
 Write-Host "[3/3] Building app bundle..." -ForegroundColor Yellow
 Write-Host "This may take several minutes..." -ForegroundColor Cyan
 Write-Host "Building with minification and resource shrinking enabled..." -ForegroundColor Cyan
-flutter build appbundle --release --obfuscate --split-debug-info=build/app/outputs/symbols
+flutter build appbundle --release --obfuscate --split-debug-info=build/app/outputs/symbols --no-shrink
 
 if ($LASTEXITCODE -ne 0) {
     Write-Host "Build failed!" -ForegroundColor Red

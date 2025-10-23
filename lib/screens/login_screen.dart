@@ -147,15 +147,28 @@ class _LoginScreenState extends State<LoginScreen>
   }
 
   Future<void> _resetPassword() async {
-    if (_usernameController.text.trim().isEmpty) {
-      _showErrorDialog('Vui lòng nhập username để reset mật khẩu');
-      return;
+    final localizations = AppLocalizations.of(context)!;
+    
+    // Open reset password page in browser
+    final resetUrl = '${AppConfig.apiBaseUrl}/reset-password';
+    
+    try {
+      final uri = Uri.parse(resetUrl);
+      if (await canLaunchUrl(uri)) {
+        await launchUrl(
+          uri,
+          mode: LaunchMode.externalApplication, // Open in external browser
+        );
+      } else {
+        if (mounted) {
+          _showErrorDialog(localizations.authCouldNotOpenRegistration);
+        }
+      }
+    } catch (e) {
+      if (mounted) {
+        _showErrorDialog('${localizations.appError}: $e');
+      }
     }
-
-    // TODO: Implement password reset với API của bạn
-    _showErrorDialog(
-      'Chức năng reset password chưa được hỗ trợ.\nVui lòng liên hệ admin.',
-    );
   }
 
   Future<void> _signInWithGoogle() async {
