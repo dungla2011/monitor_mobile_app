@@ -56,13 +56,22 @@ android {
     buildTypes {
         release {
             signingConfig = signingConfigs.getByName("release")
-            // Enable code shrinking, obfuscation, and optimization
-            isMinifyEnabled = true
-            isShrinkResources = true
+            // Temporarily disable minify to avoid NDK strip issues
+            isMinifyEnabled = false
+            isShrinkResources = false
+            
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+        }
+    }
+
+    // Bundle configuration - prevent language splitting
+    bundle {
+        language {
+            // Disable language splits to ensure all translations are included
+            enableSplit = false
         }
     }
 }
@@ -73,6 +82,6 @@ flutter {
 
 dependencies {
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.0.4")
-    // Google Play Core for deferred components
-    implementation("com.google.android.play:core:1.10.3")
+    // Note: Google Play Core 1.x is deprecated and incompatible with Android 14.
+    // Flutter does not require Play Core library. Removed for SDK 34 compatibility.
 }

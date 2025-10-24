@@ -7,9 +7,19 @@
 -keep class io.flutter.plugins.**  { *; }
 -dontwarn io.flutter.embedding.**
 
-# Google Play Core (for deferred components)
--keep class com.google.android.play.core.** { *; }
--dontwarn com.google.android.play.core.**
+# Flutter Localizations - CRITICAL for AAB translations
+-keep class **.l10n.** { *; }
+-keep class **AppLocalizations** { *; }
+-keep class **AppLocalizations$* { *; }
+-keep class **AppLocalizationsDelegate** { *; }
+-keep class **AppLocalizationsEn** { *; }
+-keep class **AppLocalizationsVi** { *; }
+-keepclassmembers class **AppLocalizations** {
+    public *;
+}
+-keepclassmembers class **AppLocalizations$* {
+    public *;
+}
 
 # Firebase
 -keep class com.google.firebase.** { *; }
